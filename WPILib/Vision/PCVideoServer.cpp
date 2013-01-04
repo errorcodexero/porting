@@ -222,7 +222,7 @@ int PCVideoServer::ServerTask()
 		}
 
 		struct sockaddr_in clientAddr;
-		int clientAddrSize;
+		socklen_t clientAddrSize;
 		int newPCSock = accept (pcSock, reinterpret_cast<sockaddr*>(&clientAddr), &clientAddrSize);
 		if (newPCSock  == ERROR)
 		{

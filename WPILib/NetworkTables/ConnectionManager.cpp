@@ -111,7 +111,7 @@ int ConnectionManager::ListenTaskRun()
 			if (FD_ISSET(m_listenSocket, &fdSet))
 			{
 				struct sockaddr clientAddr;
-				int clientAddrSize;
+				socklen_t clientAddrSize;
 				int connectedSocket = accept(m_listenSocket, &clientAddr, &clientAddrSize);
 				if (connectedSocket == ERROR)
 					continue;

@@ -15,11 +15,14 @@ private:
 public:
     vxsem( sem_type_t type, bool taken = false ) :
 	m_type( type ),
-	m_mutex( PTHREAD_MUTEX_INITIALIZER ),
-	m_cond( PTHREAD_COND_INITIALIZER ),
+     // m_mutex( PTHREAD_MUTEX_INITIALIZER ),
+     // m_cond( PTHREAD_COND_INITIALIZER ),
 	m_owner( 0 ),
 	m_count( 0 )
     {
+	pthread_mutex_init( &m_mutex, NULL );
+	pthread_cond_init( &m_cond, NULL ); 
+
 	if (taken) {
 	    m_count = 1;
 	    m_owner = pthread_self();
