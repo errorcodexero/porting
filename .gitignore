@@ -1,0 +1,12 @@
+*.o
+*.d
+.deps.mk
+*.a
+*.dll
+*.dll.a
+*.out
+*.exe
+errorlog
+undefined
+robot.pcap
+*.log

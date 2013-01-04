@@ -440,6 +440,10 @@ public:
     }
     virtual signed int readOutput(tRioStatusCode *status) {
 	*status = 0;
+	if (m_readSelect.Module == 0 && m_readSelect.Channel == 7) {
+	    // fake reading the battery voltage
+	    return (int)((12.34 * 1000. / 1680.) * 2048 / 10.0);
+	}
 	return 0;
     }
     virtual void strobeLatchOutput(tRioStatusCode *status) {
@@ -1110,7 +1114,7 @@ public:
 
     virtual void writeStatus(tWatchdog::tStatus value, tRioStatusCode *status) {
 	m_status = value;
-#ifdef DEBUG
+#if 1
 	printf("FPGA watchdog 0x%08x (SystemActive %c Alive %c\n"
 	       "  SysDisableCount %u DisableCount %u)\n",
 	  m_status.value, m_status.SystemActive ? 't' : 'f',
@@ -1122,7 +1126,7 @@ public:
     }
     virtual void writeStatus_SystemActive(bool value, tRioStatusCode *status) {
 	m_status.SystemActive = value;
-#ifdef DEBUG
+#if 1
 	printf("FPGA watchdog 0x%08x (SystemActive %c Alive %c\n"
 	       "  SysDisableCount %u DisableCount %u)\n",
 	  m_status.value, m_status.SystemActive ? 't' : 'f',
@@ -1134,7 +1138,7 @@ public:
     }
     virtual void writeStatus_Alive(bool value, tRioStatusCode *status) {
 	m_status.Alive = value;
-#ifdef DEBUG
+#if 1
 	printf("FPGA watchdog 0x%08x (SystemActive %c Alive %c\n"
 	       "  SysDisableCount %u DisableCount %u)\n",
 	  m_status.value, m_status.SystemActive ? 't' : 'f',
@@ -1146,7 +1150,7 @@ public:
     }
     virtual void writeStatus_SysDisableCount(unsigned short value, tRioStatusCode *status) {
 	m_status.SysDisableCount = value;
-#ifdef DEBUG
+#if 1
 	printf("FPGA watchdog 0x%08x (SystemActive %c Alive %c\n"
 	       "  SysDisableCount %u DisableCount %u)\n",
 	  m_status.value, m_status.SystemActive ? 't' : 'f',
@@ -1158,7 +1162,7 @@ public:
     }
     virtual void writeStatus_DisableCount(unsigned short value, tRioStatusCode *status) {
 	m_status.DisableCount = value;
-#ifdef DEBUG
+#if 1
 	printf("FPGA watchdog 0x%08x (SystemActive %c Alive %c\n"
 	       "  SysDisableCount %u DisableCount %u)\n",
 	  m_status.value, m_status.SystemActive ? 't' : 'f',
@@ -1188,7 +1192,7 @@ public:
     }
 
     virtual void writeImmortal(bool value, tRioStatusCode *status) {
-#ifdef DEBUG
+#if 1
 	printf("FPGA watchdog immortal %c\n", value ? 't' : 'f');
 #endif
 	m_immortal = value;
