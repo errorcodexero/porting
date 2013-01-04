@@ -296,7 +296,7 @@ private:
 	uint8_t eioConfig[32];		// DSEIO status_block_t + padding
 	uint8_t unknown3[4];
 	uint32_t crc;
-	uint8_t lcdData[128];		// optional
+	uint8_t lcdData[448];		// optional
     } m_sendPkt;
 #pragma pack(pop)
     sockaddr_in m_sendAddr;
@@ -792,7 +792,7 @@ int FNC::SetLCDData( const char *lcdData, int lcdDataLength, int wait_ms )
 
     if (lcdData) {
 	// discard any unsent data
-	FreeEIOConfig();
+	FreeLCDData();
 	// copy new data to local storage until we can send it to DS
 	int lcdlen = 1 + (uint8_t)lcdData[0];
 	m_lcdData = new char[lcdlen];
@@ -808,7 +808,7 @@ void FNC::FreeLCDData()
     if (m_lcdData) {
 	delete m_lcdData;
 	m_lcdData = NULL;
-	m_eioConfigLength = 0;
+	m_lcdDataLength = 0;
     }
 }
 
@@ -919,8 +919,10 @@ int FNC::Send()
 
     m_sendPktLength = 1024;
     if (m_lcdData) {
-	memcpy(m_sendPkt.lcdData, m_lcdData, m_lcdDataLength);
-	m_sendPktLength += m_lcdDataLength;
+	if (m_lcdDataLength <= sizeof m_sendPkt.lcdData) {
+	    memcpy(m_sendPkt.lcdData, m_lcdData, m_lcdDataLength);
+	    m_sendPktLength += m_lcdDataLength;
+	}
 	FreeLCDData();
     }
 
