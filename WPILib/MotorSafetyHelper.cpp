@@ -153,6 +153,9 @@ bool MotorSafetyHelper::IsSafetyEnabled()
 //TODO: these should be synchronized with the setting methods in case it's called from a different thread
 void MotorSafetyHelper::CheckMotors()
 {
+	if (m_listMutex == NULL)
+		m_listMutex = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
+
 	Synchronized sync(m_listMutex);
 	for (MotorSafetyHelper *msh = m_headHelper; msh != NULL; msh = msh->m_nextHelper)
 	{
