@@ -228,7 +228,9 @@ bool wpi_assert_impl(bool conditionValue,
 		setErrorData(error, strlen(error), 100);
 		
 		wpi_handleTracing();
+#ifdef __VXWORKS__
 		if (suspendOnAssertEnabled) taskSuspend(0);
+#endif
 	}
 	return conditionValue;
 }
@@ -264,7 +266,9 @@ void wpi_assertEqual_common_impl(int valueA,
 	setErrorData(error, strlen(error), 100);
 	
 	wpi_handleTracing();
+#ifdef __VXWORKS__
 	if (suspendOnAssertEnabled) taskSuspend(0);
+#endif
 }
 
 /**

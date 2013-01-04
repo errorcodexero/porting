@@ -11,6 +11,7 @@ class MyRobot : public IterativeRobot
 private:
     DriverStation *m_pDS;
     DriverStationEnhancedIO *m_pIO;
+    DriverStationLCD *m_pLCD;
     // Compressor *m_compressor;
 
     uint32_t disabled_periodic;

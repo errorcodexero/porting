@@ -5,7 +5,7 @@ CFLAGS := -Wall -Werror -g $(CINCLUDES)
 CXXFLAGS := -Wall -Wno-deprecated -Werror -g $(CINCLUDES)
 LDLIBS = -lpthread -ldl -lrt -lm
 
-SOURCES := chipStubs.cpp netStubs.cpp vxStubs.cpp visionStubs.cpp
+SOURCES := chipStubs.cpp netStubs.cpp vxStubs.cpp visionStubs.cpp vxSem.c
 
 OBJECTS := $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
 

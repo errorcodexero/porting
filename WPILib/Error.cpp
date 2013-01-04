@@ -69,7 +69,9 @@ void Error::Set(Code code, const char* contextMessage, const char* filename, con
 
 	Report();
 
+#ifdef __VXWORKS__
 	if (m_suspendOnErrorEnabled) taskSuspend(0);
+#endif
 }
 
 void Error::Report()

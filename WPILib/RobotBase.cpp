@@ -154,6 +154,7 @@ void RobotBase::startRobotTask(FUNCPTR factory)
 	printf("WPILib was compiled without -D'SVN_REV=nnnn'\n");
 #endif
 
+#ifdef __VXWORKS__
 	// Check for startup code already running
 	INT32 oldId = taskNameToId("FRC_RobotTask");
 	if (oldId != ERROR)
@@ -173,6 +174,7 @@ void RobotBase::startRobotTask(FUNCPTR factory)
 		printf("!!!   Error: Other robot code is still running... Unload it and then try again.\n");
 		return;
 	}
+#endif
 
 	// Let the framework know that we are starting a new user program so the Driver Station can disable.
 	FRC_NetworkCommunication_observeUserProgramStarting();

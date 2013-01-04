@@ -1,7 +1,43 @@
 // stubs for unimplemented VxWorks functions
 #include "stubs.h"
 
-#ifndef __VXWORKS__
+TASK_ID taskIdSelf( void ) {
+    return (TASK_ID) pthread_self();
+}
+
+STATUS taskSafe( void ) {
+    fprintf(stderr, "taskSafe not implemented, ignored\n");
+    return OK;
+}
+
+STATUS taskUnsafe( void ) {
+    fprintf(stderr, "taskUnsafe not implemented, ignored\n");
+    return OK;
+}
+
+STATUS taskDelete( TASK_ID task )
+{
+    return (pthread_kill((pthread_t)task, SIGKILL) == 0
+	    && pthread_join((pthread_t)task, NULL) == 0) ? OK : ERROR;
+}
+
+STATUS taskIdVerify( TASK_ID task )
+{
+    return (pthread_kill((pthread_t)task, 0) == 0) ? OK : ERROR;
+}
+
+STATUS taskDelay( int delay )
+{
+    if (delay == 0) delay++;
+    uint64_t ns = delay * 1000000000UL / sysClkRateGet();
+    struct timespec ts;
+    ts.tv_sec = ns / 1000000000UL;
+    ts.tv_nsec = ns % 1000000000UL;
+    nanosleep(&ts, NULL);
+
+    return OK;
+}
+
 #ifndef __CYGWIN__
 
 #include <execinfo.h>
@@ -28,7 +64,6 @@ void wpi_selfTrace()
 void wpi_selfTrace() { abort(); }
 
 #endif // __CYGWIN__
-#endif // __VXWORKS__
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -83,7 +118,6 @@ extern "C" {
 SYMTAB_ID sysSymTbl = (void *) 0;;
 SYMTAB_ID statSymTbl = (void *) 1;
 
-#ifndef __VXWORKS__
 #ifndef __CYGWIN__
 
 size_t strlcpy( char* dst, const char *src, size_t size )
@@ -99,7 +133,6 @@ size_t strlcpy( char* dst, const char *src, size_t size )
 }
 
 #endif // __CYGWIN__
-#endif // __VXWORKS__
 
 
 STATUS symFindByValue( SYMTAB_ID table, UINT value,

@@ -226,8 +226,6 @@ public:
 		        const char *userDataLow, int userDataLowLength,
 			int wait_ms );
 
-    int SetErrorData( const char *errors, int errorsLength, int wait_ms );
-
 private:
     float m_battery;
     UINT8 m_dsDigitalOut;
@@ -238,15 +236,19 @@ private:
 
     void FreeUserDataHigh();
 
-    char *m_userErrMsg;
-    uint32_t m_userErrMsgLength;
-
-    void FreeErrorData();
-
     char *m_userDataLow;
     uint32_t m_userDataLowLength;
 
     void FreeUserDataLow();
+
+public:
+    int SetErrorData( const char *errors, int errorsLength, int wait_ms );
+
+private:
+    char *m_userErrMsg;
+    uint32_t m_userErrMsgLength;
+
+    void FreeErrorData();
 
 public:
     // keep a local copy of enhanced I/O data
@@ -258,6 +260,14 @@ private:
     uint32_t m_eioConfigLength;
 
     void FreeEIOConfig();
+
+public:
+    int SetLCDData( const char *lcdData, int lcdDataLength,
+			   int wait_ms );
+    char *m_lcdData;
+    uint32_t m_lcdDataLength;
+
+    void FreeLCDData();
 
 private:
     int Send();
@@ -285,9 +295,11 @@ private:
 	uint8_t eioConfig[32];		// DSEIO status_block_t + padding
 	uint8_t unknown3[4];
 	uint32_t crc;
+	uint8_t lcdData[128];		// optional
     } m_sendPkt;
 #pragma pack(pop)
     sockaddr_in m_sendAddr;
+    uint32_t m_sendPktLength;
 
 private:
     FNC(const FNC&);
@@ -761,6 +773,45 @@ void FNC::FreeEIOConfig()
     }
 }
 
+int setUserDsLcdData( const char *lcdData, int lcdDataLength, int wait_ms )
+{
+    if (!netCommObj) {
+	fprintf(stderr, "%s: network communications task not initialized\n",
+		__FUNCTION__);
+	abort();
+    }
+
+    // Ignore wait_ms - we don't know what it means in this context.
+    return netCommObj->SetLCDData( lcdData, lcdDataLength, wait_ms );
+}
+
+int FNC::SetLCDData( const char *lcdData, int lcdDataLength, int wait_ms )
+{
+    Synchronized sync(m_dataMutex);
+
+    if (lcdData) {
+	// discard any unsent data
+	FreeEIOConfig();
+	// copy new data to local storage until we can send it to DS
+	int lcdlen = 1 + (uint8_t)lcdData[0];
+	m_lcdData = new char[lcdlen];
+	memcpy(m_lcdData, lcdData, lcdlen);
+	m_lcdDataLength = lcdlen;
+    }
+
+    return OK;
+}
+
+void FNC::FreeLCDData()
+{
+    if (m_lcdData) {
+	delete m_lcdData;
+	m_lcdData = NULL;
+	m_eioConfigLength = 0;
+    }
+}
+
+
 int FNC::Send()
 {
     Synchronized sync(m_dataMutex);
@@ -860,16 +911,23 @@ int FNC::Send()
 	FreeEIOConfig();
     }
 
-    // finish and send the reply packet to the DS
+    // calculate CRC on the first 1024 bytes
     uint32_t crc = crc32(0, Z_NULL, 0);
-    crc = crc32(crc, (uint8_t *)&m_sendPkt, sizeof m_sendPkt);
+    crc = crc32(crc, (uint8_t *)&m_sendPkt, 1024);
     m_sendPkt.crc = htonl(crc);
+
+    m_sendPktLength = 1024;
+    if (m_lcdData) {
+	memcpy(m_sendPkt.lcdData, m_lcdData, m_lcdDataLength);
+	m_sendPktLength += m_lcdDataLength;
+	FreeLCDData();
+    }
 
     m_sendAddr.sin_family = AF_INET;
     m_sendAddr.sin_addr.s_addr = m_recvAddr.sin_addr.s_addr;
     m_sendAddr.sin_port = htons(DS_COMM_PORT);
 
-    int n = sendto(m_commSocket, (char *)&m_sendPkt, sizeof m_sendPkt, 0,
+    int n = sendto(m_commSocket, (char *)&m_sendPkt, m_sendPktLength, 0,
 		    (struct sockaddr *)&m_sendAddr, sizeof m_sendAddr);
     if (n == -1) {
 	perror("FRC_NetworkCommunication::Recv::sendto");

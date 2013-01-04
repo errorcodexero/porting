@@ -965,7 +965,11 @@ int StartCameraTask(int frames, int compression, ImageResolution resolution, Ima
 	char funcName[]="startCameraTask";
 	DPRINTF(LOG_DEBUG, "starting camera");
 
+#ifdef __VXWORKS__
 	int cameraTaskID = 0;
+#else
+	static int cameraTaskID = 0;
+#endif
 
 	//range check
 	if (frames < 1) frames = 1;
@@ -974,7 +978,14 @@ int StartCameraTask(int frames, int compression, ImageResolution resolution, Ima
 	else if (compression > 100) compression = 100;
 
 	// stop any prior copy of running task
+#ifdef __VXWORKS__
 	StopCameraTask(); 
+#else
+	if(cameraTaskID != 0) {
+	    taskDelete(cameraTaskID);
+	    cameraTaskID = 0;
+	}
+#endif
 
 	// spawn camera task
 	bool started = g_axisCameraTask.Start(frames, compression, resolution, rotation);
@@ -993,14 +1004,16 @@ int StartCameraTask(int frames, int compression, ImageResolution resolution, Ima
  * @brief Stops the camera task
  * @return TaskID of camera task killed, or -1 if none was running.
  */
+#ifdef __VXWORKS__
 int StopCameraTask()
 {
     std::string taskName("FRC_Camera");    
-	// check for prior copy of running task
-	int oldTaskID = taskNameToId(const_cast<char*>(taskName.c_str()));
-	if(oldTaskID != ERROR) { taskDelete(oldTaskID);  }
-	return oldTaskID;
+    // check for prior copy of running task
+    int oldTaskID = taskNameToId(const_cast<char*>(taskName.c_str()));
+    if(oldTaskID != ERROR) { taskDelete(oldTaskID);  }
+    return oldTaskID;
 }
+#endif
 
 #if 0
 /* if you want to run this task by itself to debug  

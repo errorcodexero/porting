@@ -52,6 +52,7 @@ Task::~Task()
 bool Task::Start(UINT32 arg0, UINT32 arg1, UINT32 arg2, UINT32 arg3, UINT32 arg4, 
 	UINT32 arg5, UINT32 arg6, UINT32 arg7, UINT32 arg8, UINT32 arg9)
 {
+#ifdef __VXWORKS__
     m_taskID = taskSpawn(m_taskName,
 			m_priority,
 			VX_FP_TASK,			    // options
@@ -62,17 +63,54 @@ bool Task::Start(UINT32 arg0, UINT32 arg1, UINT32 arg2, UINT32 arg3, UINT32 arg4
     bool ok = HandleError(m_taskID);
     if (!ok) m_taskID = kInvalidTaskID;
     return ok;
+#else
+    m_arg0 = arg0;
+    m_arg1 = arg1;
+    m_arg2 = arg2;
+    m_arg3 = arg3;
+    m_arg4 = arg4;
+    m_arg5 = arg5;
+    m_arg6 = arg6;
+    m_arg7 = arg7;
+    m_arg8 = arg8;
+    m_arg9 = arg9;
+    // TBD: build a thread_attr structure from m_priority and m_stackSize
+    if (pthread_create((pthread_t *)&m_taskID, NULL,
+			(void*(*)(void*))Task::Main, this) != 0)
+    {
+	HandleError(ERROR);
+	m_taskID = kInvalidTaskID;
+	return false;
+    }
+    return true;
+#endif
 }
+
+#ifndef __VXWORKS__
+int Task::Main( Task *self )
+{
+    typedef int (*task_main_t)(UINT32, UINT32, UINT32, UINT32, UINT32,
+		               UINT32, UINT32, UINT32, UINT32, UINT32);
+
+    return ((task_main_t)(self->m_function))(
+		    self->m_arg0, self->m_arg1, self->m_arg2,
+		    self->m_arg3, self->m_arg4, self->m_arg5,
+		    self->m_arg6, self->m_arg7, self->m_arg8,
+		    self->m_arg9 );
+}
+#endif
 
 /**
  * Restarts a running task.
  * If the task isn't started, it starts it.
  * @return false if the task is running and we are unable to kill the previous instance
  */
+#ifdef __VXWORKS__
 bool Task::Restart()
 {
     return HandleError(taskRestart(m_taskID));
 }
+#endif
 
 /**
  * Kills the running task.
@@ -93,37 +131,45 @@ bool Task::Stop()
  * Returns true if the task is ready to execute (i.e. not suspended, delayed, or blocked).
  * @return true if ready, false if not ready.
  */
+#ifdef __VXWORKS__
 bool Task::IsReady()
 {
     return taskIsReady(m_taskID);
 }
+#endif
 
 /**
  * Returns true if the task was explicitly suspended by calling Suspend()
  * @return true if suspended, false if not suspended.
  */
+#ifdef __VXWORKS__
 bool Task::IsSuspended()
 {
     return taskIsSuspended(m_taskID);
 }
+#endif
 
 /**
  * Pauses a running task.
  * Returns true on success, false if unable to pause or the task isn't running.
  */
+#ifdef __VXWORKS__
 bool Task::Suspend()
 {
     return HandleError(taskSuspend(m_taskID));
 }
+#endif
 
 /**
  * Resumes a paused task.
  * Returns true on success, false if unable to resume or if the task isn't running/paused.
  */
+#ifdef __VXWORKS__
 bool Task::Resume()
 {
     return HandleError(taskResume(m_taskID));
 }
+#endif
 
 /**
  * Verifies a task still exists.
@@ -138,6 +184,7 @@ bool Task::Verify()
  * Gets the priority of a task.
  * @returns task priority or 0 if an error occured
  */
+#ifdef __VXWORKS__
 INT32 Task::GetPriority()
 {
     if (HandleError(taskPriorityGet(m_taskID, &m_priority)))
@@ -145,6 +192,7 @@ INT32 Task::GetPriority()
     else
 	return 0;
 }
+#endif
 
 /**
  * This routine changes a task's priority to a specified priority.
@@ -153,11 +201,13 @@ INT32 Task::GetPriority()
  * @param priority The priority the task should run at.
  * @returns true on success.
  */
+#ifdef __VXWORKS__
 bool Task::SetPriority(INT32 priority)
 {
     m_priority = priority;
     return HandleError(taskPrioritySet(m_taskID, m_priority));
 }
+#endif
 
 /**
  * Returns the name of the task.

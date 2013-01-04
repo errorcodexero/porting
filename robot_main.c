@@ -21,21 +21,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "v2lpthread.h"
-#include "vxw_hdrs.h"
-#include "v2ldebug.h"
+// #include "v2lpthread.h"
+// #include "vxw_hdrs.h"
+// #include "v2ldebug.h"
 
 char **_argv;
 
-extern INT32 FRC_UserProgram_StartupLibraryInit();
+extern int FRC_UserProgram_StartupLibraryInit();
 
 int main(int argc, char **argv)
 {
 	_argv = argv;
-	TRACEF("{");
-	v2lin_init();
+//	TRACEF("{");
+//	v2lin_init();
 	FRC_UserProgram_StartupLibraryInit();
-	TRACEF("}");
+//	TRACEF("}");
 	sleep(300); // should wait for robot task to die?
 	return 0;
 }

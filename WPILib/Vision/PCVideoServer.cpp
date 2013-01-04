@@ -124,6 +124,7 @@ int PCVideoServer::StartServerTask()
 	}
 	int id = 0;
 	m_stopServer = false;
+#ifdef __VXWORKS__
 	// Check for prior copy of running task
 	int oldId = taskNameToId((char*)m_serverTask.GetName());
 	if(oldId != ERROR)
@@ -131,6 +132,7 @@ int PCVideoServer::StartServerTask()
 		// TODO: Report error. You are in a bad state.
 		taskDelete(oldId);
 	}
+#endif
 
 	// spawn video server task
 	// this is done to ensure that the task is spawned with the
