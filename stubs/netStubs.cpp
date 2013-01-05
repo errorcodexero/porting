@@ -189,8 +189,10 @@ private:
     int m_commSocket;
     sockaddr_in m_commAddr;
 
+#ifdef HAVE_FRC_WATCHDOG
     int m_wdogSocket;
     sockaddr_in m_wdogAddr;
+#endif
 
     Task *m_commTask;
     static void FRCCommTask( FNC * );
@@ -347,6 +349,7 @@ FNC::FNC( SEM_ID dataAvailable )
 	abort();
     }
 
+#ifdef HAVE_FRC_WATCHDOG
     m_wdogSocket = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
     if (m_wdogSocket == -1) {
 	perror("socket");
@@ -361,14 +364,17 @@ FNC::FNC( SEM_ID dataAvailable )
 	perror("bind");
 	abort();
     }
+#endif
 
     m_dataAvailable = dataAvailable;
     m_dataMutex = semMCreate(SEM_Q_PRIORITY|SEM_DELETE_SAFE|SEM_INVERSION_SAFE);
     m_commTask = new Task( "NetRecv", (FUNCPTR) FNC::FRCCommTask );
     m_commTask->Start((uint32_t)this);
 
+#ifdef HAVE_FRC_WATCHDOG
     m_wdogTask = new Task( "NetWatchdog", (FUNCPTR) FNC::FRCWatchdogTask );
     m_wdogTask->Start((uint32_t)this);
+#endif
 }
 
 FNC::~FNC()
@@ -942,6 +948,7 @@ int FNC::Send()
     return OK;
 }
 
+#ifdef HAVE_FRC_WATCHDOG
 void FNC::FRCWatchdogTask( FNC *pObj )
 {
     while (1) {
@@ -997,6 +1004,7 @@ STATUS FNC::Watchdog()
 
     return OK;
 }
+#endif // HAVE_FRC_WATCHDOG
 
 extern "C" {
 
