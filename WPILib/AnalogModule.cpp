@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
+/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -27,17 +27,17 @@ SEM_ID AnalogModule::m_registerWindowSemaphore = NULL;
  */
 AnalogModule* AnalogModule::GetInstance(UINT8 moduleNumber)
 {
-    if (CheckAnalogModule(moduleNumber))
-    {
-	return (AnalogModule*)GetModule(nLoadOut::kModuleType_Analog, moduleNumber);
-    }
+	if (CheckAnalogModule(moduleNumber))
+	{
+		return (AnalogModule*)GetModule(nLoadOut::kModuleType_Analog, moduleNumber);
+	}
 
-    // If this wasn't caught before now, make sure we say what's wrong before we crash
-    char buf[64];
-    snprintf(buf, 64, "Analog Module %d", moduleNumber);
-    wpi_setGlobalWPIErrorWithContext(ModuleIndexOutOfRange, buf);
+	// If this wasn't caught before now, make sure we say what's wrong before we crash
+	char buf[64];
+	snprintf(buf, 64, "Analog Module %d", moduleNumber);
+	wpi_setGlobalWPIErrorWithContext(ModuleIndexOutOfRange, buf);
 
-    return NULL;
+	return NULL;
 }
 
 /**
@@ -52,31 +52,31 @@ AnalogModule* AnalogModule::GetInstance(UINT8 moduleNumber)
  * @param moduleNumber The analog module to create (1 or 2).
  */
 AnalogModule::AnalogModule(UINT8 moduleNumber)
-    : Module(nLoadOut::kModuleType_Analog, moduleNumber)
-    , m_module (NULL)
-    , m_sampleRateSet (false)
-    , m_numChannelsToActivate (0)
+	: Module(nLoadOut::kModuleType_Analog, moduleNumber)
+	, m_module (NULL)
+	, m_sampleRateSet (false)
+	, m_numChannelsToActivate (0)
 {
-    AddToSingletonList();
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_module = tAI::create(m_moduleNumber - 1, &localStatus);
-    wpi_setError(localStatus);
-    SetNumChannelsToActivate(kAnalogChannels);
-    SetSampleRate(kDefaultSampleRate);
-
-    for (UINT32 i = 0; i < kAnalogChannels; i++)
-    {
-	m_module->writeScanList(i, i, &localStatus);
+	AddToSingletonList();
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_module = tAI::create(m_moduleNumber - 1, &localStatus);
 	wpi_setError(localStatus);
-	SetAverageBits(i + 1, kDefaultAverageBits);
-	SetOversampleBits(i + 1, kDefaultOversampleBits);
-    }
+	SetNumChannelsToActivate(kAnalogChannels);
+	SetSampleRate(kDefaultSampleRate);
 
-    if (m_registerWindowSemaphore == NULL)
-    {
-	// Needs to be global since the protected resource spans both module singletons.
-	m_registerWindowSemaphore = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
-    }
+	for (UINT32 i = 0; i < kAnalogChannels; i++)
+	{
+		m_module->writeScanList(i, i, &localStatus);
+		wpi_setError(localStatus);
+		SetAverageBits(i + 1, kDefaultAverageBits);
+		SetOversampleBits(i + 1, kDefaultOversampleBits);
+	}
+
+	if (m_registerWindowSemaphore == NULL)
+	{
+		// Needs to be global since the protected resource spans both module singletons.
+		m_registerWindowSemaphore = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
+	}
 }
 
 /**
@@ -84,7 +84,7 @@ AnalogModule::AnalogModule(UINT8 moduleNumber)
  */
 AnalogModule::~AnalogModule()
 {
-    delete m_module;
+	delete m_module;
 }
 
 /**
@@ -96,31 +96,31 @@ AnalogModule::~AnalogModule()
  */
 void AnalogModule::SetSampleRate(float samplesPerSecond)
 {
-    // TODO: This will change when variable size scan lists are implemented.
-    // TODO: Need float comparison with epsilon.
-    //wpi_assert(!sampleRateSet || GetSampleRate() == samplesPerSecond);
-    m_sampleRateSet = true;
+	// TODO: This will change when variable size scan lists are implemented.
+	// TODO: Need float comparison with epsilon.
+	//wpi_assert(!sampleRateSet || GetSampleRate() == samplesPerSecond);
+	m_sampleRateSet = true;
 
-    // Compute the convert rate
-    UINT32 ticksPerSample = (UINT32)((float)kTimebase / samplesPerSecond);
-    UINT32 ticksPerConversion = ticksPerSample / GetNumChannelsToActivate();
-    // ticksPerConversion must be at least 80
-    if (ticksPerConversion < 80)
-    {
-	wpi_setWPIError(SampleRateTooHigh);
-	ticksPerConversion = 80;
-    }
+	// Compute the convert rate
+	UINT32 ticksPerSample = (UINT32)((float)kTimebase / samplesPerSecond);
+	UINT32 ticksPerConversion = ticksPerSample / GetNumChannelsToActivate();
+	// ticksPerConversion must be at least 80
+	if (ticksPerConversion < 80)
+	{
+		wpi_setWPIError(SampleRateTooHigh);
+		ticksPerConversion = 80;
+	}
 
-    // Atomically set the scan size and the convert rate so that the sample rate is constant
-    tAI::tConfig config;
-    config.ScanSize = GetNumChannelsToActivate();
-    config.ConvertRate = ticksPerConversion;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_module->writeConfig(config, &localStatus);
-    wpi_setError(localStatus);
+	// Atomically set the scan size and the convert rate so that the sample rate is constant
+	tAI::tConfig config;
+	config.ScanSize = GetNumChannelsToActivate();
+	config.ConvertRate = ticksPerConversion;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_module->writeConfig(config, &localStatus);
+	wpi_setError(localStatus);
 
-    // Indicate that the scan size has been commited to hardware.
-    SetNumChannelsToActivate(0);
+	// Indicate that the scan size has been commited to hardware.
+	SetNumChannelsToActivate(0);
 }
 
 /**
@@ -133,11 +133,11 @@ void AnalogModule::SetSampleRate(float samplesPerSecond)
  */
 float AnalogModule::GetSampleRate()
 {
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT32 ticksPerConversion = m_module->readLoopTiming(&localStatus);
-    wpi_setError(localStatus);
-    UINT32 ticksPerSample = ticksPerConversion * GetNumActiveChannels();
-    return (float)kTimebase / (float)ticksPerSample;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	UINT32 ticksPerConversion = m_module->readLoopTiming(&localStatus);
+	wpi_setError(localStatus);
+	UINT32 ticksPerSample = ticksPerConversion * GetNumActiveChannels();
+	return (float)kTimebase / (float)ticksPerSample;
 }
 
 /**
@@ -147,12 +147,12 @@ float AnalogModule::GetSampleRate()
  */
 UINT32 AnalogModule::GetNumActiveChannels()
 {
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT32 scanSize = m_module->readConfig_ScanSize(&localStatus);
-    wpi_setError(localStatus);
-    if (scanSize == 0)
-	return 8;
-    return scanSize;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	UINT32 scanSize = m_module->readConfig_ScanSize(&localStatus);
+	wpi_setError(localStatus);
+	if (scanSize == 0)
+		return 8;
+	return scanSize;
 }
 
 /**
@@ -168,8 +168,8 @@ UINT32 AnalogModule::GetNumActiveChannels()
  */
 UINT32 AnalogModule::GetNumChannelsToActivate()
 {
-    if(m_numChannelsToActivate == 0) return GetNumActiveChannels();
-    return m_numChannelsToActivate;
+	if(m_numChannelsToActivate == 0) return GetNumActiveChannels();
+	return m_numChannelsToActivate;
 }
 
 /**
@@ -182,7 +182,7 @@ UINT32 AnalogModule::GetNumChannelsToActivate()
  */
 void AnalogModule::SetNumChannelsToActivate(UINT32 channels)
 {
-    m_numChannelsToActivate = channels;
+	m_numChannelsToActivate = channels;
 }
 
 /**
@@ -197,9 +197,9 @@ void AnalogModule::SetNumChannelsToActivate(UINT32 channels)
  */
 void AnalogModule::SetAverageBits(UINT32 channel, UINT32 bits)
 {
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_module->writeAverageBits(channel - 1, bits, &localStatus);
-    wpi_setError(localStatus);
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_module->writeAverageBits(channel - 1, bits, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -213,10 +213,10 @@ void AnalogModule::SetAverageBits(UINT32 channel, UINT32 bits)
  */
 UINT32 AnalogModule::GetAverageBits(UINT32 channel)
 {
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT32 result = m_module->readAverageBits(channel - 1, &localStatus);
-    wpi_setError(localStatus);
-    return result;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	UINT32 result = m_module->readAverageBits(channel - 1, &localStatus);
+	wpi_setError(localStatus);
+	return result;
 }
 
 /**
@@ -231,9 +231,9 @@ UINT32 AnalogModule::GetAverageBits(UINT32 channel)
  */
 void AnalogModule::SetOversampleBits(UINT32 channel, UINT32 bits)
 {
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_module->writeOversampleBits(channel - 1, bits, &localStatus);
-    wpi_setError(localStatus);
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_module->writeOversampleBits(channel - 1, bits, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -247,10 +247,10 @@ void AnalogModule::SetOversampleBits(UINT32 channel, UINT32 bits)
  */
 UINT32 AnalogModule::GetOversampleBits(UINT32 channel)
 {
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT32 result = m_module->readOversampleBits(channel - 1, &localStatus);
-    wpi_setError(localStatus);
-    return result;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	UINT32 result = m_module->readOversampleBits(channel - 1, &localStatus);
+	wpi_setError(localStatus);
+	return result;
 }
 
 /**
@@ -263,24 +263,24 @@ UINT32 AnalogModule::GetOversampleBits(UINT32 channel)
  */
 INT16 AnalogModule::GetValue(UINT32 channel)
 {
-    INT16 value;
-    CheckAnalogChannel(channel);
+	INT16 value;
+	CheckAnalogChannel(channel);
 
-    tAI::tReadSelect readSelect;
-    readSelect.Channel = channel - 1;
-    readSelect.Module = m_moduleNumber - 1;
-    readSelect.Averaged = false;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
+	tAI::tReadSelect readSelect;
+	readSelect.Channel = channel - 1;
+	readSelect.Module = m_moduleNumber - 1;
+	readSelect.Averaged = false;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
 
-    {
-	Synchronized sync(m_registerWindowSemaphore);
-	m_module->writeReadSelect(readSelect, &localStatus);
-	m_module->strobeLatchOutput(&localStatus);
-	value = (INT16) m_module->readOutput(&localStatus);
-    }
+	{
+		Synchronized sync(m_registerWindowSemaphore);
+		m_module->writeReadSelect(readSelect, &localStatus);
+		m_module->strobeLatchOutput(&localStatus);
+		value = (INT16) m_module->readOutput(&localStatus);
+	}
 
-    wpi_setError(localStatus);
-    return value;
+	wpi_setError(localStatus);
+	return value;
 }
 
 /**
@@ -297,24 +297,24 @@ INT16 AnalogModule::GetValue(UINT32 channel)
  */
 INT32 AnalogModule::GetAverageValue(UINT32 channel)
 {
-    INT32 value;
-    CheckAnalogChannel(channel);
+	INT32 value;
+	CheckAnalogChannel(channel);
 
-    tAI::tReadSelect readSelect;
-    readSelect.Channel = channel - 1;
-    readSelect.Module = m_moduleNumber - 1;
-    readSelect.Averaged = true;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
+	tAI::tReadSelect readSelect;
+	readSelect.Channel = channel - 1;
+	readSelect.Module = m_moduleNumber - 1;
+	readSelect.Averaged = true;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
 
-    {
-	Synchronized sync(m_registerWindowSemaphore);
-	m_module->writeReadSelect(readSelect, &localStatus);
-	m_module->strobeLatchOutput(&localStatus);
-	value = m_module->readOutput(&localStatus);
-    }
+	{
+		Synchronized sync(m_registerWindowSemaphore);
+		m_module->writeReadSelect(readSelect, &localStatus);
+		m_module->strobeLatchOutput(&localStatus);
+		value = m_module->readOutput(&localStatus);
+	}
 
-    wpi_setError(localStatus);
-    return value;
+	wpi_setError(localStatus);
+	return value;
 }
 
 /**
@@ -331,20 +331,20 @@ INT32 AnalogModule::GetAverageValue(UINT32 channel)
  */
 INT32 AnalogModule::VoltsToValue(INT32 channel, float voltage)
 {
-    if (voltage > 10.0)
-    {
-	voltage = 10.0;
-	wpi_setWPIError(VoltageOutOfRange);
-    }
-    if (voltage < -10.0)
-    {
-	voltage = -10.0;
-	wpi_setWPIError(VoltageOutOfRange);
-    }
-    UINT32 LSBWeight = GetLSBWeight(channel);
-    INT32 offset = GetOffset(channel);
-    INT32 value = (INT32) ((voltage + offset * 1.0e-9) / (LSBWeight * 1.0e-9));
-    return value;
+	if (voltage > 10.0)
+	{
+		voltage = 10.0;
+		wpi_setWPIError(VoltageOutOfRange);
+	}
+	if (voltage < -10.0)
+	{
+		voltage = -10.0;
+		wpi_setWPIError(VoltageOutOfRange);
+	}
+	UINT32 LSBWeight = GetLSBWeight(channel);
+	INT32 offset = GetOffset(channel);
+	INT32 value = (INT32) ((voltage + offset * 1.0e-9) / (LSBWeight * 1.0e-9));
+	return value;
 }
 
 /**
@@ -357,11 +357,11 @@ INT32 AnalogModule::VoltsToValue(INT32 channel, float voltage)
  */
 float AnalogModule::GetVoltage(UINT32 channel)
 {
-    INT16 value = GetValue(channel);
-    UINT32 LSBWeight = GetLSBWeight(channel);
-    INT32 offset = GetOffset(channel);
-    float voltage = LSBWeight * 1.0e-9 * value - offset * 1.0e-9;
-    return voltage;
+	INT16 value = GetValue(channel);
+	UINT32 LSBWeight = GetLSBWeight(channel);
+	INT32 offset = GetOffset(channel);
+	float voltage = LSBWeight * 1.0e-9 * value - offset * 1.0e-9;
+	return voltage;
 }
 
 /**
@@ -376,12 +376,12 @@ float AnalogModule::GetVoltage(UINT32 channel)
  */
 float AnalogModule::GetAverageVoltage(UINT32 channel)
 {
-    INT32 value = GetAverageValue(channel);
-    UINT32 LSBWeight = GetLSBWeight(channel);
-    INT32 offset = GetOffset(channel);
-    UINT32 oversampleBits = GetOversampleBits(channel);
-    float voltage = ((LSBWeight * 1.0e-9 * value) / (float)(1 << oversampleBits)) - offset * 1.0e-9;
-    return voltage;
+	INT32 value = GetAverageValue(channel);
+	UINT32 LSBWeight = GetLSBWeight(channel);
+	INT32 offset = GetOffset(channel);
+	UINT32 oversampleBits = GetOversampleBits(channel);
+	float voltage = ((LSBWeight * 1.0e-9 * value) / (float)(1 << oversampleBits)) - offset * 1.0e-9;
+	return voltage;
 }
 
 /**
@@ -396,10 +396,10 @@ float AnalogModule::GetAverageVoltage(UINT32 channel)
  */
 UINT32 AnalogModule::GetLSBWeight(UINT32 channel) 
 {
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT32 lsbWeight = FRC_NetworkCommunication_nAICalibration_getLSBWeight(m_module->getSystemIndex(), channel - 1, (INT32*)&localStatus);
-    wpi_setError(localStatus);
-    return lsbWeight;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	UINT32 lsbWeight = FRC_NetworkCommunication_nAICalibration_getLSBWeight(m_module->getSystemIndex(), channel - 1, (INT32*)&localStatus);
+	wpi_setError(localStatus);
+	return lsbWeight;
 }
 
 /**
@@ -414,10 +414,10 @@ UINT32 AnalogModule::GetLSBWeight(UINT32 channel)
  */
 INT32 AnalogModule::GetOffset(UINT32 channel)
 {
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    INT32 offset = FRC_NetworkCommunication_nAICalibration_getOffset(m_module->getSystemIndex(), channel - 1, (INT32*)&localStatus);
-    wpi_setError(localStatus);
-    return offset;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	INT32 offset = FRC_NetworkCommunication_nAICalibration_getOffset(m_module->getSystemIndex(), channel - 1, (INT32*)&localStatus);
+	wpi_setError(localStatus);
+	return offset;
 }
 
 

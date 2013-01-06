@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
+/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -19,20 +19,20 @@ const INT32 Dashboard::kMaxDashboardDataSize;
  * This is only called once when the DriverStation constructor is called.
  */
 Dashboard::Dashboard(SEM_ID statusDataSem)
-    : m_userStatusData (NULL)
-    , m_userStatusDataSize (0)
-    , m_localBuffer (NULL)
-    , m_localPrintBuffer (NULL)
-    , m_packPtr (NULL)
-    , m_printSemaphore (0)
-    , m_statusDataSemaphore (statusDataSem)
+	: m_userStatusData (NULL)
+	, m_userStatusDataSize (0)
+	, m_localBuffer (NULL)
+	, m_localPrintBuffer (NULL)
+	, m_packPtr (NULL)
+	, m_printSemaphore (0)
+	, m_statusDataSemaphore (statusDataSem)
 {
-    m_userStatusData = new char[kMaxDashboardDataSize];
-    m_localBuffer = new char[kMaxDashboardDataSize];
-    m_localPrintBuffer = new char[kMaxDashboardDataSize * 2];
-    m_localPrintBuffer[0] = 0;
-    m_packPtr = m_localBuffer;
-    m_printSemaphore = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
+	m_userStatusData = new char[kMaxDashboardDataSize];
+	m_localBuffer = new char[kMaxDashboardDataSize];
+	m_localPrintBuffer = new char[kMaxDashboardDataSize * 2];
+	m_localPrintBuffer[0] = 0;
+	m_packPtr = m_localBuffer;
+	m_printSemaphore = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
 }
 
 /**
@@ -42,14 +42,14 @@ Dashboard::Dashboard(SEM_ID statusDataSem)
  */
 Dashboard::~Dashboard()
 {
-    semDelete(m_printSemaphore);
-    m_packPtr = NULL;
-    delete [] m_localPrintBuffer;
-    m_localPrintBuffer = NULL;
-    delete [] m_localBuffer;
-    m_localBuffer = NULL;
-    delete [] m_userStatusData;
-    m_userStatusData = NULL;
+	semDelete(m_printSemaphore);
+	m_packPtr = NULL;
+	delete [] m_localPrintBuffer;
+	m_localPrintBuffer = NULL;
+	delete [] m_localBuffer;
+	m_localBuffer = NULL;
+	delete [] m_userStatusData;
+	m_userStatusData = NULL;
 }
 
 /**
@@ -58,10 +58,10 @@ Dashboard::~Dashboard()
  */
 void Dashboard::AddI8(INT8 value)
 {
-    if (!ValidateAdd(sizeof(INT8))) return;
-    memcpy(m_packPtr, (char*)&value, sizeof(value));
-    m_packPtr += sizeof(value);
-    AddedElement(kI8);
+	if (!ValidateAdd(sizeof(INT8))) return;
+	memcpy(m_packPtr, (char*)&value, sizeof(value));
+	m_packPtr += sizeof(value);
+	AddedElement(kI8);
 }
 
 /**
@@ -70,10 +70,10 @@ void Dashboard::AddI8(INT8 value)
  */
 void Dashboard::AddI16(INT16 value)
 {
-    if (!ValidateAdd(sizeof(INT16))) return;
-    memcpy(m_packPtr, (char*)&value, sizeof(value));
-    m_packPtr += sizeof(value);
-    AddedElement(kI16);
+	if (!ValidateAdd(sizeof(INT16))) return;
+	memcpy(m_packPtr, (char*)&value, sizeof(value));
+	m_packPtr += sizeof(value);
+	AddedElement(kI16);
 }
 
 /**
@@ -82,10 +82,10 @@ void Dashboard::AddI16(INT16 value)
  */
 void Dashboard::AddI32(INT32 value)
 {
-    if (!ValidateAdd(sizeof(INT32))) return;
-    memcpy(m_packPtr, (char*)&value, sizeof(value));
-    m_packPtr += sizeof(value);
-    AddedElement(kI32);
+	if (!ValidateAdd(sizeof(INT32))) return;
+	memcpy(m_packPtr, (char*)&value, sizeof(value));
+	m_packPtr += sizeof(value);
+	AddedElement(kI32);
 }
 
 /**
@@ -94,10 +94,10 @@ void Dashboard::AddI32(INT32 value)
  */
 void Dashboard::AddU8(UINT8 value)
 {
-    if (!ValidateAdd(sizeof(UINT8))) return;
-    memcpy(m_packPtr, (char*)&value, sizeof(value));
-    m_packPtr += sizeof(value);
-    AddedElement(kU8);
+	if (!ValidateAdd(sizeof(UINT8))) return;
+	memcpy(m_packPtr, (char*)&value, sizeof(value));
+	m_packPtr += sizeof(value);
+	AddedElement(kU8);
 }
 
 /**
@@ -106,10 +106,10 @@ void Dashboard::AddU8(UINT8 value)
  */
 void Dashboard::AddU16(UINT16 value)
 {
-    if (!ValidateAdd(sizeof(UINT16))) return;
-    memcpy(m_packPtr, (char*)&value, sizeof(value));
-    m_packPtr += sizeof(value);
-    AddedElement(kU16);
+	if (!ValidateAdd(sizeof(UINT16))) return;
+	memcpy(m_packPtr, (char*)&value, sizeof(value));
+	m_packPtr += sizeof(value);
+	AddedElement(kU16);
 }
 
 /**
@@ -118,10 +118,10 @@ void Dashboard::AddU16(UINT16 value)
  */
 void Dashboard::AddU32(UINT32 value)
 {
-    if (!ValidateAdd(sizeof(UINT32))) return;
-    memcpy(m_packPtr, (char*)&value, sizeof(value));
-    m_packPtr += sizeof(value);
-    AddedElement(kU32);
+	if (!ValidateAdd(sizeof(UINT32))) return;
+	memcpy(m_packPtr, (char*)&value, sizeof(value));
+	m_packPtr += sizeof(value);
+	AddedElement(kU32);
 }
 
 /**
@@ -130,10 +130,10 @@ void Dashboard::AddU32(UINT32 value)
  */
 void Dashboard::AddFloat(float value)
 {
-    if (!ValidateAdd(sizeof(float))) return;
-    memcpy(m_packPtr, (char*)&value, sizeof(value));
-    m_packPtr += sizeof(value);
-    AddedElement(kFloat);
+	if (!ValidateAdd(sizeof(float))) return;
+	memcpy(m_packPtr, (char*)&value, sizeof(value));
+	m_packPtr += sizeof(value);
+	AddedElement(kFloat);
 }
 
 /**
@@ -142,10 +142,10 @@ void Dashboard::AddFloat(float value)
  */
 void Dashboard::AddDouble(double value)
 {
-    if (!ValidateAdd(sizeof(double))) return;
-    memcpy(m_packPtr, (char*)&value, sizeof(value));
-    m_packPtr += sizeof(value);
-    AddedElement(kDouble);
+	if (!ValidateAdd(sizeof(double))) return;
+	memcpy(m_packPtr, (char*)&value, sizeof(value));
+	m_packPtr += sizeof(value);
+	AddedElement(kDouble);
 }
 
 /**
@@ -154,10 +154,10 @@ void Dashboard::AddDouble(double value)
  */
 void Dashboard::AddBoolean(bool value)
 {
-    if (!ValidateAdd(sizeof(char))) return;
-    *m_packPtr = value ? 1 : 0;
-    m_packPtr += sizeof(char);	
-    AddedElement(kBoolean);
+	if (!ValidateAdd(sizeof(char))) return;
+	*m_packPtr = value ? 1 : 0;
+	m_packPtr += sizeof(char);	
+	AddedElement(kBoolean);
 }
 
 /**
@@ -166,7 +166,7 @@ void Dashboard::AddBoolean(bool value)
  */
 void Dashboard::AddString(char* value)
 {
-    AddString(value, strlen(value));
+	AddString(value, strlen(value));
 }
 
 /**
@@ -176,12 +176,12 @@ void Dashboard::AddString(char* value)
  */
 void Dashboard::AddString(char* value, INT32 length)
 {
-    if (!ValidateAdd(length + sizeof(length))) return;
-    memcpy(m_packPtr, (char*)&length, sizeof(length));
-    m_packPtr += sizeof(length);
-    memcpy(m_packPtr, (char*)&value, length);
-    m_packPtr += length;
-    AddedElement(kString);
+	if (!ValidateAdd(length + sizeof(length))) return;
+	memcpy(m_packPtr, (char*)&length, sizeof(length));
+	m_packPtr += sizeof(length);
+	memcpy(m_packPtr, value, length);
+	m_packPtr += length;
+	AddedElement(kString);
 }
 
 /**
@@ -195,11 +195,11 @@ void Dashboard::AddString(char* value, INT32 length)
  */
 void Dashboard::AddArray()
 {
-    if (!ValidateAdd(sizeof(INT32))) return;
-    m_complexTypeStack.push(kArray);
-    m_arrayElementCount.push_back(0);
-    m_arraySizePtr.push_back((INT32*)m_packPtr);
-    m_packPtr += sizeof(INT32);
+	if (!ValidateAdd(sizeof(INT32))) return;
+	m_complexTypeStack.push(kArray);
+	m_arrayElementCount.push_back(0);
+	m_arraySizePtr.push_back((INT32*)m_packPtr);
+	m_packPtr += sizeof(INT32);
 }
 
 /**
@@ -210,20 +210,20 @@ void Dashboard::AddArray()
  */
 void Dashboard::FinalizeArray()
 {
-    if (m_complexTypeStack.top() != kArray)
-    {
-	wpi_setWPIError(MismatchedComplexTypeClose);
-	return;
-    }
-    m_complexTypeStack.pop();
-    *(m_arraySizePtr.back()) = m_arrayElementCount.back();
-    m_arraySizePtr.pop_back();
-    if (m_arrayElementCount.back() != 0)
-    {
-	m_expectedArrayElementType.pop_back();
-    }
-    m_arrayElementCount.pop_back();
-    AddedElement(kOther);
+	if (m_complexTypeStack.top() != kArray)
+	{
+		wpi_setWPIError(MismatchedComplexTypeClose);
+		return;
+	}
+	m_complexTypeStack.pop();
+	*(m_arraySizePtr.back()) = m_arrayElementCount.back();
+	m_arraySizePtr.pop_back();
+	if (m_arrayElementCount.back() != 0)
+	{
+		m_expectedArrayElementType.pop_back();
+	}
+	m_arrayElementCount.pop_back();
+	AddedElement(kOther);
 }
 
 /**
@@ -235,7 +235,7 @@ void Dashboard::FinalizeArray()
  */
 void Dashboard::AddCluster()
 {
-    m_complexTypeStack.push(kCluster);
+	m_complexTypeStack.push(kCluster);
 }
 
 /**
@@ -246,13 +246,13 @@ void Dashboard::AddCluster()
  */
 void Dashboard::FinalizeCluster()
 {
-    if (m_complexTypeStack.top() != kCluster)
-    {
-	wpi_setWPIError(MismatchedComplexTypeClose);
-	return;
-    }
-    m_complexTypeStack.pop();
-    AddedElement(kOther);
+	if (m_complexTypeStack.top() != kCluster)
+	{
+		wpi_setWPIError(MismatchedComplexTypeClose);
+		return;
+	}
+	m_complexTypeStack.pop();
+	AddedElement(kOther);
 }
 
 /**
@@ -263,27 +263,27 @@ void Dashboard::FinalizeCluster()
  */
 void Dashboard::Printf(const char *writeFmt, ...)
 {
-    va_list args;
-    INT32 size;
+	va_list args;
+	INT32 size;
 
-    // Check if the buffer has already been used for packing.
-    if (m_packPtr != m_localBuffer)
-    {
-	wpi_setWPIError(DashboardDataCollision);
-	return;
-    }
-    va_start (args, writeFmt);
-    {
-	Synchronized sync(m_printSemaphore);
-	vsprintf(m_localPrintBuffer + strlen(m_localPrintBuffer), writeFmt, args);
-	size = strlen(m_localPrintBuffer);
-    }
-    if (size > kMaxDashboardDataSize)
-    {
-	wpi_setWPIError(DashboardDataOverflow);
-    }
+	// Check if the buffer has already been used for packing.
+	if (m_packPtr != m_localBuffer)
+	{
+		wpi_setWPIError(DashboardDataCollision);
+		return;
+	}
+	va_start (args, writeFmt);
+	{
+		Synchronized sync(m_printSemaphore);
+		vsprintf(m_localPrintBuffer + strlen(m_localPrintBuffer), writeFmt, args);
+		size = strlen(m_localPrintBuffer);
+	}
+	if (size > kMaxDashboardDataSize)
+	{
+		wpi_setWPIError(DashboardDataOverflow);
+	}
 
-    va_end (args);
+	va_end (args);
 }
 
 /**
@@ -297,30 +297,30 @@ void Dashboard::Printf(const char *writeFmt, ...)
  */
 INT32 Dashboard::Finalize()
 {
-    if (!m_complexTypeStack.empty())
-    {
-	wpi_setWPIError(MismatchedComplexTypeClose);
-	return 0;
-    }
+	if (!m_complexTypeStack.empty())
+	{
+		wpi_setWPIError(MismatchedComplexTypeClose);
+		return 0;
+	}
 
-    static bool reported = false;
-    if (!reported)
-    {
-	nUsageReporting::report(nUsageReporting::kResourceType_Dashboard, 0);
-	reported = true;
-    }
+	static bool reported = false;
+	if (!reported)
+	{
+		nUsageReporting::report(nUsageReporting::kResourceType_Dashboard, 0);
+		reported = true;
+	}
 
-    Synchronized sync(m_statusDataSemaphore);
+	Synchronized sync(m_statusDataSemaphore);
 
-    // Sequence number
-    DriverStation::GetInstance()->IncrementUpdateNumber();
+	// Sequence number
+	DriverStation::GetInstance()->IncrementUpdateNumber();
 
-    // Packed Dashboard Data
-    m_userStatusDataSize = m_packPtr - m_localBuffer;
-    memcpy(m_userStatusData, m_localBuffer, m_userStatusDataSize);
-    m_packPtr = m_localBuffer;
+	// Packed Dashboard Data
+	m_userStatusDataSize = m_packPtr - m_localBuffer;
+	memcpy(m_userStatusData, m_localBuffer, m_userStatusDataSize);
+	m_packPtr = m_localBuffer;
 
-    return m_userStatusDataSize;
+	return m_userStatusDataSize;
 }
 
 /**
@@ -330,22 +330,22 @@ INT32 Dashboard::Finalize()
  */
 void Dashboard::GetStatusBuffer(char **userStatusData, INT32* userStatusDataSize)
 {
-    // User printed strings
-    if (m_localPrintBuffer[0] != 0)
-    {
-	// Sequence number
-	DriverStation::GetInstance()->IncrementUpdateNumber();
+	// User printed strings
+	if (m_localPrintBuffer[0] != 0)
+	{
+		// Sequence number
+		DriverStation::GetInstance()->IncrementUpdateNumber();
 
-	INT32 printSize;
-	Synchronized syncPrint(m_printSemaphore);
-	printSize = strlen(m_localPrintBuffer);
-	m_userStatusDataSize = printSize;
-	memcpy(m_userStatusData, m_localPrintBuffer, m_userStatusDataSize);
-	m_localPrintBuffer[0] = 0;
-    }
+		INT32 printSize;
+		Synchronized syncPrint(m_printSemaphore);
+		printSize = strlen(m_localPrintBuffer);
+		m_userStatusDataSize = printSize;
+		memcpy(m_userStatusData, m_localPrintBuffer, m_userStatusDataSize);
+		m_localPrintBuffer[0] = 0;
+	}
 
-    *userStatusData = m_userStatusData;
-    *userStatusDataSize = m_userStatusDataSize;
+	*userStatusData = m_userStatusData;
+	*userStatusDataSize = m_userStatusDataSize;
 }
 
 /**
@@ -353,18 +353,18 @@ void Dashboard::GetStatusBuffer(char **userStatusData, INT32* userStatusDataSize
  */
 bool Dashboard::ValidateAdd(INT32 size)
 {
-    if ((m_packPtr - m_localBuffer) + size > kMaxDashboardDataSize)
-    {
-	wpi_setWPIError(DashboardDataOverflow);
-	return false;
-    }
-    // Make sure printf is not being used at the same time.
-    if (m_localPrintBuffer[0] != 0)
-    {
-	wpi_setWPIError(DashboardDataCollision);
-	return false;
-    }
-    return true;
+	if ((m_packPtr - m_localBuffer) + size > kMaxDashboardDataSize)
+	{
+		wpi_setWPIError(DashboardDataOverflow);
+		return false;
+	}
+	// Make sure printf is not being used at the same time.
+	if (m_localPrintBuffer[0] != 0)
+	{
+		wpi_setWPIError(DashboardDataCollision);
+		return false;
+	}
+	return true;
 }
 
 /**
@@ -372,21 +372,21 @@ bool Dashboard::ValidateAdd(INT32 size)
  */
 void Dashboard::AddedElement(Type type)
 {
-    if(IsArrayRoot())
-    {
-	if (m_arrayElementCount.back() == 0)
+	if(IsArrayRoot())
 	{
-	    m_expectedArrayElementType.push_back(type);
+		if (m_arrayElementCount.back() == 0)
+		{
+			m_expectedArrayElementType.push_back(type);
+		}
+		else
+		{
+			if (type != m_expectedArrayElementType.back())
+			{
+				wpi_setWPIError(InconsistentArrayValueAdded);
+			}
+		}
+		m_arrayElementCount.back() = m_arrayElementCount.back() + 1;
 	}
-	else
-	{
-	    if (type != m_expectedArrayElementType.back())
-	    {
-		wpi_setWPIError(InconsistentArrayValueAdded);
-	    }
-	}
-	m_arrayElementCount.back() = m_arrayElementCount.back() + 1;
-    }
 }
 
 /**
@@ -394,6 +394,6 @@ void Dashboard::AddedElement(Type type)
  */
 bool Dashboard::IsArrayRoot()
 {
-    return !m_complexTypeStack.empty() && m_complexTypeStack.top() == kArray;
+	return !m_complexTypeStack.empty() && m_complexTypeStack.top() == kArray;
 }
 

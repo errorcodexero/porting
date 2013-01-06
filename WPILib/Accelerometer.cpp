@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
+/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -14,9 +14,9 @@
  */
 void Accelerometer::InitAccelerometer()
 {
-    m_voltsPerG = 1.0;
-    m_zeroGVoltage = 2.5;
-    nUsageReporting::report(nUsageReporting::kResourceType_Accelerometer, m_analogChannel->GetChannel(), m_analogChannel->GetModuleNumber() - 1);
+	m_voltsPerG = 1.0;
+	m_zeroGVoltage = 2.5;
+	nUsageReporting::report(nUsageReporting::kResourceType_Accelerometer, m_analogChannel->GetChannel(), m_analogChannel->GetModuleNumber() - 1);
 }
 
 /**
@@ -27,9 +27,9 @@ void Accelerometer::InitAccelerometer()
  */
 Accelerometer::Accelerometer(UINT32 channel)
 {
-    m_analogChannel = new AnalogChannel(channel);
-    m_allocatedChannel = true;
-    InitAccelerometer();
+	m_analogChannel = new AnalogChannel(channel);
+	m_allocatedChannel = true;
+	InitAccelerometer();
 }
 
 /**
@@ -43,9 +43,9 @@ Accelerometer::Accelerometer(UINT32 channel)
  */
 Accelerometer::Accelerometer(UINT8 moduleNumber, UINT32 channel)
 {
-    m_analogChannel = new AnalogChannel(moduleNumber, channel);
-    m_allocatedChannel = true;
-    InitAccelerometer();
+	m_analogChannel = new AnalogChannel(moduleNumber, channel);
+	m_allocatedChannel = true;
+	InitAccelerometer();
 }
 
 /**
@@ -56,27 +56,27 @@ Accelerometer::Accelerometer(UINT8 moduleNumber, UINT32 channel)
  */
 Accelerometer::Accelerometer(AnalogChannel *channel)
 {
-    if (channel == NULL)
-    {
-	wpi_setWPIError(NullParameter);
-    }
-    else
-    {
-	m_analogChannel = channel;
-	InitAccelerometer();
-    }
-    m_allocatedChannel = false;
+	if (channel == NULL)
+	{
+		wpi_setWPIError(NullParameter);
+	}
+	else
+	{
+		m_analogChannel = channel;
+		InitAccelerometer();
+	}
+	m_allocatedChannel = false;
 }
-    
+	
 /**
  * Delete the analog components used for the accelerometer.
  */
 Accelerometer::~Accelerometer()
 {
-    if (m_allocatedChannel)
-    {
-	delete m_analogChannel;
-    }
+	if (m_allocatedChannel)
+	{
+		delete m_analogChannel;
+	}
 }
 
 /**
@@ -88,7 +88,7 @@ Accelerometer::~Accelerometer()
  */
 float Accelerometer::GetAcceleration()
 {
-    return (m_analogChannel->GetAverageVoltage() - m_zeroGVoltage) / m_voltsPerG;
+	return (m_analogChannel->GetAverageVoltage() - m_zeroGVoltage) / m_voltsPerG;
 }
 
 /**
@@ -101,7 +101,7 @@ float Accelerometer::GetAcceleration()
  */
 void Accelerometer::SetSensitivity(float sensitivity)
 {
-    m_voltsPerG = sensitivity;
+	m_voltsPerG = sensitivity;
 }
 
 /**
@@ -113,7 +113,7 @@ void Accelerometer::SetSensitivity(float sensitivity)
  */
 void Accelerometer::SetZero(float zero)
 {
-    m_zeroGVoltage = zero;
+	m_zeroGVoltage = zero;
 }
 
 /**
@@ -123,5 +123,31 @@ void Accelerometer::SetZero(float zero)
  */ 
 double Accelerometer::PIDGet()
 {
-    return GetAcceleration();
+	return GetAcceleration();
 }
+
+void Accelerometer::UpdateTable() {
+	if (m_table != NULL) {
+		m_table->PutNumber("Value", GetAcceleration());
+	}
+}
+
+void Accelerometer::StartLiveWindowMode() {
+}
+
+void Accelerometer::StopLiveWindowMode() {
+}
+
+std::string Accelerometer::GetSmartDashboardType() {
+	return "Accelerometer";
+}
+
+void Accelerometer::InitTable(ITable *subTable) {
+	m_table = subTable;
+	UpdateTable();
+}
+
+ITable * Accelerometer::GetTable() {
+	return m_table;
+}
+

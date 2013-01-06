@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
+/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -25,14 +25,14 @@ const double ADXL345_SPI::kGsPerLSB;
  * @param range The range (+ or -) that the accelerometer will measure.
  */
 ADXL345_SPI::ADXL345_SPI(DigitalOutput &clk, DigitalOutput &mosi, DigitalInput &miso,
-    DigitalOutput &cs, DataFormat_Range range)
-    : m_clk (NULL)
-    , m_mosi (NULL)
-    , m_miso (NULL)
-    , m_cs (NULL)
-    , m_spi (NULL)
+	DigitalOutput &cs, DataFormat_Range range)
+	: m_clk (NULL)
+	, m_mosi (NULL)
+	, m_miso (NULL)
+	, m_cs (NULL)
+	, m_spi (NULL)
 {
-    Init(&clk, &mosi, &miso, &cs, range);
+	Init(&clk, &mosi, &miso, &cs, range);
 }
 
 /**
@@ -45,14 +45,14 @@ ADXL345_SPI::ADXL345_SPI(DigitalOutput &clk, DigitalOutput &mosi, DigitalInput &
  * @param range The range (+ or -) that the accelerometer will measure.
  */
 ADXL345_SPI::ADXL345_SPI(DigitalOutput *clk, DigitalOutput *mosi, DigitalInput *miso,
-    DigitalOutput *cs, DataFormat_Range range)
-    : m_clk (NULL)
-    , m_mosi (NULL)
-    , m_miso (NULL)
-    , m_cs (NULL)
-    , m_spi (NULL)
+	DigitalOutput *cs, DataFormat_Range range)
+	: m_clk (NULL)
+	, m_mosi (NULL)
+	, m_miso (NULL)
+	, m_cs (NULL)
+	, m_spi (NULL)
 {
-    Init(clk, mosi, miso, cs, range);
+	Init(clk, mosi, miso, cs, range);
 }
 
 /**
@@ -66,51 +66,51 @@ ADXL345_SPI::ADXL345_SPI(DigitalOutput *clk, DigitalOutput *mosi, DigitalInput *
  * @param range The range (+ or -) that the accelerometer will measure.
  */
 ADXL345_SPI::ADXL345_SPI(UINT8 moduleNumber, UINT32 clk, UINT32 mosi, UINT32 miso,
-	UINT32 cs, ADXL345_SPI::DataFormat_Range range)
-    : m_clk (NULL)
-    , m_mosi (NULL)
-    , m_miso (NULL)
-    , m_cs (NULL)
-    , m_spi (NULL)
+		UINT32 cs, ADXL345_SPI::DataFormat_Range range)
+	: m_clk (NULL)
+	, m_mosi (NULL)
+	, m_miso (NULL)
+	, m_cs (NULL)
+	, m_spi (NULL)
 {
-    m_clk = new DigitalOutput(moduleNumber, clk);
-    m_mosi = new DigitalOutput(moduleNumber, mosi);
-    m_miso = new DigitalInput(moduleNumber, miso);
-    m_cs = new DigitalOutput(moduleNumber, cs);
-    Init(m_clk, m_mosi, m_miso, m_cs, range);
+	m_clk = new DigitalOutput(moduleNumber, clk);
+	m_mosi = new DigitalOutput(moduleNumber, mosi);
+	m_miso = new DigitalInput(moduleNumber, miso);
+	m_cs = new DigitalOutput(moduleNumber, cs);
+	Init(m_clk, m_mosi, m_miso, m_cs, range);
 }
 
 /**
  * Internal common init function.
  */
 void ADXL345_SPI::Init(DigitalOutput *clk, DigitalOutput *mosi, DigitalInput *miso,
-    DigitalOutput *cs, DataFormat_Range range)
+	DigitalOutput *cs, DataFormat_Range range)
 {
-    if (clk != NULL && mosi != NULL && miso != NULL && cs != NULL)
-    {
-	m_spi = new SPI(clk, mosi, miso);
-	m_spi->SetMSBFirst();
-	m_spi->SetSampleDataOnRising();
-	m_spi->SetSlaveSelect(cs, SPI::kChipSelect, false);
-	m_spi->SetClockActiveLow();
-	// 8-bit address and 8-bit data
-	m_spi->SetBitsPerWord(16);
-	m_spi->ApplyConfig();
-	m_spi->ClearReceivedData();
+	if (clk != NULL && mosi != NULL && miso != NULL && cs != NULL)
+	{
+		m_spi = new SPI(clk, mosi, miso);
+		m_spi->SetMSBFirst();
+		m_spi->SetSampleDataOnRising();
+		m_spi->SetSlaveSelect(cs, SPI::kChipSelect, false);
+		m_spi->SetClockActiveLow();
+		// 8-bit address and 8-bit data
+		m_spi->SetBitsPerWord(16);
+		m_spi->ApplyConfig();
+		m_spi->ClearReceivedData();
 
-	// Turn on the measurements
-	m_spi->Write((kPowerCtlRegister << 8) | kPowerCtl_Measure);
-	m_spi->Read();
-	// Specify the data format to read
-	m_spi->Write((kDataFormatRegister << 8) | kDataFormat_FullRes | (UINT8)(range & 0x03));
-	m_spi->Read();
+		// Turn on the measurements
+		m_spi->Write((kPowerCtlRegister << 8) | kPowerCtl_Measure);
+		m_spi->Read();
+		// Specify the data format to read
+		m_spi->Write((kDataFormatRegister << 8) | kDataFormat_FullRes | (UINT8)(range & 0x03));
+		m_spi->Read();
 
-	// 8-bit address and 16-bit data
-	m_spi->SetBitsPerWord(24);
-	m_spi->ApplyConfig();
+		// 8-bit address and 16-bit data
+		m_spi->SetBitsPerWord(24);
+		m_spi->ApplyConfig();
 
-	nUsageReporting::report(nUsageReporting::kResourceType_ADXL345, nUsageReporting::kADXL345_SPI);
-    }
+		nUsageReporting::report(nUsageReporting::kResourceType_ADXL345, nUsageReporting::kADXL345_SPI);
+	}
 }
 
 /**
@@ -118,16 +118,16 @@ void ADXL345_SPI::Init(DigitalOutput *clk, DigitalOutput *mosi, DigitalInput *mi
  */
 ADXL345_SPI::~ADXL345_SPI()
 {
-    delete m_spi;
-    m_spi = NULL;
-    delete m_cs;
-    m_cs = NULL;
-    delete m_miso;
-    m_miso = NULL;
-    delete m_mosi;
-    m_mosi = NULL;
-    delete m_clk;
-    m_clk = NULL;
+	delete m_spi;
+	m_spi = NULL;
+	delete m_cs;
+	m_cs = NULL;
+	delete m_miso;
+	m_miso = NULL;
+	delete m_mosi;
+	m_mosi = NULL;
+	delete m_clk;
+	m_clk = NULL;
 }
 
 /**
@@ -138,16 +138,16 @@ ADXL345_SPI::~ADXL345_SPI()
  */
 double ADXL345_SPI::GetAcceleration(ADXL345_SPI::Axes axis)
 {
-    INT16 rawAccel = 0;
-    if(m_spi)
-    {
-	m_spi->Write(((kAddress_Read | kAddress_MultiByte | kDataRegister) + (UINT8)axis) << 16);
-	rawAccel = (UINT16)m_spi->Read();
+	INT16 rawAccel = 0;
+	if(m_spi)
+	{
+		m_spi->Write(((kAddress_Read | kAddress_MultiByte | kDataRegister) + (UINT8)axis) << 16);
+		rawAccel = (UINT16)m_spi->Read();
 
-	// Sensor is little endian... swap bytes
-	rawAccel = ((rawAccel >> 8) & 0xFF) | (rawAccel << 8);
-    }
-    return rawAccel * kGsPerLSB;
+		// Sensor is little endian... swap bytes
+		rawAccel = ((rawAccel >> 8) & 0xFF) | (rawAccel << 8);
+	}
+	return rawAccel * kGsPerLSB;
 }
 
 /**
@@ -157,57 +157,57 @@ double ADXL345_SPI::GetAcceleration(ADXL345_SPI::Axes axis)
  */
 ADXL345_SPI::AllAxes ADXL345_SPI::GetAccelerations()
 {
-    AllAxes data = {0.0};
-    INT16 rawData[3];
-    if (m_spi)
-    {
-	SPI::tFrameMode mode;
-	bool activeLow;
-
-	// Backup original settings.
-	DigitalOutput *cs = m_spi->GetSlaveSelect(&mode, &activeLow);
-	UINT32 bitsPerWord = m_spi->GetBitsPerWord();
-
-	// Initialize the chip select to inactive.
-	cs->Set(activeLow);
-
-	// Control the chip select manually.
-	m_spi->SetSlaveSelect(NULL);
-	// 8-bit address
-	m_spi->SetBitsPerWord(8);
-	m_spi->ApplyConfig();
-
-	// Assert chip select.
-	cs->Set(!activeLow);
-
-	// Select the data address.
-	m_spi->Write(kAddress_Read | kAddress_MultiByte | kDataRegister);
-	m_spi->Read();
-
-	// 16-bits for each axis
-	m_spi->SetBitsPerWord(16);
-	m_spi->ApplyConfig();
-
-	for (INT32 i=0; i<3; i++)
+	AllAxes data = {0.0};
+	INT16 rawData[3];
+	if (m_spi)
 	{
-	    // SPI Interface can't read enough data in a single transaction to read all axes at once.
-	    rawData[i] = (UINT16)m_spi->Read(true);
-	    // Sensor is little endian... swap bytes
-	    rawData[i] = ((rawData[i] >> 8) & 0xFF) | (rawData[i] << 8);
+		SPI::tFrameMode mode;
+		bool activeLow;
+
+		// Backup original settings.
+		DigitalOutput *cs = m_spi->GetSlaveSelect(&mode, &activeLow);
+		UINT32 bitsPerWord = m_spi->GetBitsPerWord();
+
+		// Initialize the chip select to inactive.
+		cs->Set(activeLow);
+
+		// Control the chip select manually.
+		m_spi->SetSlaveSelect(NULL);
+		// 8-bit address
+		m_spi->SetBitsPerWord(8);
+		m_spi->ApplyConfig();
+
+		// Assert chip select.
+		cs->Set(!activeLow);
+
+		// Select the data address.
+		m_spi->Write(kAddress_Read | kAddress_MultiByte | kDataRegister);
+		m_spi->Read();
+
+		// 16-bits for each axis
+		m_spi->SetBitsPerWord(16);
+		m_spi->ApplyConfig();
+
+		for (INT32 i=0; i<3; i++)
+		{
+			// SPI Interface can't read enough data in a single transaction to read all axes at once.
+			rawData[i] = (UINT16)m_spi->Read(true);
+			// Sensor is little endian... swap bytes
+			rawData[i] = ((rawData[i] >> 8) & 0xFF) | (rawData[i] << 8);
+		}
+
+		// Deassert chip select.
+		cs->Set(activeLow);
+
+		// Restore original settings.
+		m_spi->SetSlaveSelect(cs, mode, activeLow);
+		m_spi->SetBitsPerWord(bitsPerWord);
+		m_spi->ApplyConfig();
+
+		data.XAxis = rawData[0] * kGsPerLSB;
+		data.YAxis = rawData[1] * kGsPerLSB;
+		data.ZAxis = rawData[2] * kGsPerLSB;
 	}
-
-	// Deassert chip select.
-	cs->Set(activeLow);
-
-	// Restore original settings.
-	m_spi->SetSlaveSelect(cs, mode, activeLow);
-	m_spi->SetBitsPerWord(bitsPerWord);
-	m_spi->ApplyConfig();
-
-	data.XAxis = rawData[0] * kGsPerLSB;
-	data.YAxis = rawData[1] * kGsPerLSB;
-	data.ZAxis = rawData[2] * kGsPerLSB;
-    }
-    return data;
+	return data;
 }
 

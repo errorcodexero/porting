@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
+/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -20,18 +20,18 @@
  */
 static void CompressorChecker(Compressor *c)
 {
-    while (1)
-    {
-	if (c->Enabled())
+	while (1)
 	{
-	    c->SetRelayValue( c->GetPressureSwitchValue() == 0 ? Relay::kOn : Relay::kOff );
+		if (c->Enabled())
+		{
+			c->SetRelayValue( c->GetPressureSwitchValue() == 0 ? Relay::kOn : Relay::kOff );
+		}
+		else
+		{
+			c->SetRelayValue(Relay::kOff);
+		}
+		Wait(0.5);
 	}
-	else
-	{
-	    c->SetRelayValue(Relay::kOff);
-	}
-	Wait(0.5);
-    }
 }
 
 /**
@@ -43,20 +43,20 @@ static void CompressorChecker(Compressor *c)
  * You MUST start the compressor by calling the Start() method.
  */
 void Compressor::InitCompressor(UINT8 pressureSwitchModuleNumber,
-	UINT32 pressureSwitchChannel,
-	UINT8 compresssorRelayModuleNumber,
-	UINT32 compressorRelayChannel)
+		UINT32 pressureSwitchChannel,
+		UINT8 compresssorRelayModuleNumber,
+		UINT32 compressorRelayChannel)
 {
-    m_enabled = false;
-    m_pressureSwitch = new DigitalInput(pressureSwitchModuleNumber, pressureSwitchChannel);
-    m_relay = new Relay(compresssorRelayModuleNumber, compressorRelayChannel, Relay::kForwardOnly);
+	m_enabled = false;
+	m_pressureSwitch = new DigitalInput(pressureSwitchModuleNumber, pressureSwitchChannel);
+	m_relay = new Relay(compresssorRelayModuleNumber, compressorRelayChannel, Relay::kForwardOnly);
 
-    nUsageReporting::report(nUsageReporting::kResourceType_Compressor, 0);
+	nUsageReporting::report(nUsageReporting::kResourceType_Compressor, 0);
 
-    if (!m_task.Start((INT32)this))
-    {
-	wpi_setWPIError(CompressorTaskError);
-    }
+	if (!m_task.Start((INT32)this))
+	{
+		wpi_setWPIError(CompressorTaskError);
+	}
 }
 
 /**
@@ -71,15 +71,15 @@ void Compressor::InitCompressor(UINT8 pressureSwitchModuleNumber,
  * @param compressorRelayChannel The relay channel that the compressor relay is attached to.
  */
 Compressor::Compressor(UINT8 pressureSwitchModuleNumber,
-	UINT32 pressureSwitchChannel,
-	UINT8 compresssorRelayModuleNumber,
-	UINT32 compressorRelayChannel)
-    : m_task ("Compressor", (FUNCPTR)CompressorChecker)
+		UINT32 pressureSwitchChannel,
+		UINT8 compresssorRelayModuleNumber,
+		UINT32 compressorRelayChannel)
+	: m_task ("Compressor", (FUNCPTR)CompressorChecker)
 {
-    InitCompressor(pressureSwitchModuleNumber,
-	pressureSwitchChannel,
-	compresssorRelayModuleNumber,
-	compressorRelayChannel);
+	InitCompressor(pressureSwitchModuleNumber,
+		pressureSwitchChannel,
+		compresssorRelayModuleNumber,
+		compressorRelayChannel);
 }
 
 /**
@@ -93,12 +93,12 @@ Compressor::Compressor(UINT8 pressureSwitchModuleNumber,
  * @param compressorRelayChannel The relay channel that the compressor relay is attached to.
  */
 Compressor::Compressor(UINT32 pressureSwitchChannel, UINT32 compressorRelayChannel)
-    : m_task ("Compressor", (FUNCPTR)CompressorChecker)
+	: m_task ("Compressor", (FUNCPTR)CompressorChecker)
 {
-    InitCompressor(GetDefaultDigitalModule(),
-	    pressureSwitchChannel,
-	    GetDefaultDigitalModule(),
-	    compressorRelayChannel);
+	InitCompressor(GetDefaultDigitalModule(),
+			pressureSwitchChannel,
+			GetDefaultDigitalModule(),
+			compressorRelayChannel);
 }
 
 /**
@@ -108,8 +108,8 @@ Compressor::Compressor(UINT32 pressureSwitchChannel, UINT32 compressorRelayChann
  */
 Compressor::~Compressor()
 {
-    delete m_pressureSwitch;
-    delete m_relay;
+	delete m_pressureSwitch;
+	delete m_relay;
 }
 
 /**
@@ -119,7 +119,7 @@ Compressor::~Compressor()
  */
 void Compressor::SetRelayValue(Relay::Value relayValue)
 {
-    m_relay->Set(relayValue);
+	m_relay->Set(relayValue);
 }
 
 /**
@@ -130,7 +130,7 @@ void Compressor::SetRelayValue(Relay::Value relayValue)
  */
 UINT32 Compressor::GetPressureSwitchValue()
 {
-    return m_pressureSwitch->Get();
+	return m_pressureSwitch->Get();
 }
 
 /**
@@ -140,7 +140,7 @@ UINT32 Compressor::GetPressureSwitchValue()
  */
 void Compressor::Start()
 {
-    m_enabled = true;
+	m_enabled = true;
 }
 
 /**
@@ -149,7 +149,7 @@ void Compressor::Start()
  */
 void Compressor::Stop()
 {
-    m_enabled = false;
+	m_enabled = false;
 }
 
 /**
@@ -161,6 +161,34 @@ void Compressor::Stop()
  */
 bool Compressor::Enabled()
 {
-    return m_enabled;
+	return m_enabled;
+}
+
+void Compressor::UpdateTable() {
+	if (m_table != NULL) {
+		m_table->PutBoolean("Enabled", m_enabled);
+		m_table->PutBoolean("Pressure switch", GetPressureSwitchValue());
+	}
+}
+
+void Compressor::StartLiveWindowMode() {
+	
+}
+
+void Compressor::StopLiveWindowMode() {
+	
+}
+
+std::string Compressor::GetSmartDashboardType() {
+	return "Compressor";
+}
+
+void Compressor::InitTable(ITable *subTable) {
+	m_table = subTable;
+	UpdateTable();
+}
+
+ITable * Compressor::GetTable() {
+	return m_table;
 }
 

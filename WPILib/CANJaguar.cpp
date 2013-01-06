@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2009. All Rights Reserved.			      */
+/* Copyright (c) FIRST 2009. All Rights Reserved.							  */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -30,45 +30,45 @@ const double CANJaguar::kApproxBusVoltage;
  */
 void CANJaguar::InitCANJaguar()
 {
-    m_transactionSemaphore = semMCreate(SEM_Q_PRIORITY | SEM_INVERSION_SAFE | SEM_DELETE_SAFE);
-    if (m_deviceNumber < 1 || m_deviceNumber > 63)
-    {
-	char buf[256];
-	snprintf(buf, 256, "device number \"%d\" must be between 1 and 63", m_deviceNumber);
-	wpi_setWPIErrorWithContext(ParameterOutOfRange, buf);
-	return;
-    }
-    UINT32 fwVer = GetFirmwareVersion();
-    if (StatusIsFatal())
-	return;
-    // 3330 was the first shipping RDK firmware version for the Jaguar
-    if (fwVer >= 3330 || fwVer < 92)
-    {
-	char buf[256];
-	if (fwVer < 3330)
+	m_transactionSemaphore = semMCreate(SEM_Q_PRIORITY | SEM_INVERSION_SAFE | SEM_DELETE_SAFE);
+	if (m_deviceNumber < 1 || m_deviceNumber > 63)
 	{
-	    snprintf(buf, 256, "Jag #%d firmware (%lu) is too old (must be at least version 92 of the FIRST approved firmware)", m_deviceNumber, fwVer);
+		char buf[256];
+		snprintf(buf, 256, "device number \"%d\" must be between 1 and 63", m_deviceNumber);
+		wpi_setWPIErrorWithContext(ParameterOutOfRange, buf);
+		return;
 	}
-	else
+	UINT32 fwVer = GetFirmwareVersion();
+	if (StatusIsFatal())
+		return;
+	// 3330 was the first shipping RDK firmware version for the Jaguar
+	if (fwVer >= 3330 || fwVer < 92)
 	{
-	    snprintf(buf, 256, "Jag #%d firmware (%lu) is not FIRST approved (must be at least version 92 of the FIRST approved firmware)", m_deviceNumber, fwVer);
+		char buf[256];
+		if (fwVer < 3330)
+		{
+			snprintf(buf, 256, "Jag #%d firmware (%lu) is too old (must be at least version 92 of the FIRST approved firmware)", m_deviceNumber, fwVer);
+		}
+		else
+		{
+			snprintf(buf, 256, "Jag #%d firmware (%lu) is not FIRST approved (must be at least version 92 of the FIRST approved firmware)", m_deviceNumber, fwVer);
+		}
+		wpi_setWPIErrorWithContext(JaguarVersionError, buf);
+		return;
 	}
-	wpi_setWPIErrorWithContext(JaguarVersionError, buf);
-	return;
-    }
-    switch (m_controlMode)
-    {
-    case kPercentVbus:
-    case kVoltage:
-	// No additional configuration required... start enabled.
-	EnableControl();
-	break;
-    default:
-	break;
-    }
-    m_safetyHelper = new MotorSafetyHelper(this);
+	switch (m_controlMode)
+	{
+	case kPercentVbus:
+	case kVoltage:
+		// No additional configuration required... start enabled.
+		EnableControl();
+		break;
+	default:
+		break;
+	}
+	m_safetyHelper = new MotorSafetyHelper(this);
 
-    nUsageReporting::report(nUsageReporting::kResourceType_CANJaguar, m_deviceNumber, m_controlMode);
+	nUsageReporting::report(nUsageReporting::kResourceType_CANJaguar, m_deviceNumber, m_controlMode);
 }
 
 /**
@@ -77,21 +77,21 @@ void CANJaguar::InitCANJaguar()
  * @param deviceNumber The the address of the Jaguar on the CAN bus.
  */
 CANJaguar::CANJaguar(UINT8 deviceNumber, ControlMode controlMode)
-    : m_deviceNumber (deviceNumber)
-    , m_controlMode (controlMode)
-    , m_transactionSemaphore (NULL)
-    , m_maxOutputVoltage (kApproxBusVoltage)
-    , m_safetyHelper (NULL)
+	: m_deviceNumber (deviceNumber)
+	, m_controlMode (controlMode)
+	, m_transactionSemaphore (NULL)
+	, m_maxOutputVoltage (kApproxBusVoltage)
+	, m_safetyHelper (NULL)
 {
-    InitCANJaguar();
+	InitCANJaguar();
 }
 
 CANJaguar::~CANJaguar()
 {
-    delete m_safetyHelper;
-    m_safetyHelper = NULL;
-    semDelete(m_transactionSemaphore);
-    m_transactionSemaphore = NULL;
+	delete m_safetyHelper;
+	m_safetyHelper = NULL;
+	semDelete(m_transactionSemaphore);
+	m_transactionSemaphore = NULL;
 }
 
 /**
@@ -109,59 +109,59 @@ CANJaguar::~CANJaguar()
  */
 void CANJaguar::Set(float outputValue, UINT8 syncGroup)
 {
-    UINT32 messageID;
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT32 messageID;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    if (m_safetyHelper && !m_safetyHelper->IsAlive())
-    {
-	EnableControl();
-    }
+	if (m_safetyHelper && !m_safetyHelper->IsAlive())
+	{
+		EnableControl();
+	}
 
-    switch(m_controlMode)
-    {
-    case kPercentVbus:
+	switch(m_controlMode)
 	{
-	    messageID = LM_API_VOLT_T_SET;
-	    if (outputValue > 1.0) outputValue = 1.0;
-	    if (outputValue < -1.0) outputValue = -1.0;
-	    dataSize = packPercentage(dataBuffer, outputValue);
+	case kPercentVbus:
+		{
+			messageID = LM_API_VOLT_T_SET;
+			if (outputValue > 1.0) outputValue = 1.0;
+			if (outputValue < -1.0) outputValue = -1.0;
+			dataSize = packPercentage(dataBuffer, outputValue);
+		}
+		break;
+	case kSpeed:
+		{
+			messageID = LM_API_SPD_T_SET;
+			dataSize = packFXP16_16(dataBuffer, outputValue);
+		}
+		break;
+	case kPosition:
+		{
+			messageID = LM_API_POS_T_SET;
+			dataSize = packFXP16_16(dataBuffer, outputValue);
+		}
+		break;
+	case kCurrent:
+		{
+			messageID = LM_API_ICTRL_T_SET;
+			dataSize = packFXP8_8(dataBuffer, outputValue);
+		}
+		break;
+	case kVoltage:
+		{
+			messageID = LM_API_VCOMP_T_SET;
+			dataSize = packFXP8_8(dataBuffer, outputValue);
+		}
+		break;
+	default:
+		return;
 	}
-	break;
-    case kSpeed:
+	if (syncGroup != 0)
 	{
-	    messageID = LM_API_SPD_T_SET;
-	    dataSize = packFXP16_16(dataBuffer, outputValue);
+		dataBuffer[dataSize] = syncGroup;
+		dataSize++;
 	}
-	break;
-    case kPosition:
-	{
-	    messageID = LM_API_POS_T_SET;
-	    dataSize = packFXP16_16(dataBuffer, outputValue);
-	}
-	break;
-    case kCurrent:
-	{
-	    messageID = LM_API_ICTRL_T_SET;
-	    dataSize = packFXP8_8(dataBuffer, outputValue);
-	}
-	break;
-    case kVoltage:
-	{
-	    messageID = LM_API_VCOMP_T_SET;
-	    dataSize = packFXP8_8(dataBuffer, outputValue);
-	}
-	break;
-    default:
-	return;
-    }
-    if (syncGroup != 0)
-    {
-	dataBuffer[dataSize] = syncGroup;
-	dataSize++;
-    }
-    setTransaction(messageID, dataBuffer, dataSize);
-    if (m_safetyHelper) m_safetyHelper->Feed();
+	setTransaction(messageID, dataBuffer, dataSize);
+	if (m_safetyHelper) m_safetyHelper->Feed();
 }
 
 /**
@@ -178,48 +178,48 @@ void CANJaguar::Set(float outputValue, UINT8 syncGroup)
  */
 float CANJaguar::Get()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    switch(m_controlMode)
-    {
-    case kPercentVbus:
-	getTransaction(LM_API_VOLT_SET, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT16))
+	switch(m_controlMode)
 	{
-	    return unpackPercentage(dataBuffer);
+	case kPercentVbus:
+		getTransaction(LM_API_VOLT_SET, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT16))
+		{
+			return unpackPercentage(dataBuffer);
+		}
+		break;
+	case kSpeed:
+		getTransaction(LM_API_SPD_SET, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
+	case kPosition:
+		getTransaction(LM_API_POS_SET, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
+	case kCurrent:
+		getTransaction(LM_API_ICTRL_SET, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT16))
+		{
+			return unpackFXP8_8(dataBuffer);
+		}
+		break;
+	case kVoltage:
+		getTransaction(LM_API_VCOMP_SET, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT16))
+		{
+			return unpackFXP8_8(dataBuffer);
+		}
+		break;
 	}
-	break;
-    case kSpeed:
-	getTransaction(LM_API_SPD_SET, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
-	{
-	    return unpackFXP16_16(dataBuffer);
-	}
-	break;
-    case kPosition:
-	getTransaction(LM_API_POS_SET, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
-	{
-	    return unpackFXP16_16(dataBuffer);
-	}
-	break;
-    case kCurrent:
-	getTransaction(LM_API_ICTRL_SET, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT16))
-	{
-	    return unpackFXP8_8(dataBuffer);
-	}
-	break;
-    case kVoltage:
-	getTransaction(LM_API_VCOMP_SET, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT16))
-	{
-	    return unpackFXP8_8(dataBuffer);
-	}
-	break;
-    }
-    return 0.0;
+	return 0.0;
 }
 
 /**
@@ -229,7 +229,7 @@ float CANJaguar::Get()
  */
 void CANJaguar::Disable()
 {
-    DisableControl();
+	DisableControl();
 }
 
 /**
@@ -241,80 +241,80 @@ void CANJaguar::Disable()
  */
 void CANJaguar::PIDWrite(float output)
 {
-    if (m_controlMode == kPercentVbus)
-    {
-	Set(output);
-    }
-    else
-    {
-	wpi_setWPIErrorWithContext(IncompatibleMode, "PID only supported in PercentVbus mode");
-    }
+	if (m_controlMode == kPercentVbus)
+	{
+		Set(output);
+	}
+	else
+	{
+		wpi_setWPIErrorWithContext(IncompatibleMode, "PID only supported in PercentVbus mode");
+	}
 }
 
 UINT8 CANJaguar::packPercentage(UINT8 *buffer, double value)
 {
-    INT16 intValue = (INT16)(value * 32767.0);
-    *((INT16*)buffer) = swap16(intValue);
-    return sizeof(INT16);
+	INT16 intValue = (INT16)(value * 32767.0);
+	*((INT16*)buffer) = swap16(intValue);
+	return sizeof(INT16);
 }
 
 UINT8 CANJaguar::packFXP8_8(UINT8 *buffer, double value)
 {
-    INT16 intValue = (INT16)(value * 256.0);
-    *((INT16*)buffer) = swap16(intValue);
-    return sizeof(INT16);
+	INT16 intValue = (INT16)(value * 256.0);
+	*((INT16*)buffer) = swap16(intValue);
+	return sizeof(INT16);
 }
 
 UINT8 CANJaguar::packFXP16_16(UINT8 *buffer, double value)
 {
-    INT32 intValue = (INT32)(value * 65536.0);
-    *((INT32*)buffer) = swap32(intValue);
-    return sizeof(INT32);
+	INT32 intValue = (INT32)(value * 65536.0);
+	*((INT32*)buffer) = swap32(intValue);
+	return sizeof(INT32);
 }
 
 UINT8 CANJaguar::packINT16(UINT8 *buffer, INT16 value)
 {
-    *((INT16*)buffer) = swap16(value);
-    return sizeof(INT16);
+	*((INT16*)buffer) = swap16(value);
+	return sizeof(INT16);
 }
 
 UINT8 CANJaguar::packINT32(UINT8 *buffer, INT32 value)
 {
-    *((INT32*)buffer) = swap32(value);
-    return sizeof(INT32);
+	*((INT32*)buffer) = swap32(value);
+	return sizeof(INT32);
 }
 
 double CANJaguar::unpackPercentage(UINT8 *buffer)
 {
-    INT16 value = *((INT16*)buffer);
-    value = swap16(value);
-    return value / 32767.0;
+	INT16 value = *((INT16*)buffer);
+	value = swap16(value);
+	return value / 32767.0;
 }
 
 double CANJaguar::unpackFXP8_8(UINT8 *buffer)
 {
-    INT16 value = *((INT16*)buffer);
-    value = swap16(value);
-    return value / 256.0;
+	INT16 value = *((INT16*)buffer);
+	value = swap16(value);
+	return value / 256.0;
 }
 
 double CANJaguar::unpackFXP16_16(UINT8 *buffer)
 {
-    INT32 value = *((INT32*)buffer);
-    value = swap32(value);
-    return value / 65536.0;
+	INT32 value = *((INT32*)buffer);
+	value = swap32(value);
+	return value / 65536.0;
 }
 
 INT16 CANJaguar::unpackINT16(UINT8 *buffer)
 {
-    INT16 value = *((INT16*)buffer);
-    return swap16(value);
+	INT16 value = *((INT16*)buffer);
+	return swap16(value);
 }
 
 INT32 CANJaguar::unpackINT32(UINT8 *buffer)
 {
-    INT32 value = *((INT32*)buffer);
-    return swap32(value);
+	INT32 value = *((INT32*)buffer);
+	return swap32(value);
 }
 
 /**
@@ -330,36 +330,36 @@ INT32 CANJaguar::unpackINT32(UINT8 *buffer)
  */
 INT32 CANJaguar::sendMessage(UINT32 messageID, const UINT8 *data, UINT8 dataSize)
 {
-    static const UINT32 kTrustedMessages[] = {
-	    LM_API_VOLT_T_EN, LM_API_VOLT_T_SET, LM_API_SPD_T_EN, LM_API_SPD_T_SET,
-	    LM_API_VCOMP_T_EN, LM_API_VCOMP_T_SET, LM_API_POS_T_EN, LM_API_POS_T_SET,
-	    LM_API_ICTRL_T_EN, LM_API_ICTRL_T_SET};
-    INT32 status=0;
+	static const UINT32 kTrustedMessages[] = {
+			LM_API_VOLT_T_EN, LM_API_VOLT_T_SET, LM_API_SPD_T_EN, LM_API_SPD_T_SET,
+			LM_API_VCOMP_T_EN, LM_API_VCOMP_T_SET, LM_API_POS_T_EN, LM_API_POS_T_SET,
+			LM_API_ICTRL_T_EN, LM_API_ICTRL_T_SET};
+	INT32 status=0;
 
-    for (UINT8 i=0; i<(sizeof(kTrustedMessages)/sizeof(kTrustedMessages[0])); i++)
-    {
-	if ((kFullMessageIDMask & messageID) == kTrustedMessages[i])
+	for (UINT8 i=0; i<(sizeof(kTrustedMessages)/sizeof(kTrustedMessages[0])); i++)
 	{
-	    UINT8 dataBuffer[8];
-	    dataBuffer[0] = 0;
-	    dataBuffer[1] = 0;
-	    // Make sure the data will still fit after adjusting for the token.
-	    if (dataSize > 6)
-	    {
-		// TODO: I would rather this not have to set the global error
-		wpi_setGlobalWPIErrorWithContext(ParameterOutOfRange, "dataSize > 6");
-		return 0;
-	    }
-	    for (UINT8 j=0; j < dataSize; j++)
-	    {
-		dataBuffer[j + 2] = data[j];
-	    }
-	    FRC_NetworkCommunication_JaguarCANDriver_sendMessage(messageID, dataBuffer, dataSize + 2, &status);
-	    return status;
+		if ((kFullMessageIDMask & messageID) == kTrustedMessages[i])
+		{
+			UINT8 dataBuffer[8];
+			dataBuffer[0] = 0;
+			dataBuffer[1] = 0;
+			// Make sure the data will still fit after adjusting for the token.
+			if (dataSize > 6)
+			{
+				// TODO: I would rather this not have to set the global error
+				wpi_setGlobalWPIErrorWithContext(ParameterOutOfRange, "dataSize > 6");
+				return 0;
+			}
+			for (UINT8 j=0; j < dataSize; j++)
+			{
+				dataBuffer[j + 2] = data[j];
+			}
+			FRC_NetworkCommunication_JaguarCANDriver_sendMessage(messageID, dataBuffer, dataSize + 2, &status);
+			return status;
+		}
 	}
-    }
-    FRC_NetworkCommunication_JaguarCANDriver_sendMessage(messageID, data, dataSize, &status);
-    return status;
+	FRC_NetworkCommunication_JaguarCANDriver_sendMessage(messageID, data, dataSize, &status);
+	return status;
 }
 
 /**
@@ -373,10 +373,10 @@ INT32 CANJaguar::sendMessage(UINT32 messageID, const UINT8 *data, UINT8 dataSize
  */
 INT32 CANJaguar::receiveMessage(UINT32 *messageID, UINT8 *data, UINT8 *dataSize, float timeout)
 {
-    INT32 status = 0;
-    FRC_NetworkCommunication_JaguarCANDriver_receiveMessage(messageID, data, dataSize,
-	    (UINT32)(timeout * 1000), &status);
-    return status;
+	INT32 status = 0;
+	FRC_NetworkCommunication_JaguarCANDriver_receiveMessage(messageID, data, dataSize,
+			(UINT32)(timeout * 1000), &status);
+	return status;
 }
 
 /**
@@ -391,28 +391,28 @@ INT32 CANJaguar::receiveMessage(UINT32 *messageID, UINT8 *data, UINT8 *dataSize,
  */
 void CANJaguar::setTransaction(UINT32 messageID, const UINT8 *data, UINT8 dataSize)
 {
-    UINT32 ackMessageID = LM_API_ACK | m_deviceNumber;
-    INT32 localStatus = 0;
+	UINT32 ackMessageID = LM_API_ACK | m_deviceNumber;
+	INT32 localStatus = 0;
 
-    // If there was an error on this object and it wasn't a timeout, refuse to talk to the device
-    // Call ClearError() on the object to try again
-    if (StatusIsFatal() && GetError().GetCode() != -44087)
-	return;
+	// If there was an error on this object and it wasn't a timeout, refuse to talk to the device
+	// Call ClearError() on the object to try again
+	if (StatusIsFatal() && GetError().GetCode() != -44087)
+		return;
 
-    // Make sure we don't have more than one transaction with the same Jaguar outstanding.
-    semTake(m_transactionSemaphore, WAIT_FOREVER);
+	// Make sure we don't have more than one transaction with the same Jaguar outstanding.
+	semTake(m_transactionSemaphore, WAIT_FOREVER);
 
-    // Throw away any stale acks.
-    receiveMessage(&ackMessageID, NULL, 0, 0.0f);
-    // Send the message with the data.
-    localStatus = sendMessage(messageID | m_deviceNumber, data, dataSize);
-    wpi_setErrorWithContext(localStatus, "sendMessage");
-    // Wait for an ack.
-    localStatus = receiveMessage(&ackMessageID, NULL, 0);
-    wpi_setErrorWithContext(localStatus, "receiveMessage");
+	// Throw away any stale acks.
+	receiveMessage(&ackMessageID, NULL, 0, 0.0f);
+	// Send the message with the data.
+	localStatus = sendMessage(messageID | m_deviceNumber, data, dataSize);
+	wpi_setErrorWithContext(localStatus, "sendMessage");
+	// Wait for an ack.
+	localStatus = receiveMessage(&ackMessageID, NULL, 0);
+	wpi_setErrorWithContext(localStatus, "receiveMessage");
 
-    // Transaction complete.
-    semGive(m_transactionSemaphore);
+	// Transaction complete.
+	semGive(m_transactionSemaphore);
 }
 
 /**
@@ -426,34 +426,34 @@ void CANJaguar::setTransaction(UINT32 messageID, const UINT8 *data, UINT8 dataSi
  */
 void CANJaguar::getTransaction(UINT32 messageID, UINT8 *data, UINT8 *dataSize)
 {
-    UINT32 targetedMessageID = messageID | m_deviceNumber;
-    INT32 localStatus = 0;
+	UINT32 targetedMessageID = messageID | m_deviceNumber;
+	INT32 localStatus = 0;
 
-    // If there was an error on this object and it wasn't a timeout, refuse to talk to the device
-    // Call ClearError() on the object to try again
-    if (StatusIsFatal() && GetError().GetCode() != -44087)
-    {
-	if (dataSize != NULL)
-	    *dataSize = 0;
-	return;
-    }
+	// If there was an error on this object and it wasn't a timeout, refuse to talk to the device
+	// Call ClearError() on the object to try again
+	if (StatusIsFatal() && GetError().GetCode() != -44087)
+	{
+		if (dataSize != NULL)
+			*dataSize = 0;
+		return;
+	}
 
-    // Make sure we don't have more than one transaction with the same Jaguar outstanding.
-    semTake(m_transactionSemaphore, WAIT_FOREVER);
+	// Make sure we don't have more than one transaction with the same Jaguar outstanding.
+	semTake(m_transactionSemaphore, WAIT_FOREVER);
 
-    // Throw away any stale responses.
-    receiveMessage(&targetedMessageID, NULL, 0, 0.0f);
-    // Send the message requesting data.
-    localStatus = sendMessage(targetedMessageID, NULL, 0);
-    wpi_setErrorWithContext(localStatus, "sendMessage");
-    // Caller may have set bit31 for remote frame transmission so clear invalid bits[31-29]
-    targetedMessageID &= 0x1FFFFFFF;
-    // Wait for the data.
-    localStatus = receiveMessage(&targetedMessageID, data, dataSize);
-    wpi_setErrorWithContext(localStatus, "receiveMessage");
+	// Throw away any stale responses.
+	receiveMessage(&targetedMessageID, NULL, 0, 0.0f);
+	// Send the message requesting data.
+	localStatus = sendMessage(targetedMessageID, NULL, 0);
+	wpi_setErrorWithContext(localStatus, "sendMessage");
+	// Caller may have set bit31 for remote frame transmission so clear invalid bits[31-29]
+	targetedMessageID &= 0x1FFFFFFF;
+	// Wait for the data.
+	localStatus = receiveMessage(&targetedMessageID, data, dataSize);
+	wpi_setErrorWithContext(localStatus, "receiveMessage");
 
-    // Transaction complete.
-    semGive(m_transactionSemaphore);
+	// Transaction complete.
+	semGive(m_transactionSemaphore);
 }
 
 /**
@@ -465,10 +465,10 @@ void CANJaguar::getTransaction(UINT32 messageID, UINT8 *data, UINT8 *dataSize)
  */
 void CANJaguar::SetSpeedReference(SpeedReference reference)
 {
-    UINT8 dataBuffer[8];
+	UINT8 dataBuffer[8];
 
-    dataBuffer[0] = reference;
-    setTransaction(LM_API_SPD_REF, dataBuffer, sizeof(UINT8));
+	dataBuffer[0] = reference;
+	setTransaction(LM_API_SPD_REF, dataBuffer, sizeof(UINT8));
 }
 
 /**
@@ -478,15 +478,15 @@ void CANJaguar::SetSpeedReference(SpeedReference reference)
  */
 CANJaguar::SpeedReference CANJaguar::GetSpeedReference()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_SPD_REF, dataBuffer, &dataSize);
-    if (dataSize == sizeof(UINT8))
-    {
-	return (SpeedReference)*dataBuffer;
-    }
-    return kSpeedRef_None;
+	getTransaction(LM_API_SPD_REF, dataBuffer, &dataSize);
+	if (dataSize == sizeof(UINT8))
+	{
+		return (SpeedReference)*dataBuffer;
+	}
+	return kSpeedRef_None;
 }
 
 /**
@@ -499,10 +499,10 @@ CANJaguar::SpeedReference CANJaguar::GetSpeedReference()
  */
 void CANJaguar::SetPositionReference(PositionReference reference)
 {
-    UINT8 dataBuffer[8];
+	UINT8 dataBuffer[8];
 
-    dataBuffer[0] = reference;
-    setTransaction(LM_API_POS_REF, dataBuffer, sizeof(UINT8));
+	dataBuffer[0] = reference;
+	setTransaction(LM_API_POS_REF, dataBuffer, sizeof(UINT8));
 }
 
 /**
@@ -512,15 +512,15 @@ void CANJaguar::SetPositionReference(PositionReference reference)
  */
 CANJaguar::PositionReference CANJaguar::GetPositionReference()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_POS_REF, dataBuffer, &dataSize);
-    if (dataSize == sizeof(UINT8))
-    {
-	return (PositionReference)*dataBuffer;
-    }
-    return kPosRef_None;
+	getTransaction(LM_API_POS_REF, dataBuffer, &dataSize);
+	if (dataSize == sizeof(UINT8))
+	{
+		return (PositionReference)*dataBuffer;
+	}
+	return kPosRef_None;
 }
 
 /**
@@ -532,40 +532,40 @@ CANJaguar::PositionReference CANJaguar::GetPositionReference()
  */
 void CANJaguar::SetPID(double p, double i, double d)
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    switch(m_controlMode)
-    {
-    case kPercentVbus:
-    case kVoltage:
-	wpi_setWPIErrorWithContext(IncompatibleMode, "PID constants only apply in Speed, Position, and Current mode");
-	break;
-    case kSpeed:
-	dataSize = packFXP16_16(dataBuffer, p);
-	setTransaction(LM_API_SPD_PC, dataBuffer, dataSize);
-	dataSize = packFXP16_16(dataBuffer, i);
-	setTransaction(LM_API_SPD_IC, dataBuffer, dataSize);
-	dataSize = packFXP16_16(dataBuffer, d);
-	setTransaction(LM_API_SPD_DC, dataBuffer, dataSize);
-	break;
-    case kPosition:
-	dataSize = packFXP16_16(dataBuffer, p);
-	setTransaction(LM_API_POS_PC, dataBuffer, dataSize);
-	dataSize = packFXP16_16(dataBuffer, i);
-	setTransaction(LM_API_POS_IC, dataBuffer, dataSize);
-	dataSize = packFXP16_16(dataBuffer, d);
-	setTransaction(LM_API_POS_DC, dataBuffer, dataSize);
-	break;
-    case kCurrent:
-	dataSize = packFXP16_16(dataBuffer, p);
-	setTransaction(LM_API_ICTRL_PC, dataBuffer, dataSize);
-	dataSize = packFXP16_16(dataBuffer, i);
-	setTransaction(LM_API_ICTRL_IC, dataBuffer, dataSize);
-	dataSize = packFXP16_16(dataBuffer, d);
-	setTransaction(LM_API_ICTRL_DC, dataBuffer, dataSize);
-	break;
-    }
+	switch(m_controlMode)
+	{
+	case kPercentVbus:
+	case kVoltage:
+		wpi_setWPIErrorWithContext(IncompatibleMode, "PID constants only apply in Speed, Position, and Current mode");
+		break;
+	case kSpeed:
+		dataSize = packFXP16_16(dataBuffer, p);
+		setTransaction(LM_API_SPD_PC, dataBuffer, dataSize);
+		dataSize = packFXP16_16(dataBuffer, i);
+		setTransaction(LM_API_SPD_IC, dataBuffer, dataSize);
+		dataSize = packFXP16_16(dataBuffer, d);
+		setTransaction(LM_API_SPD_DC, dataBuffer, dataSize);
+		break;
+	case kPosition:
+		dataSize = packFXP16_16(dataBuffer, p);
+		setTransaction(LM_API_POS_PC, dataBuffer, dataSize);
+		dataSize = packFXP16_16(dataBuffer, i);
+		setTransaction(LM_API_POS_IC, dataBuffer, dataSize);
+		dataSize = packFXP16_16(dataBuffer, d);
+		setTransaction(LM_API_POS_DC, dataBuffer, dataSize);
+		break;
+	case kCurrent:
+		dataSize = packFXP16_16(dataBuffer, p);
+		setTransaction(LM_API_ICTRL_PC, dataBuffer, dataSize);
+		dataSize = packFXP16_16(dataBuffer, i);
+		setTransaction(LM_API_ICTRL_IC, dataBuffer, dataSize);
+		dataSize = packFXP16_16(dataBuffer, d);
+		setTransaction(LM_API_ICTRL_DC, dataBuffer, dataSize);
+		break;
+	}
 }
 
 /**
@@ -575,38 +575,38 @@ void CANJaguar::SetPID(double p, double i, double d)
  */
 double CANJaguar::GetP()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    switch(m_controlMode)
-    {
-    case kPercentVbus:
-    case kVoltage:
-	wpi_setWPIErrorWithContext(IncompatibleMode, "PID constants only apply in Speed, Position, and Current mode");
-	break;
-    case kSpeed:
-	getTransaction(LM_API_SPD_PC, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
+	switch(m_controlMode)
 	{
-	    return unpackFXP16_16(dataBuffer);
+	case kPercentVbus:
+	case kVoltage:
+		wpi_setWPIErrorWithContext(IncompatibleMode, "PID constants only apply in Speed, Position, and Current mode");
+		break;
+	case kSpeed:
+		getTransaction(LM_API_SPD_PC, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
+	case kPosition:
+		getTransaction(LM_API_POS_PC, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
+	case kCurrent:
+		getTransaction(LM_API_ICTRL_PC, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
 	}
-	break;
-    case kPosition:
-	getTransaction(LM_API_POS_PC, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
-	{
-	    return unpackFXP16_16(dataBuffer);
-	}
-	break;
-    case kCurrent:
-	getTransaction(LM_API_ICTRL_PC, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
-	{
-	    return unpackFXP16_16(dataBuffer);
-	}
-	break;
-    }
-    return 0.0;
+	return 0.0;
 }
 
 /**
@@ -616,38 +616,38 @@ double CANJaguar::GetP()
  */
 double CANJaguar::GetI()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    switch(m_controlMode)
-    {
-    case kPercentVbus:
-    case kVoltage:
-	wpi_setWPIErrorWithContext(IncompatibleMode, "PID constants only apply in Speed, Position, and Current mode");
-	break;
-    case kSpeed:
-	getTransaction(LM_API_SPD_IC, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
+	switch(m_controlMode)
 	{
-	    return unpackFXP16_16(dataBuffer);
+	case kPercentVbus:
+	case kVoltage:
+		wpi_setWPIErrorWithContext(IncompatibleMode, "PID constants only apply in Speed, Position, and Current mode");
+		break;
+	case kSpeed:
+		getTransaction(LM_API_SPD_IC, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
+	case kPosition:
+		getTransaction(LM_API_POS_IC, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
+	case kCurrent:
+		getTransaction(LM_API_ICTRL_IC, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
 	}
-	break;
-    case kPosition:
-	getTransaction(LM_API_POS_IC, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
-	{
-	    return unpackFXP16_16(dataBuffer);
-	}
-	break;
-    case kCurrent:
-	getTransaction(LM_API_ICTRL_IC, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
-	{
-	    return unpackFXP16_16(dataBuffer);
-	}
-	break;
-    }
-    return 0.0;
+	return 0.0;
 }
 
 /**
@@ -657,38 +657,38 @@ double CANJaguar::GetI()
  */
 double CANJaguar::GetD()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    switch(m_controlMode)
-    {
-    case kPercentVbus:
-    case kVoltage:
-	wpi_setWPIErrorWithContext(IncompatibleMode, "PID constants only apply in Speed, Position, and Current mode");
-	break;
-    case kSpeed:
-	getTransaction(LM_API_SPD_DC, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
+	switch(m_controlMode)
 	{
-	    return unpackFXP16_16(dataBuffer);
+	case kPercentVbus:
+	case kVoltage:
+		wpi_setWPIErrorWithContext(IncompatibleMode, "PID constants only apply in Speed, Position, and Current mode");
+		break;
+	case kSpeed:
+		getTransaction(LM_API_SPD_DC, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
+	case kPosition:
+		getTransaction(LM_API_POS_DC, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
+	case kCurrent:
+		getTransaction(LM_API_ICTRL_DC, dataBuffer, &dataSize);
+		if (dataSize == sizeof(INT32))
+		{
+			return unpackFXP16_16(dataBuffer);
+		}
+		break;
 	}
-	break;
-    case kPosition:
-	getTransaction(LM_API_POS_DC, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
-	{
-	    return unpackFXP16_16(dataBuffer);
-	}
-	break;
-    case kCurrent:
-	getTransaction(LM_API_ICTRL_DC, dataBuffer, &dataSize);
-	if (dataSize == sizeof(INT32))
-	{
-	    return unpackFXP16_16(dataBuffer);
-	}
-	break;
-    }
-    return 0.0;
+	return 0.0;
 }
 
 /**
@@ -703,28 +703,28 @@ double CANJaguar::GetD()
  */
 void CANJaguar::EnableControl(double encoderInitialPosition)
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize = 0;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize = 0;
 
-    switch(m_controlMode)
-    {
-    case kPercentVbus:
-	setTransaction(LM_API_VOLT_T_EN, dataBuffer, dataSize);
-	break;
-    case kSpeed:
-	setTransaction(LM_API_SPD_T_EN, dataBuffer, dataSize);
-	break;
-    case kPosition:
-	dataSize = packFXP16_16(dataBuffer, encoderInitialPosition);
-	setTransaction(LM_API_POS_T_EN, dataBuffer, dataSize);
-	break;
-    case kCurrent:
-	setTransaction(LM_API_ICTRL_T_EN, dataBuffer, dataSize);
-	break;
-    case kVoltage:
-	setTransaction(LM_API_VCOMP_T_EN, dataBuffer, dataSize);
-	break;
-    }
+	switch(m_controlMode)
+	{
+	case kPercentVbus:
+		setTransaction(LM_API_VOLT_T_EN, dataBuffer, dataSize);
+		break;
+	case kSpeed:
+		setTransaction(LM_API_SPD_T_EN, dataBuffer, dataSize);
+		break;
+	case kPosition:
+		dataSize = packFXP16_16(dataBuffer, encoderInitialPosition);
+		setTransaction(LM_API_POS_T_EN, dataBuffer, dataSize);
+		break;
+	case kCurrent:
+		setTransaction(LM_API_ICTRL_T_EN, dataBuffer, dataSize);
+		break;
+	case kVoltage:
+		setTransaction(LM_API_VCOMP_T_EN, dataBuffer, dataSize);
+		break;
+	}
 }
 
 /**
@@ -734,27 +734,27 @@ void CANJaguar::EnableControl(double encoderInitialPosition)
  */
 void CANJaguar::DisableControl()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize = 0;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize = 0;
 
-    switch(m_controlMode)
-    {
-    case kPercentVbus:
-	setTransaction(LM_API_VOLT_DIS, dataBuffer, dataSize);
-	break;
-    case kSpeed:
-	setTransaction(LM_API_SPD_DIS, dataBuffer, dataSize);
-	break;
-    case kPosition:
-	setTransaction(LM_API_POS_DIS, dataBuffer, dataSize);
-	break;
-    case kCurrent:
-	setTransaction(LM_API_ICTRL_DIS, dataBuffer, dataSize);
-	break;
-    case kVoltage:
-	setTransaction(LM_API_VCOMP_DIS, dataBuffer, dataSize);
-	break;
-    }
+	switch(m_controlMode)
+	{
+	case kPercentVbus:
+		setTransaction(LM_API_VOLT_DIS, dataBuffer, dataSize);
+		break;
+	case kSpeed:
+		setTransaction(LM_API_SPD_DIS, dataBuffer, dataSize);
+		break;
+	case kPosition:
+		setTransaction(LM_API_POS_DIS, dataBuffer, dataSize);
+		break;
+	case kCurrent:
+		setTransaction(LM_API_ICTRL_DIS, dataBuffer, dataSize);
+		break;
+	case kVoltage:
+		setTransaction(LM_API_VCOMP_DIS, dataBuffer, dataSize);
+		break;
+	}
 }
 
 /**
@@ -767,13 +767,13 @@ void CANJaguar::DisableControl()
  */
 void CANJaguar::ChangeControlMode(ControlMode controlMode)
 {
-    // Disable the previous mode
-    DisableControl();
+	// Disable the previous mode
+	DisableControl();
 
-    // Update the local mode
-    m_controlMode = controlMode;
+	// Update the local mode
+	m_controlMode = controlMode;
 
-    nUsageReporting::report(nUsageReporting::kResourceType_CANJaguar, m_deviceNumber, m_controlMode);
+	nUsageReporting::report(nUsageReporting::kResourceType_CANJaguar, m_deviceNumber, m_controlMode);
 }
 
 /**
@@ -785,15 +785,15 @@ void CANJaguar::ChangeControlMode(ControlMode controlMode)
  */
 CANJaguar::ControlMode CANJaguar::GetControlMode()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_STATUS_CMODE, dataBuffer, &dataSize);
-    if (dataSize == sizeof(INT8))
-    {
-	return (ControlMode)dataBuffer[0];
-    }
-    return kPercentVbus;
+	getTransaction(LM_API_STATUS_CMODE, dataBuffer, &dataSize);
+	if (dataSize == sizeof(INT8))
+	{
+		return (ControlMode)dataBuffer[0];
+	}
+	return kPercentVbus;
 }
 
 /**
@@ -803,15 +803,15 @@ CANJaguar::ControlMode CANJaguar::GetControlMode()
  */
 float CANJaguar::GetBusVoltage()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_STATUS_VOLTBUS, dataBuffer, &dataSize);
-    if (dataSize == sizeof(INT16))
-    {
-	return unpackFXP8_8(dataBuffer);
-    }
-    return 0.0;
+	getTransaction(LM_API_STATUS_VOLTBUS, dataBuffer, &dataSize);
+	if (dataSize == sizeof(INT16))
+	{
+		return unpackFXP8_8(dataBuffer);
+	}
+	return 0.0;
 }
 
 /**
@@ -821,16 +821,16 @@ float CANJaguar::GetBusVoltage()
  */
 float CANJaguar::GetOutputVoltage()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    // Read the volt out which is in Volts units.
-    getTransaction(LM_API_STATUS_VOUT, dataBuffer, &dataSize);
-    if (dataSize == sizeof(INT16))
-    {
-	return unpackFXP8_8(dataBuffer);
-    }
-    return 0.0;
+	// Read the volt out which is in Volts units.
+	getTransaction(LM_API_STATUS_VOUT, dataBuffer, &dataSize);
+	if (dataSize == sizeof(INT16))
+	{
+		return unpackFXP8_8(dataBuffer);
+	}
+	return 0.0;
 }
 
 /**
@@ -840,15 +840,15 @@ float CANJaguar::GetOutputVoltage()
  */
 float CANJaguar::GetOutputCurrent()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_STATUS_CURRENT, dataBuffer, &dataSize);
-    if (dataSize == sizeof(INT16))
-    {
-	return unpackFXP8_8(dataBuffer);
-    }
-    return 0.0;
+	getTransaction(LM_API_STATUS_CURRENT, dataBuffer, &dataSize);
+	if (dataSize == sizeof(INT16))
+	{
+		return unpackFXP8_8(dataBuffer);
+	}
+	return 0.0;
 }
 
 /**
@@ -858,15 +858,15 @@ float CANJaguar::GetOutputCurrent()
  */
 float CANJaguar::GetTemperature()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_STATUS_TEMP, dataBuffer, &dataSize);
-    if (dataSize == sizeof(INT16))
-    {
-	return unpackFXP8_8(dataBuffer);
-    }
-    return 0.0;
+	getTransaction(LM_API_STATUS_TEMP, dataBuffer, &dataSize);
+	if (dataSize == sizeof(INT16))
+	{
+		return unpackFXP8_8(dataBuffer);
+	}
+	return 0.0;
 }
 
 /**
@@ -876,15 +876,15 @@ float CANJaguar::GetTemperature()
  */
 double CANJaguar::GetPosition()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_STATUS_POS, dataBuffer, &dataSize);
-    if (dataSize == sizeof(INT32))
-    {
-	return unpackFXP16_16(dataBuffer);
-    }
-    return 0.0;
+	getTransaction(LM_API_STATUS_POS, dataBuffer, &dataSize);
+	if (dataSize == sizeof(INT32))
+	{
+		return unpackFXP16_16(dataBuffer);
+	}
+	return 0.0;
 }
 
 /**
@@ -894,15 +894,15 @@ double CANJaguar::GetPosition()
  */
 double CANJaguar::GetSpeed()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_STATUS_SPD, dataBuffer, &dataSize);
-    if (dataSize == sizeof(INT32))
-    {
-	return unpackFXP16_16(dataBuffer);
-    }
-    return 0.0;
+	getTransaction(LM_API_STATUS_SPD, dataBuffer, &dataSize);
+	if (dataSize == sizeof(INT32))
+	{
+		return unpackFXP16_16(dataBuffer);
+	}
+	return 0.0;
 }
 
 /**
@@ -912,15 +912,15 @@ double CANJaguar::GetSpeed()
  */
 bool CANJaguar::GetForwardLimitOK()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_STATUS_LIMIT, dataBuffer, &dataSize);
-    if (dataSize == sizeof(UINT8))
-    {
-	return (*dataBuffer & kForwardLimit) != 0;
-    }
-    return 0;
+	getTransaction(LM_API_STATUS_LIMIT, dataBuffer, &dataSize);
+	if (dataSize == sizeof(UINT8))
+	{
+		return (*dataBuffer & kForwardLimit) != 0;
+	}
+	return 0;
 }
 
 /**
@@ -930,15 +930,15 @@ bool CANJaguar::GetForwardLimitOK()
  */
 bool CANJaguar::GetReverseLimitOK()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_STATUS_LIMIT, dataBuffer, &dataSize);
-    if (dataSize == sizeof(UINT8))
-    {
-	return (*dataBuffer & kReverseLimit) != 0;
-    }
-    return 0;
+	getTransaction(LM_API_STATUS_LIMIT, dataBuffer, &dataSize);
+	if (dataSize == sizeof(UINT8))
+	{
+		return (*dataBuffer & kReverseLimit) != 0;
+	}
+	return 0;
 }
 
 /**
@@ -948,15 +948,15 @@ bool CANJaguar::GetReverseLimitOK()
  */
 UINT16 CANJaguar::GetFaults()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_STATUS_FAULT, dataBuffer, &dataSize);
-    if (dataSize == sizeof(UINT16))
-    {
-	return unpackINT16(dataBuffer);
-    }
-    return 0;
+	getTransaction(LM_API_STATUS_FAULT, dataBuffer, &dataSize);
+	if (dataSize == sizeof(UINT16))
+	{
+		return unpackINT16(dataBuffer);
+	}
+	return 0;
 }
 
 /**
@@ -969,24 +969,24 @@ UINT16 CANJaguar::GetFaults()
  */
 bool CANJaguar::GetPowerCycled()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_STATUS_POWER, dataBuffer, &dataSize);
-    if (dataSize == sizeof(UINT8))
-    {
-	bool powerCycled = (*dataBuffer != 0);
-
-	// Clear the power cycled bit now that we've accessed it
-	if (powerCycled)
+	getTransaction(LM_API_STATUS_POWER, dataBuffer, &dataSize);
+	if (dataSize == sizeof(UINT8))
 	{
-	    dataBuffer[0] = 1;
-	    setTransaction(LM_API_STATUS_POWER, dataBuffer, sizeof(UINT8));
-	}
+		bool powerCycled = (*dataBuffer != 0);
 
-	return powerCycled;
-    }
-    return 0;
+		// Clear the power cycled bit now that we've accessed it
+		if (powerCycled)
+		{
+			dataBuffer[0] = 1;
+			setTransaction(LM_API_STATUS_POWER, dataBuffer, sizeof(UINT8));
+		}
+
+		return powerCycled;
+	}
+	return 0;
 }
 
 /**
@@ -999,22 +999,22 @@ bool CANJaguar::GetPowerCycled()
  */
 void CANJaguar::SetVoltageRampRate(double rampRate)
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    switch(m_controlMode)
-    {
-    case kPercentVbus:
-	dataSize = packPercentage(dataBuffer, rampRate / (m_maxOutputVoltage * kControllerRate));
-	setTransaction(LM_API_VOLT_SET_RAMP, dataBuffer, dataSize);
-	break;
-    case kVoltage:
-	dataSize = packFXP8_8(dataBuffer, rampRate / kControllerRate);
-	setTransaction(LM_API_VCOMP_IN_RAMP, dataBuffer, dataSize);
-	break;
-    default:
-	return;
-    }
+	switch(m_controlMode)
+	{
+	case kPercentVbus:
+		dataSize = packPercentage(dataBuffer, rampRate / (m_maxOutputVoltage * kControllerRate));
+		setTransaction(LM_API_VOLT_SET_RAMP, dataBuffer, dataSize);
+		break;
+	case kVoltage:
+		dataSize = packFXP8_8(dataBuffer, rampRate / kControllerRate);
+		setTransaction(LM_API_VCOMP_IN_RAMP, dataBuffer, dataSize);
+		break;
+	default:
+		return;
+	}
 }
 
 /**
@@ -1024,16 +1024,16 @@ void CANJaguar::SetVoltageRampRate(double rampRate)
  */
 UINT32 CANJaguar::GetFirmwareVersion()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    // Set the MSB to tell the 2CAN that this is a remote message.
-    getTransaction(0x80000000 | CAN_MSGID_API_FIRMVER, dataBuffer, &dataSize);
-    if (dataSize == sizeof(UINT32))
-    {
-	return unpackINT32(dataBuffer);
-    }
-    return 0;
+	// Set the MSB to tell the 2CAN that this is a remote message.
+	getTransaction(0x80000000 | CAN_MSGID_API_FIRMVER, dataBuffer, &dataSize);
+	if (dataSize == sizeof(UINT32))
+	{
+		return unpackINT32(dataBuffer);
+	}
+	return 0;
 }
 
 /**
@@ -1043,19 +1043,19 @@ UINT32 CANJaguar::GetFirmwareVersion()
  */
 UINT8 CANJaguar::GetHardwareVersion()
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    getTransaction(LM_API_HWVER, dataBuffer, &dataSize);
-    if (dataSize == sizeof(UINT8)+sizeof(UINT8))
-    {
-	if (*dataBuffer == m_deviceNumber)
+	getTransaction(LM_API_HWVER, dataBuffer, &dataSize);
+	if (dataSize == sizeof(UINT8)+sizeof(UINT8))
 	{
-	    return *(dataBuffer+1);
+		if (*dataBuffer == m_deviceNumber)
+		{
+			return *(dataBuffer+1);
+		}
 	}
-    }
-    // Assume Gray Jag if there is no response
-    return LM_HWVER_JAG_1_0;
+	// Assume Gray Jag if there is no response
+	return LM_HWVER_JAG_1_0;
 }
 
 /**
@@ -1067,10 +1067,10 @@ UINT8 CANJaguar::GetHardwareVersion()
  */
 void CANJaguar::ConfigNeutralMode(NeutralMode mode)
 {
-    UINT8 dataBuffer[8];
+	UINT8 dataBuffer[8];
 
-    dataBuffer[0] = mode;
-    setTransaction(LM_API_CFG_BRAKE_COAST, dataBuffer, sizeof(UINT8));
+	dataBuffer[0] = mode;
+	setTransaction(LM_API_CFG_BRAKE_COAST, dataBuffer, sizeof(UINT8));
 }
 
 /**
@@ -1080,11 +1080,11 @@ void CANJaguar::ConfigNeutralMode(NeutralMode mode)
  */
 void CANJaguar::ConfigEncoderCodesPerRev(UINT16 codesPerRev)
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    dataSize = packINT16(dataBuffer, codesPerRev);
-    setTransaction(LM_API_CFG_ENC_LINES, dataBuffer, dataSize);
+	dataSize = packINT16(dataBuffer, codesPerRev);
+	setTransaction(LM_API_CFG_ENC_LINES, dataBuffer, dataSize);
 }
 
 /**
@@ -1097,11 +1097,11 @@ void CANJaguar::ConfigEncoderCodesPerRev(UINT16 codesPerRev)
  */
 void CANJaguar::ConfigPotentiometerTurns(UINT16 turns)
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    dataSize = packINT16(dataBuffer, turns);
-    setTransaction(LM_API_CFG_POT_TURNS, dataBuffer, dataSize);
+	dataSize = packINT16(dataBuffer, turns);
+	setTransaction(LM_API_CFG_POT_TURNS, dataBuffer, dataSize);
 }
 
 /**
@@ -1116,19 +1116,19 @@ void CANJaguar::ConfigPotentiometerTurns(UINT16 turns)
  */
 void CANJaguar::ConfigSoftPositionLimits(double forwardLimitPosition, double reverseLimitPosition)
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    dataSize = packFXP16_16(dataBuffer, forwardLimitPosition);
-    dataBuffer[dataSize++] = forwardLimitPosition > reverseLimitPosition;
-    setTransaction(LM_API_CFG_LIMIT_FWD, dataBuffer, dataSize);
+	dataSize = packFXP16_16(dataBuffer, forwardLimitPosition);
+	dataBuffer[dataSize++] = forwardLimitPosition > reverseLimitPosition;
+	setTransaction(LM_API_CFG_LIMIT_FWD, dataBuffer, dataSize);
 
-    dataSize = packFXP16_16(dataBuffer, reverseLimitPosition);
-    dataBuffer[dataSize++] = forwardLimitPosition <= reverseLimitPosition;
-    setTransaction(LM_API_CFG_LIMIT_REV, dataBuffer, dataSize);
+	dataSize = packFXP16_16(dataBuffer, reverseLimitPosition);
+	dataBuffer[dataSize++] = forwardLimitPosition <= reverseLimitPosition;
+	setTransaction(LM_API_CFG_LIMIT_REV, dataBuffer, dataSize);
 
-    dataBuffer[0] = kLimitMode_SoftPositionLimits;
-    setTransaction(LM_API_CFG_LIMIT_MODE, dataBuffer, sizeof(UINT8));
+	dataBuffer[0] = kLimitMode_SoftPositionLimits;
+	setTransaction(LM_API_CFG_LIMIT_MODE, dataBuffer, sizeof(UINT8));
 }
 
 /**
@@ -1138,10 +1138,10 @@ void CANJaguar::ConfigSoftPositionLimits(double forwardLimitPosition, double rev
  */
 void CANJaguar::DisableSoftPositionLimits()
 {
-    UINT8 dataBuffer[8];
+	UINT8 dataBuffer[8];
 
-    dataBuffer[0] = kLimitMode_SwitchInputsOnly;
-    setTransaction(LM_API_CFG_LIMIT_MODE, dataBuffer, sizeof(UINT8));
+	dataBuffer[0] = kLimitMode_SwitchInputsOnly;
+	setTransaction(LM_API_CFG_LIMIT_MODE, dataBuffer, sizeof(UINT8));
 }
 
 /**
@@ -1154,12 +1154,12 @@ void CANJaguar::DisableSoftPositionLimits()
  */
 void CANJaguar::ConfigMaxOutputVoltage(double voltage)
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    m_maxOutputVoltage = voltage;
-    dataSize = packFXP8_8(dataBuffer, voltage);
-    setTransaction(LM_API_CFG_MAX_VOUT, dataBuffer, dataSize);
+	m_maxOutputVoltage = voltage;
+	dataSize = packFXP8_8(dataBuffer, voltage);
+	setTransaction(LM_API_CFG_MAX_VOUT, dataBuffer, dataSize);
 }
 
 /**
@@ -1172,12 +1172,12 @@ void CANJaguar::ConfigMaxOutputVoltage(double voltage)
  */
 void CANJaguar::ConfigFaultTime(float faultTime)
 {
-    UINT8 dataBuffer[8];
-    UINT8 dataSize;
+	UINT8 dataBuffer[8];
+	UINT8 dataSize;
 
-    // Message takes ms
-    dataSize = packINT16(dataBuffer, (INT16)(faultTime * 1000.0));
-    setTransaction(LM_API_CFG_FAULT_TIME, dataBuffer, dataSize);
+	// Message takes ms
+	dataSize = packINT16(dataBuffer, (INT16)(faultTime * 1000.0));
+	setTransaction(LM_API_CFG_FAULT_TIME, dataBuffer, dataSize);
 }
 
 /**
@@ -1187,41 +1187,41 @@ void CANJaguar::ConfigFaultTime(float faultTime)
  */
 void CANJaguar::UpdateSyncGroup(UINT8 syncGroup)
 {
-    sendMessage(CAN_MSGID_API_SYNC, &syncGroup, sizeof(syncGroup));
+	sendMessage(CAN_MSGID_API_SYNC, &syncGroup, sizeof(syncGroup));
 }
 
 
 void CANJaguar::SetExpiration(float timeout)
 {
-    if (m_safetyHelper) m_safetyHelper->SetExpiration(timeout);
+	if (m_safetyHelper) m_safetyHelper->SetExpiration(timeout);
 }
 
 float CANJaguar::GetExpiration()
 {
-    if (!m_safetyHelper) return 0.0;
-    return m_safetyHelper->GetExpiration();
+	if (!m_safetyHelper) return 0.0;
+	return m_safetyHelper->GetExpiration();
 }
 
 bool CANJaguar::IsAlive()
 {
-    if (!m_safetyHelper) return false;
-    return m_safetyHelper->IsAlive();
+	if (!m_safetyHelper) return false;
+	return m_safetyHelper->IsAlive();
 }
 
 bool CANJaguar::IsSafetyEnabled()
 {
-    if (!m_safetyHelper) return false;
-    return m_safetyHelper->IsSafetyEnabled();
+	if (!m_safetyHelper) return false;
+	return m_safetyHelper->IsSafetyEnabled();
 }
 
 void CANJaguar::SetSafetyEnabled(bool enabled)
 {
-    if (m_safetyHelper) m_safetyHelper->SetSafetyEnabled(enabled);
+	if (m_safetyHelper) m_safetyHelper->SetSafetyEnabled(enabled);
 }
 
 void CANJaguar::GetDescription(char *desc)
 {
-    sprintf(desc, "CANJaguar ID %d", m_deviceNumber);
+	sprintf(desc, "CANJaguar ID %d", m_deviceNumber);
 }
 
 /**
@@ -1232,6 +1232,38 @@ void CANJaguar::GetDescription(char *desc)
  */
 void CANJaguar::StopMotor()
 {
-    DisableControl();
+	DisableControl();
 }
+
+void CANJaguar::ValueChanged(ITable* source, const std::string& key, EntryValue value, bool isNew) {
+	Set(value.f);
+}
+
+void CANJaguar::UpdateTable() {
+	if (m_table != NULL) {
+		m_table->PutNumber("Value", Get());
+	}
+}
+
+void CANJaguar::StartLiveWindowMode() {
+	m_table->AddTableListener("Value", this, true);
+}
+
+void CANJaguar::StopLiveWindowMode() {
+	m_table->RemoveTableListener(this);
+}
+
+std::string CANJaguar::GetSmartDashboardType() {
+	return "Speed Controller";
+}
+
+void CANJaguar::InitTable(ITable *subTable) {
+	m_table = subTable;
+	UpdateTable();
+}
+
+ITable * CANJaguar::GetTable() {
+	return m_table;
+}
+
 

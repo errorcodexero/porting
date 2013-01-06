@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
+/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -20,25 +20,25 @@ Resource *interruptsResource = NULL;
  */
 void DigitalInput::InitDigitalInput(UINT8 moduleNumber, UINT32 channel)
 {
-    char buf[64];
-    Resource::CreateResourceObject(&interruptsResource, tInterrupt::kNumSystems);
-    if (!CheckDigitalModule(moduleNumber))
-    {
-	snprintf(buf, 64, "Digital Module %d", moduleNumber);
-	wpi_setWPIErrorWithContext(ModuleIndexOutOfRange, buf);
-	return;
-    }
-    if (!CheckDigitalChannel(channel))
-    {
-	snprintf(buf, 64, "Digital Channel %lu", channel);
-	wpi_setWPIErrorWithContext(ChannelIndexOutOfRange, buf);
-	return;
-    }
-    m_channel = channel;
-    m_module = DigitalModule::GetInstance(moduleNumber);
-    m_module->AllocateDIO(channel, true);
+	char buf[64];
+	Resource::CreateResourceObject(&interruptsResource, tInterrupt::kNumSystems);
+	if (!CheckDigitalModule(moduleNumber))
+	{
+		snprintf(buf, 64, "Digital Module %d", moduleNumber);
+		wpi_setWPIErrorWithContext(ModuleIndexOutOfRange, buf);
+		return;
+	}
+	if (!CheckDigitalChannel(channel))
+	{
+		snprintf(buf, 64, "Digital Channel %lu", channel);
+		wpi_setWPIErrorWithContext(ChannelIndexOutOfRange, buf);
+		return;
+	}
+	m_channel = channel;
+	m_module = DigitalModule::GetInstance(moduleNumber);
+	m_module->AllocateDIO(channel, true);
 
-    nUsageReporting::report(nUsageReporting::kResourceType_DigitalInput, channel, moduleNumber - 1);
+	nUsageReporting::report(nUsageReporting::kResourceType_DigitalInput, channel, moduleNumber - 1);
 }
 
 /**
@@ -49,7 +49,7 @@ void DigitalInput::InitDigitalInput(UINT8 moduleNumber, UINT32 channel)
  */
 DigitalInput::DigitalInput(UINT32 channel)
 {
-    InitDigitalInput(GetDefaultDigitalModule(), channel);
+	InitDigitalInput(GetDefaultDigitalModule(), channel);
 }
 
 /**
@@ -61,7 +61,7 @@ DigitalInput::DigitalInput(UINT32 channel)
  */
 DigitalInput::DigitalInput(UINT8 moduleNumber, UINT32 channel)
 {
-    InitDigitalInput(moduleNumber, channel);
+	InitDigitalInput(moduleNumber, channel);
 }
 
 /**
@@ -69,14 +69,14 @@ DigitalInput::DigitalInput(UINT8 moduleNumber, UINT32 channel)
  */
 DigitalInput::~DigitalInput()
 {
-    if (StatusIsFatal()) return;
-    if (m_manager != NULL)
-    {
-	delete m_manager;
-	delete m_interrupt;
-	interruptsResource->Free(m_interruptIndex);
-    }
-    m_module->FreeDIO(m_channel);
+	if (StatusIsFatal()) return;
+	if (m_manager != NULL)
+	{
+		delete m_manager;
+		delete m_interrupt;
+		interruptsResource->Free(m_interruptIndex);
+	}
+	m_module->FreeDIO(m_channel);
 }
 
 /*
@@ -85,8 +85,8 @@ DigitalInput::~DigitalInput()
  */
 UINT32 DigitalInput::Get()
 {
-    if (StatusIsFatal()) return 0;
-    return m_module->GetDIO(m_channel);
+	if (StatusIsFatal()) return 0;
+	return m_module->GetDIO(m_channel);
 }
 
 /**
@@ -94,7 +94,7 @@ UINT32 DigitalInput::Get()
  */
 UINT32 DigitalInput::GetChannel()
 {
-    return m_channel;
+	return m_channel;
 }
 
 /**
@@ -102,7 +102,7 @@ UINT32 DigitalInput::GetChannel()
  */
 UINT32 DigitalInput::GetChannelForRouting()
 {
-    return DigitalModule::RemapDigitalChannel(GetChannel() - 1);
+	return DigitalModule::RemapDigitalChannel(GetChannel() - 1);
 }
 
 /**
@@ -110,8 +110,8 @@ UINT32 DigitalInput::GetChannelForRouting()
  */
 UINT32 DigitalInput::GetModuleForRouting()
 {
-    if (StatusIsFatal()) return 0;
-    return m_module->GetNumber() - 1;
+	if (StatusIsFatal()) return 0;
+	return m_module->GetNumber() - 1;
 }
 
 /**
@@ -119,7 +119,7 @@ UINT32 DigitalInput::GetModuleForRouting()
  */
 bool DigitalInput::GetAnalogTriggerForRouting()
 {
-    return false;
+	return false;
 }
 
 /**
@@ -132,27 +132,27 @@ bool DigitalInput::GetAnalogTriggerForRouting()
  */
 void DigitalInput::RequestInterrupts(tInterruptHandler handler, void *param)
 {
-    if (StatusIsFatal()) return;
-    UINT32 index = interruptsResource->Allocate("Async Interrupt");
-    if (index == ~0ul)
-    {
-	CloneError(interruptsResource);
-	return;
-    }
-    m_interruptIndex = index;
+	if (StatusIsFatal()) return;
+	UINT32 index = interruptsResource->Allocate("Async Interrupt");
+	if (index == ~0ul)
+	{
+		CloneError(interruptsResource);
+		return;
+	}
+	m_interruptIndex = index;
 
-     // Creates a manager too
-    AllocateInterrupts(false);
+	 // Creates a manager too
+	AllocateInterrupts(false);
 
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_interrupt->writeConfig_WaitForAck(false, &localStatus);
-    m_interrupt->writeConfig_Source_AnalogTrigger(GetAnalogTriggerForRouting(), &localStatus);
-    m_interrupt->writeConfig_Source_Channel(GetChannelForRouting(), &localStatus);
-    m_interrupt->writeConfig_Source_Module(GetModuleForRouting(), &localStatus);
-    SetUpSourceEdge(true, false);
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_interrupt->writeConfig_WaitForAck(false, &localStatus);
+	m_interrupt->writeConfig_Source_AnalogTrigger(GetAnalogTriggerForRouting(), &localStatus);
+	m_interrupt->writeConfig_Source_Channel(GetChannelForRouting(), &localStatus);
+	m_interrupt->writeConfig_Source_Module(GetModuleForRouting(), &localStatus);
+	SetUpSourceEdge(true, false);
 
-    m_manager->registerHandler(handler, param, &localStatus);
-    wpi_setError(localStatus);
+	m_manager->registerHandler(handler, param, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -163,39 +163,65 @@ void DigitalInput::RequestInterrupts(tInterruptHandler handler, void *param)
  */
 void DigitalInput::RequestInterrupts()
 {
-    if (StatusIsFatal()) return;
-    UINT32 index = interruptsResource->Allocate("Sync Interrupt");
-    if (index == ~0ul)
-    {
-	CloneError(interruptsResource);
-	return;
-    }
-    m_interruptIndex = index;
+	if (StatusIsFatal()) return;
+	UINT32 index = interruptsResource->Allocate("Sync Interrupt");
+	if (index == ~0ul)
+	{
+		CloneError(interruptsResource);
+		return;
+	}
+	m_interruptIndex = index;
 
-    AllocateInterrupts(true);
+	AllocateInterrupts(true);
 
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_interrupt->writeConfig_Source_AnalogTrigger(GetAnalogTriggerForRouting(), &localStatus);
-    m_interrupt->writeConfig_Source_Channel(GetChannelForRouting(), &localStatus);
-    m_interrupt->writeConfig_Source_Module(GetModuleForRouting(), &localStatus);
-    SetUpSourceEdge(true, false);
-    wpi_setError(localStatus);
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_interrupt->writeConfig_Source_AnalogTrigger(GetAnalogTriggerForRouting(), &localStatus);
+	m_interrupt->writeConfig_Source_Channel(GetChannelForRouting(), &localStatus);
+	m_interrupt->writeConfig_Source_Module(GetModuleForRouting(), &localStatus);
+	SetUpSourceEdge(true, false);
+	wpi_setError(localStatus);
 }
 
 void DigitalInput::SetUpSourceEdge(bool risingEdge, bool fallingEdge)
 {
-    if (StatusIsFatal()) return;
-    if (m_interrupt == NULL)
-    {
-	wpi_setWPIErrorWithContext(NullParameter, "You must call RequestInterrupts before SetUpSourceEdge");
-	return;
-    }
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    if (m_interrupt != NULL)
-    {
-	m_interrupt->writeConfig_RisingEdge(risingEdge, &localStatus);
-	m_interrupt->writeConfig_FallingEdge(fallingEdge, &localStatus);
-    }
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	if (m_interrupt == NULL)
+	{
+		wpi_setWPIErrorWithContext(NullParameter, "You must call RequestInterrupts before SetUpSourceEdge");
+		return;
+	}
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	if (m_interrupt != NULL)
+	{
+		m_interrupt->writeConfig_RisingEdge(risingEdge, &localStatus);
+		m_interrupt->writeConfig_FallingEdge(fallingEdge, &localStatus);
+	}
+	wpi_setError(localStatus);
 }
 
+void DigitalInput::UpdateTable() {
+	if (m_table != NULL) {
+		m_table->PutBoolean("Value", Get());
+	}
+}
+
+void DigitalInput::StartLiveWindowMode() {
+	
+}
+
+void DigitalInput::StopLiveWindowMode() {
+	
+}
+
+std::string DigitalInput::GetSmartDashboardType() {
+	return "DigitalInput";
+}
+
+void DigitalInput::InitTable(ITable *subTable) {
+	m_table = subTable;
+	UpdateTable();
+}
+
+ITable * DigitalInput::GetTable() {
+	return m_table;
+}

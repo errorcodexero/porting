@@ -1,10 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
+/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
 
 #include "AnalogTrigger.h"
+
 #include "AnalogChannel.h"
 #include "AnalogModule.h"
 #include "NetworkCommunication/UsageReporting.h"
@@ -19,24 +20,24 @@ static Resource *triggers = NULL;
  */
 void AnalogTrigger::InitTrigger(UINT8 moduleNumber, UINT32 channel)
 {
-    Resource::CreateResourceObject(&triggers, tAnalogTrigger::kNumSystems);
-    UINT32 index = triggers->Allocate("Analog Trigger");
-    if (index == ~0ul)
-    {
-	CloneError(triggers);
-	return;
-    }
-    m_index = (UINT8)index;
-    m_channel = channel;
-    m_analogModule = AnalogModule::GetInstance(moduleNumber);
+	Resource::CreateResourceObject(&triggers, tAnalogTrigger::kNumSystems);
+	UINT32 index = triggers->Allocate("Analog Trigger");
+	if (index == ~0ul)
+	{
+		CloneError(triggers);
+		return;
+	}
+	m_index = (UINT8)index;
+	m_channel = channel;
+	m_analogModule = AnalogModule::GetInstance(moduleNumber);
 
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_trigger = tAnalogTrigger::create(m_index, &localStatus);
-    m_trigger->writeSourceSelect_Channel(m_channel - 1, &localStatus);
-    m_trigger->writeSourceSelect_Module(moduleNumber - 1, &localStatus);
-    wpi_setError(localStatus);
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_trigger = tAnalogTrigger::create(m_index, &localStatus);
+	m_trigger->writeSourceSelect_Channel(m_channel - 1, &localStatus);
+	m_trigger->writeSourceSelect_Module(moduleNumber - 1, &localStatus);
+	wpi_setError(localStatus);
 
-    nUsageReporting::report(nUsageReporting::kResourceType_AnalogTrigger, m_channel, moduleNumber - 1);
+	nUsageReporting::report(nUsageReporting::kResourceType_AnalogTrigger, m_channel, moduleNumber - 1);
 }
 
 /**
@@ -47,7 +48,7 @@ void AnalogTrigger::InitTrigger(UINT8 moduleNumber, UINT32 channel)
  */
 AnalogTrigger::AnalogTrigger(UINT32 channel)
 {
-    InitTrigger(GetDefaultAnalogModule(), channel);
+	InitTrigger(GetDefaultAnalogModule(), channel);
 }
 
 /**
@@ -58,7 +59,7 @@ AnalogTrigger::AnalogTrigger(UINT32 channel)
  */
 AnalogTrigger::AnalogTrigger(UINT8 moduleNumber, UINT32 channel)
 {
-    InitTrigger(moduleNumber, channel);
+	InitTrigger(moduleNumber, channel);
 }
 
 /**
@@ -68,13 +69,13 @@ AnalogTrigger::AnalogTrigger(UINT8 moduleNumber, UINT32 channel)
  */
 AnalogTrigger::AnalogTrigger(AnalogChannel *channel)
 {
-    InitTrigger(channel->GetModuleNumber(), channel->GetChannel());
+	InitTrigger(channel->GetModuleNumber(), channel->GetChannel());
 }
 
 AnalogTrigger::~AnalogTrigger()
 {
-    triggers->Free(m_index);
-    delete m_trigger;
+	triggers->Free(m_index);
+	delete m_trigger;
 }
 
 /**
@@ -84,15 +85,15 @@ AnalogTrigger::~AnalogTrigger()
  */
 void AnalogTrigger::SetLimitsRaw(INT32 lower, INT32 upper)
 {
-    if (StatusIsFatal()) return;
-    if (lower > upper)
-    {
-	wpi_setWPIError(AnalogTriggerLimitOrderError);
-    }
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_trigger->writeLowerLimit(lower, &localStatus);
-    m_trigger->writeUpperLimit(upper, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	if (lower > upper)
+	{
+		wpi_setWPIError(AnalogTriggerLimitOrderError);
+	}
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_trigger->writeLowerLimit(lower, &localStatus);
+	m_trigger->writeUpperLimit(upper, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -101,16 +102,16 @@ void AnalogTrigger::SetLimitsRaw(INT32 lower, INT32 upper)
  */
 void AnalogTrigger::SetLimitsVoltage(float lower, float upper)
 {
-    if (StatusIsFatal()) return;
-    if (lower > upper)
-    {
-	wpi_setWPIError(AnalogTriggerLimitOrderError);
-    }
-    // TODO: This depends on the averaged setting.  Only raw values will work as is.
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_trigger->writeLowerLimit(m_analogModule->VoltsToValue(m_channel, lower), &localStatus);
-    m_trigger->writeUpperLimit(m_analogModule->VoltsToValue(m_channel, upper), &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	if (lower > upper)
+	{
+		wpi_setWPIError(AnalogTriggerLimitOrderError);
+	}
+	// TODO: This depends on the averaged setting.  Only raw values will work as is.
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_trigger->writeLowerLimit(m_analogModule->VoltsToValue(m_channel, lower), &localStatus);
+	m_trigger->writeUpperLimit(m_analogModule->VoltsToValue(m_channel, upper), &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -120,12 +121,12 @@ void AnalogTrigger::SetLimitsVoltage(float lower, float upper)
  */
 void AnalogTrigger::SetAveraged(bool useAveragedValue)
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    if (m_trigger->readSourceSelect_Filter(&localStatus) != 0)
-	wpi_setWPIErrorWithContext(IncompatibleMode, "Hardware does not support average and filtering at the same time.");
-    m_trigger->writeSourceSelect_Averaged(useAveragedValue, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	if (m_trigger->readSourceSelect_Filter(&localStatus) != 0)
+		wpi_setWPIErrorWithContext(IncompatibleMode, "Hardware does not support average and filtering at the same time.");
+	m_trigger->writeSourceSelect_Averaged(useAveragedValue, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -135,12 +136,12 @@ void AnalogTrigger::SetAveraged(bool useAveragedValue)
  */
 void AnalogTrigger::SetFiltered(bool useFilteredValue)
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    if (m_trigger->readSourceSelect_Averaged(&localStatus) != 0)
-	wpi_setWPIErrorWithContext(IncompatibleMode, "Hardware does not support average and filtering at the same time.");
-    m_trigger->writeSourceSelect_Filter(useFilteredValue, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	if (m_trigger->readSourceSelect_Averaged(&localStatus) != 0)
+		wpi_setWPIErrorWithContext(IncompatibleMode, "Hardware does not support average and filtering at the same time.");
+	m_trigger->writeSourceSelect_Filter(useFilteredValue, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -150,8 +151,8 @@ void AnalogTrigger::SetFiltered(bool useFilteredValue)
  */
 UINT32 AnalogTrigger::GetIndex()
 {
-    if (StatusIsFatal()) return ~0ul;
-    return m_index;
+	if (StatusIsFatal()) return ~0ul;
+	return m_index;
 }
 
 /**
@@ -161,11 +162,11 @@ UINT32 AnalogTrigger::GetIndex()
  */
 bool AnalogTrigger::GetInWindow()
 {
-    if (StatusIsFatal()) return false;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    bool result = m_trigger->readOutput_InHysteresis(m_index, &localStatus) != 0;
-    wpi_setError(localStatus);
-    return result;
+	if (StatusIsFatal()) return false;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	bool result = m_trigger->readOutput_InHysteresis(m_index, &localStatus) != 0;
+	wpi_setError(localStatus);
+	return result;
 }
 
 /**
@@ -177,11 +178,11 @@ bool AnalogTrigger::GetInWindow()
  */
 bool AnalogTrigger::GetTriggerState()
 {
-    if (StatusIsFatal()) return false;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    bool result = m_trigger->readOutput_OverLimit(m_index, &localStatus) != 0;
-    wpi_setError(localStatus);
-    return result;
+	if (StatusIsFatal()) return false;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	bool result = m_trigger->readOutput_OverLimit(m_index, &localStatus) != 0;
+	wpi_setError(localStatus);
+	return result;
 }
 
 /**
@@ -193,7 +194,7 @@ bool AnalogTrigger::GetTriggerState()
  */
 AnalogTriggerOutput *AnalogTrigger::CreateOutput(AnalogTriggerOutput::Type type)
 {
-    if (StatusIsFatal()) return NULL;
-    return new AnalogTriggerOutput(this, type);
+	if (StatusIsFatal()) return NULL;
+	return new AnalogTriggerOutput(this, type);
 }
 

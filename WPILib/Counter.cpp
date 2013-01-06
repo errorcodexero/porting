@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
+/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -19,25 +19,25 @@ static Resource *counters = NULL;
  */
 void Counter::InitCounter(Mode mode)
 {
-    Resource::CreateResourceObject(&counters, tCounter::kNumSystems);
-    UINT32 index = counters->Allocate("Counter");
-    if (index == ~0ul)
-    {
-	CloneError(counters);
-	return;
-    }
-    m_index = index;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter = tCounter::create(m_index, &localStatus);
-    m_counter->writeConfig_Mode(mode, &localStatus);
-    m_upSource = NULL;
-    m_downSource = NULL;
-    m_allocatedUpSource = false;
-    m_allocatedDownSource = false;
-    m_counter->writeTimerConfig_AverageSize(1, &localStatus);
-    wpi_setError(localStatus);
+	Resource::CreateResourceObject(&counters, tCounter::kNumSystems);
+	UINT32 index = counters->Allocate("Counter");
+	if (index == ~0ul)
+	{
+		CloneError(counters);
+		return;
+	}
+	m_index = index;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter = tCounter::create(m_index, &localStatus);
+	m_counter->writeConfig_Mode(mode, &localStatus);
+	m_upSource = NULL;
+	m_downSource = NULL;
+	m_allocatedUpSource = false;
+	m_allocatedDownSource = false;
+	m_counter->writeTimerConfig_AverageSize(1, &localStatus);
+	wpi_setError(localStatus);
 
-    nUsageReporting::report(nUsageReporting::kResourceType_Counter, index, mode);
+	nUsageReporting::report(nUsageReporting::kResourceType_Counter, index, mode);
 }
 
 /**
@@ -46,11 +46,11 @@ void Counter::InitCounter(Mode mode)
  * independently.
  */
 Counter::Counter() :
-    m_upSource(NULL),
-    m_downSource(NULL),
-    m_counter(NULL)
+	m_upSource(NULL),
+	m_downSource(NULL),
+	m_counter(NULL)
 {
-    InitCounter();
+	InitCounter();
 }
 
 /**
@@ -59,23 +59,23 @@ Counter::Counter() :
  * as encoders.
  */
 Counter::Counter(DigitalSource *source) :
-    m_upSource(NULL),
-    m_downSource(NULL),
-    m_counter(NULL)
+	m_upSource(NULL),
+	m_downSource(NULL),
+	m_counter(NULL)
 {
-    InitCounter();
-    SetUpSource(source);
-    ClearDownSource();
+	InitCounter();
+	SetUpSource(source);
+	ClearDownSource();
 }
 
 Counter::Counter(DigitalSource &source) :
-    m_upSource(NULL),
-    m_downSource(NULL),
-    m_counter(NULL)
+	m_upSource(NULL),
+	m_downSource(NULL),
+	m_counter(NULL)
 {
-    InitCounter();
-    SetUpSource(&source);
-    ClearDownSource();
+	InitCounter();
+	SetUpSource(&source);
+	ClearDownSource();
 }
 
 /**
@@ -83,13 +83,13 @@ Counter::Counter(DigitalSource &source) :
  * Create an up-Counter instance given a channel. The default digital module is assumed.
  */
 Counter::Counter(UINT32 channel) :
-    m_upSource(NULL),
-    m_downSource(NULL),
-    m_counter(NULL)
+	m_upSource(NULL),
+	m_downSource(NULL),
+	m_counter(NULL)
 {
-    InitCounter();
-    SetUpSource(channel);
-    ClearDownSource();
+	InitCounter();
+	SetUpSource(channel);
+	ClearDownSource();
 }
 
 /**
@@ -99,13 +99,13 @@ Counter::Counter(UINT32 channel) :
  * @param channel The channel in the digital module
  */
 Counter::Counter(UINT8 moduleNumber, UINT32 channel) :
-    m_upSource(NULL),
-    m_downSource(NULL),
-    m_counter(NULL)
+	m_upSource(NULL),
+	m_downSource(NULL),
+	m_counter(NULL)
 {
-    InitCounter();
-    SetUpSource(moduleNumber, channel);
-    ClearDownSource();
+	InitCounter();
+	SetUpSource(moduleNumber, channel);
+	ClearDownSource();
 }
 
 /**
@@ -114,55 +114,55 @@ Counter::Counter(UINT8 moduleNumber, UINT32 channel) :
  * Use the trigger state output from the analog trigger.
  */
 Counter::Counter(AnalogTrigger *trigger) :
-    m_upSource(NULL),
-    m_downSource(NULL),
-    m_counter(NULL)
+	m_upSource(NULL),
+	m_downSource(NULL),
+	m_counter(NULL)
 {
-    InitCounter();
-    SetUpSource(trigger->CreateOutput(AnalogTriggerOutput::kState));
-    ClearDownSource();
-    m_allocatedUpSource = true;
+	InitCounter();
+	SetUpSource(trigger->CreateOutput(AnalogTriggerOutput::kState));
+	ClearDownSource();
+	m_allocatedUpSource = true;
 }
 
 Counter::Counter(AnalogTrigger &trigger) :
-    m_upSource(NULL),
-    m_downSource(NULL),
-    m_counter(NULL)
+	m_upSource(NULL),
+	m_downSource(NULL),
+	m_counter(NULL)
 {
-    InitCounter();
-    SetUpSource(trigger.CreateOutput(AnalogTriggerOutput::kState));
-    ClearDownSource();
-    m_allocatedUpSource = true;
+	InitCounter();
+	SetUpSource(trigger.CreateOutput(AnalogTriggerOutput::kState));
+	ClearDownSource();
+	m_allocatedUpSource = true;
 }
 
 Counter::Counter(EncodingType encodingType, DigitalSource *upSource, DigitalSource *downSource, bool inverted) :
-    m_upSource(NULL),
-    m_downSource(NULL),
-    m_counter(NULL)
+	m_upSource(NULL),
+	m_downSource(NULL),
+	m_counter(NULL)
 {
-    if (encodingType != k1X && encodingType != k2X)
-    {
-	wpi_setWPIErrorWithContext(ParameterOutOfRange, "Counter only supports 1X and 2X quadrature decoding.");
-	return;
-    }
-    InitCounter(kExternalDirection);
-    SetUpSource(upSource);
-    SetDownSource(downSource);
-    tRioStatusCode localStatus = NiFpga_Status_Success;
+	if (encodingType != k1X && encodingType != k2X)
+	{
+		wpi_setWPIErrorWithContext(ParameterOutOfRange, "Counter only supports 1X and 2X quadrature decoding.");
+		return;
+	}
+	InitCounter(kExternalDirection);
+	SetUpSource(upSource);
+	SetDownSource(downSource);
+	tRioStatusCode localStatus = NiFpga_Status_Success;
 
-    if (encodingType == k1X)
-    {
-	SetUpSourceEdge(true, false);
-	m_counter->writeTimerConfig_AverageSize(1, &localStatus);
-    }
-    else
-    {
-	SetUpSourceEdge(true, true);
-	m_counter->writeTimerConfig_AverageSize(2, &localStatus);
-    }
+	if (encodingType == k1X)
+	{
+		SetUpSourceEdge(true, false);
+		m_counter->writeTimerConfig_AverageSize(1, &localStatus);
+	}
+	else
+	{
+		SetUpSourceEdge(true, true);
+		m_counter->writeTimerConfig_AverageSize(2, &localStatus);
+	}
 
-    wpi_setError(localStatus);
-    SetDownSourceEdge(inverted, true);
+	wpi_setError(localStatus);
+	SetDownSourceEdge(inverted, true);
 }
 
 /**
@@ -170,20 +170,20 @@ Counter::Counter(EncodingType encodingType, DigitalSource *upSource, DigitalSour
  */
 Counter::~Counter()
 {
-    SetUpdateWhenEmpty(true);
-    if (m_allocatedUpSource)
-    {
-	delete m_upSource;
-	m_upSource = NULL;
-    }
-    if (m_allocatedDownSource)
-    {
-	delete m_downSource;
-	m_downSource = NULL;
-    }
-    delete m_counter;
-    m_counter = NULL;
-    counters->Free(m_index);
+	SetUpdateWhenEmpty(true);
+	if (m_allocatedUpSource)
+	{
+		delete m_upSource;
+		m_upSource = NULL;
+	}
+	if (m_allocatedDownSource)
+	{
+		delete m_downSource;
+		m_downSource = NULL;
+	}
+	delete m_counter;
+	m_counter = NULL;
+	counters->Free(m_index);
 }
 
 /**
@@ -194,9 +194,9 @@ Counter::~Counter()
  */
 void Counter::SetUpSource(UINT8 moduleNumber, UINT32 channel)
 {
-    if (StatusIsFatal()) return;
-    SetUpSource(new DigitalInput(moduleNumber, channel));
-    m_allocatedUpSource = true;
+	if (StatusIsFatal()) return;
+	SetUpSource(new DigitalInput(moduleNumber, channel));
+	m_allocatedUpSource = true;
 }
 
 /**
@@ -205,9 +205,9 @@ void Counter::SetUpSource(UINT8 moduleNumber, UINT32 channel)
  */
 void Counter::SetUpSource(UINT32 channel)
 {
-    if (StatusIsFatal()) return;
-    SetUpSource(GetDefaultDigitalModule(), channel);
-    m_allocatedUpSource = true;
+	if (StatusIsFatal()) return;
+	SetUpSource(GetDefaultDigitalModule(), channel);
+	m_allocatedUpSource = true;
 }
 
 /**
@@ -217,9 +217,9 @@ void Counter::SetUpSource(UINT32 channel)
  */
 void Counter::SetUpSource(AnalogTrigger *analogTrigger, AnalogTriggerOutput::Type triggerType)
 {
-    if (StatusIsFatal()) return;
-    SetUpSource(analogTrigger->CreateOutput(triggerType));
-    m_allocatedUpSource = true;
+	if (StatusIsFatal()) return;
+	SetUpSource(analogTrigger->CreateOutput(triggerType));
+	m_allocatedUpSource = true;
 }
 
 /**
@@ -229,7 +229,7 @@ void Counter::SetUpSource(AnalogTrigger *analogTrigger, AnalogTriggerOutput::Typ
  */
 void Counter::SetUpSource(AnalogTrigger &analogTrigger, AnalogTriggerOutput::Type triggerType)
 {
-    SetUpSource(&analogTrigger, triggerType);
+	SetUpSource(&analogTrigger, triggerType);
 }
 
 /**
@@ -238,33 +238,33 @@ void Counter::SetUpSource(AnalogTrigger &analogTrigger, AnalogTriggerOutput::Typ
  */
 void Counter::SetUpSource(DigitalSource *source)
 {
-    if (StatusIsFatal()) return;
-    if (m_allocatedUpSource)
-    {
-	delete m_upSource;
-	m_upSource = NULL;
-	m_allocatedUpSource = false;
-    }
-    m_upSource = source;
-    if (m_upSource->StatusIsFatal())
-    {
-	CloneError(m_upSource);
-    }
-    else
-    {
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	m_counter->writeConfig_UpSource_Module(source->GetModuleForRouting(), &localStatus);
-	m_counter->writeConfig_UpSource_Channel(source->GetChannelForRouting(), &localStatus);
-	m_counter->writeConfig_UpSource_AnalogTrigger(source->GetAnalogTriggerForRouting(), &localStatus);
-    
-	if(m_counter->readConfig_Mode(&localStatus) == kTwoPulse ||
-		m_counter->readConfig_Mode(&localStatus) == kExternalDirection)
+	if (StatusIsFatal()) return;
+	if (m_allocatedUpSource)
 	{
-	    SetUpSourceEdge(true, false);
+		delete m_upSource;
+		m_upSource = NULL;
+		m_allocatedUpSource = false;
 	}
-	m_counter->strobeReset(&localStatus);
-	wpi_setError(localStatus);
-    }
+	m_upSource = source;
+	if (m_upSource->StatusIsFatal())
+	{
+		CloneError(m_upSource);
+	}
+	else
+	{
+		tRioStatusCode localStatus = NiFpga_Status_Success;
+		m_counter->writeConfig_UpSource_Module(source->GetModuleForRouting(), &localStatus);
+		m_counter->writeConfig_UpSource_Channel(source->GetChannelForRouting(), &localStatus);
+		m_counter->writeConfig_UpSource_AnalogTrigger(source->GetAnalogTriggerForRouting(), &localStatus);
+	
+		if(m_counter->readConfig_Mode(&localStatus) == kTwoPulse ||
+				m_counter->readConfig_Mode(&localStatus) == kExternalDirection)
+		{
+			SetUpSourceEdge(true, false);
+		}
+		m_counter->strobeReset(&localStatus);
+		wpi_setError(localStatus);
+	}
 }
 
 /**
@@ -273,7 +273,7 @@ void Counter::SetUpSource(DigitalSource *source)
  */
 void Counter::SetUpSource(DigitalSource &source)
 {
-    SetUpSource(&source);
+	SetUpSource(&source);
 }
 
 /**
@@ -282,15 +282,15 @@ void Counter::SetUpSource(DigitalSource &source)
  */
 void Counter::SetUpSourceEdge(bool risingEdge, bool fallingEdge)
 {
-    if (StatusIsFatal()) return;
-    if (m_upSource == NULL)
-    {
-	wpi_setWPIErrorWithContext(NullParameter, "Must set non-NULL UpSource before setting UpSourceEdge");
-    }
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->writeConfig_UpRisingEdge(risingEdge, &localStatus);
-    m_counter->writeConfig_UpFallingEdge(fallingEdge, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	if (m_upSource == NULL)
+	{
+		wpi_setWPIErrorWithContext(NullParameter, "Must set non-NULL UpSource before setting UpSourceEdge");
+	}
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->writeConfig_UpRisingEdge(risingEdge, &localStatus);
+	m_counter->writeConfig_UpFallingEdge(fallingEdge, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -298,23 +298,23 @@ void Counter::SetUpSourceEdge(bool risingEdge, bool fallingEdge)
  */
 void Counter::ClearUpSource()
 {
-    if (StatusIsFatal()) return;
-    if (m_allocatedUpSource)
-    {
-	delete m_upSource;
-	m_upSource = NULL;
-	m_allocatedUpSource = false;
-    }
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    bool state = m_counter->readConfig_Enable(&localStatus);
-    m_counter->writeConfig_Enable(false, &localStatus);
-    m_counter->writeConfig_UpFallingEdge(false, &localStatus);
-    m_counter->writeConfig_UpRisingEdge(false, &localStatus);
-    // Index 0 of digital is always 0.
-    m_counter->writeConfig_UpSource_Channel(0, &localStatus);
-    m_counter->writeConfig_UpSource_AnalogTrigger(false, &localStatus);
-    m_counter->writeConfig_Enable(state, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	if (m_allocatedUpSource)
+	{
+		delete m_upSource;
+		m_upSource = NULL;
+		m_allocatedUpSource = false;
+	}
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	bool state = m_counter->readConfig_Enable(&localStatus);
+	m_counter->writeConfig_Enable(false, &localStatus);
+	m_counter->writeConfig_UpFallingEdge(false, &localStatus);
+	m_counter->writeConfig_UpRisingEdge(false, &localStatus);
+	// Index 0 of digital is always 0.
+	m_counter->writeConfig_UpSource_Channel(0, &localStatus);
+	m_counter->writeConfig_UpSource_AnalogTrigger(false, &localStatus);
+	m_counter->writeConfig_Enable(state, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -323,9 +323,9 @@ void Counter::ClearUpSource()
  */
 void Counter::SetDownSource(UINT32 channel)
 {
-    if (StatusIsFatal()) return;
-    SetDownSource(new DigitalInput(channel));
-    m_allocatedDownSource = true;
+	if (StatusIsFatal()) return;
+	SetDownSource(new DigitalInput(channel));
+	m_allocatedDownSource = true;
 }
 
 /**
@@ -336,9 +336,9 @@ void Counter::SetDownSource(UINT32 channel)
  */
 void Counter::SetDownSource(UINT8 moduleNumber, UINT32 channel)
 {
-    if (StatusIsFatal()) return;
-    SetDownSource(new DigitalInput(moduleNumber, channel));
-    m_allocatedDownSource = true;
+	if (StatusIsFatal()) return;
+	SetDownSource(new DigitalInput(moduleNumber, channel));
+	m_allocatedDownSource = true;
 }
 
 /**
@@ -348,9 +348,9 @@ void Counter::SetDownSource(UINT8 moduleNumber, UINT32 channel)
  */
 void Counter::SetDownSource(AnalogTrigger *analogTrigger, AnalogTriggerOutput::Type triggerType)
 {
-    if (StatusIsFatal()) return;
-    SetDownSource(analogTrigger->CreateOutput(triggerType));
-    m_allocatedDownSource = true;
+	if (StatusIsFatal()) return;
+	SetDownSource(analogTrigger->CreateOutput(triggerType));
+	m_allocatedDownSource = true;
 }
 
 /**
@@ -360,7 +360,7 @@ void Counter::SetDownSource(AnalogTrigger *analogTrigger, AnalogTriggerOutput::T
  */
 void Counter::SetDownSource(AnalogTrigger &analogTrigger, AnalogTriggerOutput::Type triggerType)
 {
-    SetDownSource(&analogTrigger, triggerType);
+	SetDownSource(&analogTrigger, triggerType);
 }
 
 /**
@@ -369,35 +369,35 @@ void Counter::SetDownSource(AnalogTrigger &analogTrigger, AnalogTriggerOutput::T
  */
 void Counter::SetDownSource(DigitalSource *source)
 {
-    if (StatusIsFatal()) return;
-    if (m_allocatedDownSource)
-    {
-	delete m_downSource;
-	m_downSource = NULL;
-	m_allocatedDownSource = false;
-    }
-    m_downSource = source;
-    if (m_downSource->StatusIsFatal())
-    {
-	CloneError(m_downSource);
-    }
-    else
-    {
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	unsigned char mode = m_counter->readConfig_Mode(&localStatus);
-	if (mode != kTwoPulse && mode != kExternalDirection)
+	if (StatusIsFatal()) return;
+	if (m_allocatedDownSource)
 	{
-	    wpi_setWPIErrorWithContext(ParameterOutOfRange, "Counter only supports DownSource in TwoPulse and ExternalDirection modes.");
-	    return;
+		delete m_downSource;
+		m_downSource = NULL;
+		m_allocatedDownSource = false;
 	}
-	m_counter->writeConfig_DownSource_Module(source->GetModuleForRouting(), &localStatus);
-	m_counter->writeConfig_DownSource_Channel(source->GetChannelForRouting(), &localStatus);
-	m_counter->writeConfig_DownSource_AnalogTrigger(source->GetAnalogTriggerForRouting(), &localStatus);
-    
-	SetDownSourceEdge(true, false);
-	m_counter->strobeReset(&localStatus);
-	wpi_setError(localStatus);
-    }
+	m_downSource = source;
+	if (m_downSource->StatusIsFatal())
+	{
+		CloneError(m_downSource);
+	}
+	else
+	{
+		tRioStatusCode localStatus = NiFpga_Status_Success;
+		unsigned char mode = m_counter->readConfig_Mode(&localStatus);
+		if (mode != kTwoPulse && mode != kExternalDirection)
+		{
+			wpi_setWPIErrorWithContext(ParameterOutOfRange, "Counter only supports DownSource in TwoPulse and ExternalDirection modes.");
+			return;
+		}
+		m_counter->writeConfig_DownSource_Module(source->GetModuleForRouting(), &localStatus);
+		m_counter->writeConfig_DownSource_Channel(source->GetChannelForRouting(), &localStatus);
+		m_counter->writeConfig_DownSource_AnalogTrigger(source->GetAnalogTriggerForRouting(), &localStatus);
+	
+		SetDownSourceEdge(true, false);
+		m_counter->strobeReset(&localStatus);
+		wpi_setError(localStatus);
+	}
 }
 
 /**
@@ -406,7 +406,7 @@ void Counter::SetDownSource(DigitalSource *source)
  */
 void Counter::SetDownSource(DigitalSource &source)
 {
-    SetDownSource(&source);
+	SetDownSource(&source);
 }
 
 /**
@@ -415,15 +415,15 @@ void Counter::SetDownSource(DigitalSource &source)
  */
 void Counter::SetDownSourceEdge(bool risingEdge, bool fallingEdge)
 {
-    if (StatusIsFatal()) return;
-    if (m_downSource == NULL)
-    {
-	wpi_setWPIErrorWithContext(NullParameter, "Must set non-NULL DownSource before setting DownSourceEdge");
-    }
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->writeConfig_DownRisingEdge(risingEdge, &localStatus);
-    m_counter->writeConfig_DownFallingEdge(fallingEdge, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	if (m_downSource == NULL)
+	{
+		wpi_setWPIErrorWithContext(NullParameter, "Must set non-NULL DownSource before setting DownSourceEdge");
+	}
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->writeConfig_DownRisingEdge(risingEdge, &localStatus);
+	m_counter->writeConfig_DownFallingEdge(fallingEdge, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -431,23 +431,23 @@ void Counter::SetDownSourceEdge(bool risingEdge, bool fallingEdge)
  */
 void Counter::ClearDownSource()
 {
-    if (StatusIsFatal()) return;
-    if (m_allocatedDownSource)
-    {
-	delete m_downSource;
-	m_downSource = NULL;
-	m_allocatedDownSource = false;
-    }
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    bool state = m_counter->readConfig_Enable(&localStatus);
-    m_counter->writeConfig_Enable(false, &localStatus);
-    m_counter->writeConfig_DownFallingEdge(false, &localStatus);
-    m_counter->writeConfig_DownRisingEdge(false, &localStatus);
-    // Index 0 of digital is always 0.
-    m_counter->writeConfig_DownSource_Channel(0, &localStatus);
-    m_counter->writeConfig_DownSource_AnalogTrigger(false, &localStatus);
-    m_counter->writeConfig_Enable(state, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	if (m_allocatedDownSource)
+	{
+		delete m_downSource;
+		m_downSource = NULL;
+		m_allocatedDownSource = false;
+	}
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	bool state = m_counter->readConfig_Enable(&localStatus);
+	m_counter->writeConfig_Enable(false, &localStatus);
+	m_counter->writeConfig_DownFallingEdge(false, &localStatus);
+	m_counter->writeConfig_DownRisingEdge(false, &localStatus);
+	// Index 0 of digital is always 0.
+	m_counter->writeConfig_DownSource_Channel(0, &localStatus);
+	m_counter->writeConfig_DownSource_AnalogTrigger(false, &localStatus);
+	m_counter->writeConfig_Enable(state, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -456,10 +456,10 @@ void Counter::ClearDownSource()
  */
 void Counter::SetUpDownCounterMode()
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->writeConfig_Mode(kTwoPulse, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->writeConfig_Mode(kTwoPulse, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -469,10 +469,10 @@ void Counter::SetUpDownCounterMode()
  */
 void Counter::SetExternalDirectionMode()
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->writeConfig_Mode(kExternalDirection, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->writeConfig_Mode(kExternalDirection, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -481,12 +481,12 @@ void Counter::SetExternalDirectionMode()
  */
 void Counter::SetSemiPeriodMode(bool highSemiPeriod)
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->writeConfig_Mode(kSemiperiod, &localStatus);
-    m_counter->writeConfig_UpRisingEdge(highSemiPeriod, &localStatus);
-    SetUpdateWhenEmpty(false);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->writeConfig_Mode(kSemiperiod, &localStatus);
+	m_counter->writeConfig_UpRisingEdge(highSemiPeriod, &localStatus);
+	SetUpdateWhenEmpty(false);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -496,11 +496,11 @@ void Counter::SetSemiPeriodMode(bool highSemiPeriod)
  */
 void Counter::SetPulseLengthMode(float threshold)
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->writeConfig_Mode(kPulseLength, &localStatus);
-    m_counter->writeConfig_PulseLengthThreshold((UINT32)(threshold * 1.0e6) * kSystemClockTicksPerMicrosecond, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->writeConfig_Mode(kPulseLength, &localStatus);
+	m_counter->writeConfig_PulseLengthThreshold((UINT32)(threshold * 1.0e6) * kSystemClockTicksPerMicrosecond, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -510,10 +510,10 @@ void Counter::SetPulseLengthMode(float threshold)
  */
 void Counter::Start()
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->writeConfig_Enable(1, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->writeConfig_Enable(1, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -523,11 +523,11 @@ void Counter::Start()
  */
 INT32 Counter::Get()
 {
-    if (StatusIsFatal()) return 0;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    INT32 value = m_counter->readOutput_Value(&localStatus);
-    wpi_setError(localStatus);
-    return value;
+	if (StatusIsFatal()) return 0;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	INT32 value = m_counter->readOutput_Value(&localStatus);
+	wpi_setError(localStatus);
+	return value;
 }
 
 /**
@@ -537,10 +537,10 @@ INT32 Counter::Get()
  */
 void Counter::Reset()
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->strobeReset(&localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->strobeReset(&localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -549,10 +549,10 @@ void Counter::Reset()
  */
 void Counter::Stop()
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->writeConfig_Enable(0, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->writeConfig_Enable(0, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /*
@@ -563,23 +563,23 @@ void Counter::Stop()
  */
 double Counter::GetPeriod()
 {
-    if (StatusIsFatal()) return 0.0;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    tCounter::tTimerOutput output = m_counter->readTimerOutput(&localStatus);
-    double period;
-    if (output.Stalled)
-    {
-	// Return infinity
-	double zero = 0.0;
-	period = 1.0 / zero;
-    }
-    else
-    {
-	// output.Period is a fixed point number that counts by 2 (24 bits, 25 integer bits)
-	period = (double)(output.Period << 1) / (double)output.Count;
-    }
-    wpi_setError(localStatus);
-    return period * 1.0e-6;
+	if (StatusIsFatal()) return 0.0;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	tCounter::tTimerOutput output = m_counter->readTimerOutput(&localStatus);
+	double period;
+	if (output.Stalled)
+	{
+		// Return infinity
+		double zero = 0.0;
+		period = 1.0 / zero;
+	}
+	else
+	{
+		// output.Period is a fixed point number that counts by 2 (24 bits, 25 integer bits)
+		period = (double)(output.Period << 1) / (double)output.Count;
+	}
+	wpi_setError(localStatus);
+	return period * 1.0e-6;
 }
 
 /**
@@ -591,10 +591,10 @@ double Counter::GetPeriod()
  */
 void Counter::SetMaxPeriod(double maxPeriod)
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->writeTimerConfig_StallPeriod((UINT32)(maxPeriod * 1.0e6), &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->writeTimerConfig_StallPeriod((UINT32)(maxPeriod * 1.0e6), &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -611,10 +611,10 @@ void Counter::SetMaxPeriod(double maxPeriod)
  */
 void Counter::SetUpdateWhenEmpty(bool enabled)
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_counter->writeTimerConfig_UpdateWhenEmpty(enabled, &localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_counter->writeTimerConfig_UpdateWhenEmpty(enabled, &localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -627,10 +627,10 @@ void Counter::SetUpdateWhenEmpty(bool enabled)
  */
 bool Counter::GetStopped()
 {
-    if (StatusIsFatal()) return false;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    return m_counter->readTimerOutput_Stalled(&localStatus);
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return false;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	return m_counter->readTimerOutput_Stalled(&localStatus);
+	wpi_setError(localStatus);
 }
 
 /**
@@ -639,11 +639,11 @@ bool Counter::GetStopped()
  */
 bool Counter::GetDirection()
 {
-    if (StatusIsFatal()) return false;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    bool value = m_counter->readOutput_Direction(&localStatus);
-    wpi_setError(localStatus);
-    return value;
+	if (StatusIsFatal()) return false;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	bool value = m_counter->readOutput_Direction(&localStatus);
+	wpi_setError(localStatus);
+	return value;
 }
 
 /**
@@ -654,14 +654,43 @@ bool Counter::GetDirection()
  */
 void Counter::SetReverseDirection(bool reverseDirection)
 {
-    if (StatusIsFatal()) return;
-    tRioStatusCode localStatus = NiFpga_Status_Success;
-    if (m_counter->readConfig_Mode(&localStatus) == kExternalDirection)
-    {
-	if (reverseDirection)
-	    SetDownSourceEdge(true, true);
-	else
-	    SetDownSourceEdge(false, true);
-    }
-    wpi_setError(localStatus);
+	if (StatusIsFatal()) return;
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	if (m_counter->readConfig_Mode(&localStatus) == kExternalDirection)
+	{
+		if (reverseDirection)
+			SetDownSourceEdge(true, true);
+		else
+			SetDownSourceEdge(false, true);
+	}
+	wpi_setError(localStatus);
 }
+
+
+void Counter::UpdateTable() {
+	if (m_table != NULL) {
+		m_table->PutNumber("Value", Get());
+	}
+}
+
+void Counter::StartLiveWindowMode() {
+	
+}
+
+void Counter::StopLiveWindowMode() {
+	
+}
+
+std::string Counter::GetSmartDashboardType() {
+	return "Counter";
+}
+
+void Counter::InitTable(ITable *subTable) {
+	m_table = subTable;
+	UpdateTable();
+}
+
+ITable * Counter::GetTable() {
+	return m_table;
+}
+
