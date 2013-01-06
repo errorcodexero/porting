@@ -5,8 +5,8 @@
  *      Author: Mitchell Wills
  */
 
-#include "networktables/NetworkTableListenerAdapter.h"
-#include "networktables/NetworkTable.h"
+#include "NetworkTables/NetworkTableListenerAdapter.h"
+#include "NetworkTables/NetworkTable.h"
 
 
 

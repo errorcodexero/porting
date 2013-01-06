@@ -8,7 +8,7 @@ class NetworkTableProvider;
 
 #include "tables/ITableProvider.h"
 #include "networktables2/NetworkTableNode.h"
-#include "networktables/NetworkTable.h"
+#include "NetworkTables/NetworkTable.h"
 
 using namespace std;
 

@@ -14,7 +14,7 @@ class NetworkTableKeyListenerAdapter;
 #include "tables/ITableListener.h"
 #include "tables/ITable.h"
 #include <string>
-#include "networktables/NetworkTable.h"
+#include "NetworkTables/NetworkTable.h"
 
 
 

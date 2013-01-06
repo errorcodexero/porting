@@ -38,6 +38,16 @@ STATUS taskDelay( int delay )
     return OK;
 }
 
+STATUS taskSuspend( TASK_ID task )
+{
+    return (pthread_kill((pthread_t)task, SIGSTOP) == 0) ? OK : ERROR;
+}
+
+STATUS taskResume( TASK_ID task )
+{
+    return (pthread_kill((pthread_t)task, SIGCONT) == 0) ? OK : ERROR;
+}
+
 #ifndef __CYGWIN__
 
 #include <execinfo.h>

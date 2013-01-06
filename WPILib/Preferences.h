@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 #include "tables/ITableListener.h"
-#include "networktables/NetworkTable.h"
+#include "NetworkTables/NetworkTable.h"
 
 /**
  * The preferences class provides a relatively simple way to save important values to

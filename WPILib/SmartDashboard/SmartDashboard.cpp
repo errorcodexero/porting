@@ -9,7 +9,7 @@
 #include "NetworkCommunication/UsageReporting.h"
 #include "NamedSendable.h"
 #include "WPIErrors.h"
-#include "networktables/NetworkTable.h"
+#include "NetworkTables/NetworkTable.h"
 
 ITable* SmartDashboard::m_table = NULL;
 std::map<ITable *, Sendable *> SmartDashboard::m_tablesToData;

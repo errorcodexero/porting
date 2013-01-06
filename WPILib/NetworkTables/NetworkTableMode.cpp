@@ -12,7 +12,7 @@
 #include "networktables2/client/NetworkTableClient.h"
 #include "networktables2/stream/SocketServerStreamProvider.h"
 #include "networktables2/stream/SocketStreamFactory.h"
-#include "networktables/NetworkTableMode.h"
+#include "NetworkTables/NetworkTableMode.h"
 
 
 NetworkTableServerMode NetworkTableMode::Server;

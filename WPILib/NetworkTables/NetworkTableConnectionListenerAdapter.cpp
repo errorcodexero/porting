@@ -5,7 +5,7 @@
  *      Author: Mitchell Wills
  */
 
-#include "networktables/NetworkTableConnectionListenerAdapter.h"
+#include "NetworkTables/NetworkTableConnectionListenerAdapter.h"
 
 
 NetworkTableConnectionListenerAdapter::NetworkTableConnectionListenerAdapter(IRemote* _targetSource, IRemoteConnectionListener* _targetListener):

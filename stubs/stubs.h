@@ -65,8 +65,8 @@ extern STATUS taskDelete( TASK_ID task );
 
 extern STATUS taskDelay( int delay );
 
-// extern STATUS taskSuspend( TASK_ID task );	// kill with SIGSTOP?
-// extern STATUS taskResume( TASK_ID task );	// kill with SIGCONT?
+extern STATUS taskSuspend( TASK_ID task );
+extern STATUS taskResume( TASK_ID task );
 // extern BOOL taskIsReady( TASK_ID task );
 // extern BOOL taskIsSuspended( TASK_ID task );
 

@@ -5,7 +5,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include "Buttons/NetworkButton.h"
-#include "networktables/NetworkTable.h"
+#include "NetworkTables/NetworkTable.h"
 
 NetworkButton::NetworkButton(const char *tableName, const char *field) ://TODO how is this supposed to work???
 	m_netTable(NetworkTable::GetTable(tableName)),

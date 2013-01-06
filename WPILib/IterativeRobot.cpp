@@ -11,7 +11,7 @@
 #include <taskLib.h>
 #include "SmartDashboard/SmartDashboard.h"
 #include "LiveWindow/LiveWindow.h"
-#include "networktables/NetworkTable.h"
+#include "NetworkTables/NetworkTable.h"
 
 const double IterativeRobot::kDefaultPeriod;
 

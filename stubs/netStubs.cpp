@@ -1029,6 +1029,11 @@ void FRC_NetworkCommunication_observeUserProgramTeleop()
     // printf("FRC_NetworkCommunication: user program is in Teleop mode\n");
 }
 
+void FRC_NetworkCommunication_observeUserProgramTest()
+{
+    // printf("FRC_NetworkCommunication: user program is in Test mode\n");
+}
+
 int getDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength,
 			   int wait_ms )
 {

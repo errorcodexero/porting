@@ -3,10 +3,10 @@
 
 #include "tables/ITableProvider.h"
 #include "networktables2/NetworkTableNode.h"
-#include "networktables/NetworkTable.h"
+#include "NetworkTables/NetworkTable.h"
 
 
-#include "networktables/NetworkTableProvider.h"
+#include "NetworkTables/NetworkTableProvider.h"
 
 
 

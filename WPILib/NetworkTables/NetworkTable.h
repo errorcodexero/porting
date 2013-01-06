@@ -12,11 +12,11 @@ class EntryCache;
 #include "networktables2/thread/NTThreadManager.h"
 #include "networktables2/NetworkTableEntry.h"
 #include "networktables2/util/StringCache.h"
-#include "networktables/NetworkTableProvider.h"
-#include "networktables/NetworkTableMode.h"
+#include "NetworkTables/NetworkTableProvider.h"
+#include "NetworkTables/NetworkTableMode.h"
 #include "networktables2/thread/DefaultThreadManager.h"
-#include "networktables/NetworkTableConnectionListenerAdapter.h"
-#include "networktables/NetworkTableListenerAdapter.h"
+#include "NetworkTables/NetworkTableConnectionListenerAdapter.h"
+#include "NetworkTables/NetworkTableListenerAdapter.h"
 #include "tables/IRemoteConnectionListener.h"
 
 

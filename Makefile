@@ -3,7 +3,7 @@ CC := gcc-3
 CXX := g++-3
 CINCLUDES := -I./ -I./WPILib/ -I./stubs/
 CFLAGS := -Wall -Werror -g $(CINCLUDES)
-CXXFLAGS := -Wall -Wno-deprecated -Werror -g $(CINCLUDES)
+CXXFLAGS := -Wall -Wno-deprecated -Wno-ctor-dtor-privacy -Werror -g $(CINCLUDES)
 
 SOURCES := \
 	MyRobot.cpp \

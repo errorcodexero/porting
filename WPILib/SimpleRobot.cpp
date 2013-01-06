@@ -11,7 +11,7 @@
 #include "Timer.h"
 #include "SmartDashboard/SmartDashboard.h"
 #include "LiveWindow/LiveWindow.h"
-#include "networktables/NetworkTable.h"
+#include "NetworkTables/NetworkTable.h"
 
 SimpleRobot::SimpleRobot()
 	: m_robotMainOverridden (true)

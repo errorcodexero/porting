@@ -25,6 +25,7 @@
 #endif
 #include "networktables2/stream/FDIOStream.h"
 #include "networktables2/stream/SocketStreamFactory.h"
+#include <netinet/tcp.h>
 
 
 SocketStreamFactory::SocketStreamFactory(const char* _host, int _port):host(_host), port(_port){}
