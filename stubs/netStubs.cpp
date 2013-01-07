@@ -164,8 +164,8 @@ pcap::~pcap()
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#define	ROBOT_COMM_PORT	1110		// 0x0456
-#define	DS_COMM_PORT	1150		// 0x047E
+#define	ROBOT_COMM_PORT	1110
+#define	DS_COMM_PORT	1150
 #define	ROBOT_WDOG_PORT	17185		// 0x4321
 #define	DS_WDOG_PORT	750		// 0x02EE
 
@@ -680,7 +680,8 @@ void FRC_NetworkCommunication_observeUserProgramStarting()
     if (!netCommObj) {
 	fprintf(stderr, "%s: network communications task not initialized\n",
 		__FUNCTION__);
-	abort();
+	// abort();
+	return;
     }
 
     netCommObj->ObserveUserProgramStarting();
@@ -704,7 +705,8 @@ void FRC_NetworkCommunication_observeUserProgramDisabled()
     if (!netCommObj) {
 	fprintf(stderr, "%s: network communications task not initialized\n",
 		__FUNCTION__);
-	abort();
+	// abort();
+	return;
     }
 
     netCommObj->ObserveUserProgramDisabled();
@@ -724,7 +726,8 @@ void FRC_NetworkCommunication_observeUserProgramAutonomous()
     if (!netCommObj) {
 	fprintf(stderr, "%s: network communications task not initialized\n",
 		__FUNCTION__);
-	abort();
+	// abort();
+	return;
     }
 
     netCommObj->ObserveUserProgramAutonomous();
@@ -745,7 +748,8 @@ void FRC_NetworkCommunication_observeUserProgramTeleop()
     if (!netCommObj) {
 	fprintf(stderr, "%s: network communications task not initialized\n",
 		__FUNCTION__);
-	abort();
+	// abort();
+	return;
     }
 
     netCommObj->ObserveUserProgramTeleop();
@@ -766,7 +770,8 @@ void FRC_NetworkCommunication_observeUserProgramTest()
     if (!netCommObj) {
 	fprintf(stderr, "%s: network communications task not initialized\n",
 		__FUNCTION__);
-	abort();
+	// abort();
+	return;
     }
 
     netCommObj->ObserveUserProgramTest();
@@ -977,6 +982,7 @@ int FNC::Send()
 
     m_sendPkt.reset = m_reset;
     m_reset = false;
+    m_sendPkt.notEStop = true;
     m_sendPkt.enabled = m_enabled;
     m_sendPkt.autonomous = m_autonomous;
     m_sendPkt.test = m_test;
