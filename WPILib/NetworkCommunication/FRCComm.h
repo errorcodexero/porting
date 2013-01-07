@@ -22,6 +22,8 @@
 #define EXPORT_FUNC
 #endif
 
+#include <endian.h>
+
 // Commandeer some bytes at the end for advanced I/O feedback.
 #define IO_CONFIG_DATA_SIZE 32
 #define SYS_STATUS_DATA_SIZE 44
@@ -32,12 +34,12 @@ struct FRCCommonControlData{
 	UINT16 packetIndex;
 	union {
 		UINT8 control;
-#ifdef SIMULATION
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
 		struct {
-			UINT8 checkVersions :1;
-			UINT8 test :1;
+			UINT8 checkVersions : 1;
+			UINT8 test : 1;
 			UINT8 resync : 1;
-			UINT8 fmsAttached:1;
+			UINT8 fmsAttached : 1;
 			UINT8 autonomous : 1;
 			UINT8 enabled : 1;
 			UINT8 notEStop : 1;
@@ -49,10 +51,10 @@ struct FRCCommonControlData{
 			UINT8 notEStop : 1;
 			UINT8 enabled : 1;
 			UINT8 autonomous : 1;
-			UINT8 fmsAttached:1;
+			UINT8 fmsAttached : 1;
 			UINT8 resync : 1;
-			UINT8 test :1;
-			UINT8 checkVersions :1;
+			UINT8 test : 1;
+			UINT8 checkVersions : 1;
 		};
 #endif
 	};

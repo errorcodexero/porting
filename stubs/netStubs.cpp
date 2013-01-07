@@ -169,9 +169,6 @@ pcap::~pcap()
 #define	ROBOT_WDOG_PORT	17185		// 0x4321
 #define	DS_WDOG_PORT	750		// 0x02EE
 
-extern "C" void setNewDataSem( SEM_ID );
-extern "C" int getCommonControlData( FRCCommonControlData *, int );
-
 class FNC // FRC_NetworkCommunication
 {
 private:
@@ -224,12 +221,22 @@ public:
 
 public:
     // keep a local copy of user data to be sent to the DS
+    void ObserveUserProgramStarting();
+    void ObserveUserProgramDisabled();
+    void ObserveUserProgramAutonomous();
+    void ObserveUserProgramTeleop();
+    void ObserveUserProgramTest();
     int SetStatusData( float battery, UINT8 dsDigitalOut, UINT8 updateNumber,
 		        const char *userDataHigh, int userDataHighLength,
 		        const char *userDataLow, int userDataLowLength,
 			int wait_ms );
 
 private:
+    bool m_reset;
+    bool m_enabled;
+    bool m_autonomous;
+    bool m_test;
+
     float m_battery;
     UINT8 m_dsDigitalOut;
     UINT8 m_updateNumber;
@@ -277,7 +284,32 @@ private:
 
 #pragma pack(push,1)
     struct FRCStatusPkt {
-	uint8_t control;		// copied from DS control packet
+	union {
+		UINT8 control;
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+		struct {
+			UINT8 checkVersions : 1;
+			UINT8 test : 1;
+			UINT8 resync : 1;
+			UINT8 fmsAttached : 1;
+			UINT8 autonomous : 1;
+			UINT8 enabled : 1;
+			UINT8 notEStop : 1;
+			UINT8 reset : 1;
+		};
+#else
+		struct {
+			UINT8 reset : 1;
+			UINT8 notEStop : 1;
+			UINT8 enabled : 1;
+			UINT8 autonomous : 1;
+			UINT8 fmsAttached : 1;
+			UINT8 resync : 1;
+			UINT8 test : 1;
+			UINT8 checkVersions : 1;
+		};
+#endif
+	};
 	uint8_t battery[2];		// 2 bytes, scaled integer
 	uint8_t dsDigitalOut;		// DS digital outputs
 	uint8_t unknown1[4];
@@ -365,6 +397,8 @@ FNC::FNC( SEM_ID dataAvailable )
 	abort();
     }
 #endif
+
+    m_reset = true;
 
     m_dataAvailable = dataAvailable;
     m_dataMutex = semMCreate(SEM_Q_PRIORITY|SEM_DELETE_SAFE|SEM_INVERSION_SAFE);
@@ -459,7 +493,6 @@ STATUS FNC::Recv()
 // on PPC and x86, but perhaps not other toolchains/hosts
 #if (BYTE_ORDER == BIG_ENDIAN)
 # define ntohb(x) ((uint8_t)(x))
-# define htonb(x) ((uint8_t)(x))
 #else
 # define ntohb(x) \
 	((uint8_t)((((uint8_t)(x) & 0x01) << 7) | \
@@ -470,7 +503,6 @@ STATUS FNC::Recv()
 		   (((uint8_t)(x) & 0x20) >> 3) | \
 		   (((uint8_t)(x) & 0x40) >> 5) | \
 		   (((uint8_t)(x) & 0x80) >> 7)))
-# define htonb(x) ntohb(x)
 #endif
 	m_recvData.control		= ntohb(m_recvPkt.ctrl.control);
 
@@ -633,9 +665,123 @@ int FNC::GetCommonControlData( FRCCommonControlData *data )
     return OK;
 }
 
-// This sets up data to be transmitted back to the driver station, but
-// doesn't actually send anything.  The reply is sent when the FRCComm
+int getDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength,
+			   int wait_ms )
+{
+    return ERROR;
+}
+
+// These functions set up data to be transmitted back to the driver station
+// but don't actually send anything.  The reply is sent when the FRCComm
 // task calls Send().
+
+void FRC_NetworkCommunication_observeUserProgramStarting()
+{
+    if (!netCommObj) {
+	fprintf(stderr, "%s: network communications task not initialized\n",
+		__FUNCTION__);
+	abort();
+    }
+
+    netCommObj->ObserveUserProgramStarting();
+}
+
+void FNC::ObserveUserProgramStarting()
+{
+    Synchronized sync(m_dataMutex);
+    if (!m_reset) {
+	printf("FRC_NetworkCommunication: user program is Starting\n");
+	// this should make the driver station switch to disabled mode!
+	m_reset = true;
+	m_enabled = false;
+	m_autonomous = false;
+	m_test = false;
+    }
+}
+
+void FRC_NetworkCommunication_observeUserProgramDisabled()
+{
+    if (!netCommObj) {
+	fprintf(stderr, "%s: network communications task not initialized\n",
+		__FUNCTION__);
+	abort();
+    }
+
+    netCommObj->ObserveUserProgramDisabled();
+}
+
+void FNC::ObserveUserProgramDisabled()
+{
+    Synchronized sync(m_dataMutex);
+    if (m_enabled) {
+	printf("FRC_NetworkCommunication: user program is in Disabled mode\n");
+	m_enabled = false;
+    }
+}
+
+void FRC_NetworkCommunication_observeUserProgramAutonomous()
+{
+    if (!netCommObj) {
+	fprintf(stderr, "%s: network communications task not initialized\n",
+		__FUNCTION__);
+	abort();
+    }
+
+    netCommObj->ObserveUserProgramAutonomous();
+}
+
+void FNC::ObserveUserProgramAutonomous()
+{
+    Synchronized sync(m_dataMutex);
+    if (!m_autonomous) {
+	printf("FRC_NetworkCommunication: user program is in Autonomous mode\n");
+	m_autonomous = true;
+	m_test = false;
+    }
+}
+
+void FRC_NetworkCommunication_observeUserProgramTeleop()
+{
+    if (!netCommObj) {
+	fprintf(stderr, "%s: network communications task not initialized\n",
+		__FUNCTION__);
+	abort();
+    }
+
+    netCommObj->ObserveUserProgramTeleop();
+}
+
+void FNC::ObserveUserProgramTeleop()
+{
+    Synchronized sync(m_dataMutex);
+    if (m_autonomous || m_test) {
+	printf("FRC_NetworkCommunication: user program is in Teleop mode\n");
+	m_autonomous = false;
+	m_test = false;
+    }
+}
+
+void FRC_NetworkCommunication_observeUserProgramTest()
+{
+    if (!netCommObj) {
+	fprintf(stderr, "%s: network communications task not initialized\n",
+		__FUNCTION__);
+	abort();
+    }
+
+    netCommObj->ObserveUserProgramTest();
+}
+
+void FNC::ObserveUserProgramTest()
+{
+    Synchronized sync(m_dataMutex);
+    if (!m_test) {
+	printf("FRC_NetworkCommunication: user program is in Test mode\n");
+	m_autonomous = false;
+	m_test = true;
+    }
+}
+
 
 int setStatusData( float battery, UINT8 dsDigitalOut, UINT8 updateNumber,
 		   const char *userDataHigh, int userDataHighLength,
@@ -825,8 +971,15 @@ int FNC::Send()
 
     memset(&m_sendPkt, 0, sizeof m_sendPkt);
 
-    // copy control byte from DS control packet
-    m_sendPkt.control = htonb(m_recvData.control);
+    // send our current control mode back to DS
+    // copy resync flag from DS control packet
+    m_sendPkt.resync = m_recvData.resync;
+
+    m_sendPkt.reset = m_reset;
+    m_reset = false;
+    m_sendPkt.enabled = m_enabled;
+    m_sendPkt.autonomous = m_autonomous;
+    m_sendPkt.test = m_test;
 
     // battery voltage - BCD scaled integer
     int vbat = (int)(m_battery * 100.0);
@@ -1005,42 +1158,6 @@ STATUS FNC::Watchdog()
     return OK;
 }
 #endif // HAVE_FRC_WATCHDOG
-
-extern "C" {
-
-void FRC_NetworkCommunication_observeUserProgramStarting()
-{
-    printf("FRC_NetworkCommunication: user program is Starting\n");
-    // this should make the driver station switch to disabled mode!
-}
-
-void FRC_NetworkCommunication_observeUserProgramDisabled()
-{
-    // printf("FRC_NetworkCommunication: user program is in Disabled mode\n");
-}
-
-void FRC_NetworkCommunication_observeUserProgramAutonomous()
-{
-    // printf("FRC_NetworkCommunication: user program is in Autonomous mode\n");
-}
-
-void FRC_NetworkCommunication_observeUserProgramTeleop()
-{
-    // printf("FRC_NetworkCommunication: user program is in Teleop mode\n");
-}
-
-void FRC_NetworkCommunication_observeUserProgramTest()
-{
-    // printf("FRC_NetworkCommunication: user program is in Test mode\n");
-}
-
-int getDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength,
-			   int wait_ms )
-{
-    return ERROR;
-}
-
-}; // extern "C"
 
 ///////////////////////////////////////////////////////////////////////////////
 //
