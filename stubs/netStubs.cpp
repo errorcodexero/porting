@@ -337,8 +337,7 @@ private:
     uint32_t m_sendPktLength;
 
 private:
-    FNC(const FNC&);
-    void operator=(const FNC&);
+    DISALLOW_COPY_AND_ASSIGN(FNC);
 };
 
 
@@ -489,22 +488,14 @@ STATUS FNC::Recv()
 	// unpack common header elements
 	m_recvData.packetIndex		= ntohs(m_recvPkt.ctrl.packetIndex);
 
-// assume here that "BIT_ORDER" == "BYTE_ORDER" which works for gcc-3.x
-// on PPC and x86, but perhaps not other toolchains/hosts
-#if (BYTE_ORDER == BIG_ENDIAN)
-# define ntohb(x) ((uint8_t)(x))
-#else
-# define ntohb(x) \
-	((uint8_t)((((uint8_t)(x) & 0x01) << 7) | \
-		   (((uint8_t)(x) & 0x02) << 5) | \
-		   (((uint8_t)(x) & 0x04) << 3) | \
-		   (((uint8_t)(x) & 0x08) << 1) | \
-		   (((uint8_t)(x) & 0x10) >> 1) | \
-		   (((uint8_t)(x) & 0x20) >> 3) | \
-		   (((uint8_t)(x) & 0x40) >> 5) | \
-		   (((uint8_t)(x) & 0x80) >> 7)))
-#endif
-	m_recvData.control		= ntohb(m_recvPkt.ctrl.control);
+	m_recvData.reset		= m_recvPkt.ctrl.reset;
+	m_recvData.notEStop		= m_recvPkt.ctrl.notEStop;
+	m_recvData.enabled		= m_recvPkt.ctrl.enabled;
+	m_recvData.autonomous		= m_recvPkt.ctrl.autonomous;
+	m_recvData.fmsAttached		= m_recvPkt.ctrl.fmsAttached;
+	m_recvData.resync		= m_recvPkt.ctrl.resync;
+	m_recvData.test			= m_recvPkt.ctrl.test;
+	m_recvData.checkVersions	= m_recvPkt.ctrl.checkVersions;
 
 	m_recvData.dsDigitalIn		= m_recvPkt.ctrl.dsDigitalIn;
 	m_recvData.teamID		= ntohs(m_recvPkt.ctrl.teamID);
@@ -977,15 +968,14 @@ int FNC::Send()
     memset(&m_sendPkt, 0, sizeof m_sendPkt);
 
     // send our current control mode back to DS
-    // copy resync flag from DS control packet
-    m_sendPkt.resync = m_recvData.resync;
-
-    m_sendPkt.reset = m_reset;
-    m_reset = false;
+    m_sendPkt.reset = m_reset; m_reset = false;
     m_sendPkt.notEStop = true;
     m_sendPkt.enabled = m_enabled;
     m_sendPkt.autonomous = m_autonomous;
     m_sendPkt.test = m_test;
+
+    // copy resync flag from DS control packet
+    m_sendPkt.resync = m_recvData.resync;
 
     // battery voltage - BCD scaled integer
     int vbat = (int)(m_battery * 100.0);

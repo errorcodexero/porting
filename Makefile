@@ -2,7 +2,7 @@
 CC := gcc-3
 CXX := g++-3
 CINCLUDES := -I./ -I./WPILib/ -I./stubs/
-CFLAGS := -Wall -Werror -g $(CINCLUDES)
+CFLAGS := -Wall -Werror -g -Oo $(CINCLUDES)
 CXXFLAGS := -Wall -Wno-deprecated -Wno-ctor-dtor-privacy -Werror -g $(CINCLUDES)
 
 SOURCES := \

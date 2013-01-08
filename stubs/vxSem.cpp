@@ -51,7 +51,7 @@ public:
 	pthread_mutex_lock( &m_mutex );
 	while ((m_count > 0) &&
 	  !(m_type == SEM_MUTEX && pthread_equal(m_owner, pthread_self()))) {
-	    if (pthread_kill(m_owner, 0) != 0) {
+	    if ((m_type == SEM_MUTEX) && pthread_kill(m_owner, 0) != 0) {
 		fprintf(stderr, "mutex: absentee owner\n");
 		m_count = 0;
 		m_owner = (pthread_t) 0;
@@ -78,16 +78,16 @@ public:
     STATUS give()
     {
 	pthread_mutex_lock( &m_mutex );
-	if (!pthread_equal(m_owner, pthread_self())) {
+	if (m_type == SEM_MUTEX && !pthread_equal(m_owner, pthread_self())) {
 	    fprintf(stderr, "mutex: given by non-owner\n");
 	    pthread_mutex_unlock( &m_mutex );
 	    return ERROR;
 	}
 	if (--m_count <= 0) {
-	    if (m_count < 0) {
+	    if ((m_type == SEM_MUTEX) && (m_count < 0)) {
 		fprintf(stderr, "mutex: more give() than take()!\n");
-		m_count = 0;
 	    }
+	    m_count = 0;
 	    m_owner = (pthread_t) 0;
 	    pthread_cond_signal( &m_cond );
 	    pthread_mutex_unlock( &m_mutex );
@@ -104,6 +104,10 @@ public:
 	pthread_mutex_unlock( &m_mutex );
 	return OK;
     }
+
+private:
+    vxsem(const vxsem&);               \
+    void operator=(const vxsem&);
 };
 
 extern "C" SEM_ID semMCreate( int options )

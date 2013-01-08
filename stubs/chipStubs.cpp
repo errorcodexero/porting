@@ -2,6 +2,7 @@
 #include "stubs.h"
 #include "ChipObject.h"
 #include "NetworkCommunication/LoadOut.h"
+#include "Synchronized.h"
 
 bool nLoadOut::getModulePresence(
 	nLoadOut::tModuleType moduleType,
@@ -31,7 +32,7 @@ private:
     uint32_t m_signature[4];
 
 public:
-    stubSystemInterface( const uint32_t guid[] ) {
+    stubSystemInterface( const uint32_t guid[] ) : tSystemInterface() {
 	memcpy(m_signature, guid, sizeof m_signature);
     }
     virtual ~stubSystemInterface() {}
@@ -61,8 +62,7 @@ public:
     }
 
 private:
-    stubSystemInterface(const stubSystemInterface&);
-    void operator=(const stubSystemInterface&);
+    DISALLOW_COPY_AND_ASSIGN(stubSystemInterface);
 };
 
 }; // namespace nFPGA
@@ -83,7 +83,7 @@ private:
     bool m_led;
 
 public:
-    stubGlobal( const uint32_t guid[] ) {
+    stubGlobal( const uint32_t guid[] ) : tGlobal() {
 	m_systemInterface = new stubSystemInterface(guid);
 	m_led = false;
     }
@@ -109,30 +109,24 @@ public:
     }
     virtual unsigned int readLocalTime(tRioStatusCode *status) {
 	*status = 0;
-	return time(0);
+	return time(0) * 1000000U;
     }
     virtual unsigned int readRevision(tRioStatusCode *status) {
 	*status = 0;
-	return 1;
+	return 0x01051300;
     }
 
 private:
-    stubGlobal(const stubGlobal&);
-    void operator=(const stubGlobal&);
+    DISALLOW_COPY_AND_ASSIGN(stubGlobal);
 };
 
 
 tGlobal* tGlobal::create( tRioStatusCode *status )
 {
-    static stubGlobal * theGlobal;
-
-    if (!theGlobal) {
-	uint32_t guid[4];
-	snprintf((char *)guid, sizeof guid, "global");
-	theGlobal = new stubGlobal(guid);
-    }
+    uint32_t guid[4];
+    snprintf((char *)guid, sizeof guid, "global");
     *status = 0;
-    return theGlobal;
+    return new stubGlobal(guid);
 }
 
 }; // namespace nFRC_2012_1_6_4
@@ -156,7 +150,7 @@ private:
     signed int m_deadband;
 
 public:
-    stubAccumulator( unsigned char sys_index, const uint32_t guid[] ) {
+    stubAccumulator( unsigned char sys_index, const uint32_t guid[] ) : tAccumulator() {
 	m_index = sys_index;
 	m_systemInterface = new stubSystemInterface(guid);
 	m_center = 0;
@@ -217,8 +211,7 @@ public:
     }
 
 private:
-    stubAccumulator(const stubAccumulator&);
-    void operator=(const stubAccumulator&);
+    DISALLOW_COPY_AND_ASSIGN(stubAccumulator);
 };
 
 
@@ -227,20 +220,10 @@ tAccumulator* tAccumulator::create(
 	tRioStatusCode *status
     )
 {
-    static stubAccumulator *s_accumulator[tAccumulator::kNumSystems];
-
-    if (sys_index >= tAccumulator::kNumSystems) {
-	*status = NiFpga_Status_InvalidParameter;
-	return NULL;
-    }
-
-    if (!s_accumulator[sys_index]) {
-	uint32_t guid[4];
-	snprintf((char *)guid, sizeof guid, "accumulator %u", sys_index);
-	s_accumulator[sys_index] = new stubAccumulator(sys_index, guid);
-    }
+    uint32_t guid[4];
+    snprintf((char *)guid, sizeof guid, "accumulator %u", sys_index);
     *status = 0;
-    return s_accumulator[sys_index];
+    return new stubAccumulator(sys_index, guid);
 }
 
 }; // namespace nFRC_2012_1_6_4
@@ -268,7 +251,7 @@ private:
     tAI::tReadSelect m_readSelect;
 
 public:
-    stubAI( unsigned char sys_index, const uint32_t guid[] ) {
+    stubAI( unsigned char sys_index, const uint32_t guid[] ) : tAI() {
 	m_index = sys_index;
 	m_systemInterface = new stubSystemInterface(guid);
 	m_config.value = 0;
@@ -454,8 +437,7 @@ public:
     }
 
 private:
-    stubAI(const stubAI&);
-    void operator=(const stubAI&);
+    DISALLOW_COPY_AND_ASSIGN(stubAI);
 };
 
 
@@ -464,20 +446,10 @@ tAI* tAI::create(
 	tRioStatusCode *status
     )
 {
-    static stubAI *s_ai[tAI::kNumSystems];
-
-    if (sys_index >= tAI::kNumSystems) {
-	*status = NiFpga_Status_InvalidParameter;
-	return NULL;
-    }
-
-    if (!s_ai[sys_index]) {
-	uint32_t guid[4];
-	snprintf((char *)guid, sizeof guid, "ai %u", sys_index);
-	s_ai[sys_index] = new stubAI(sys_index, guid);
-    }
+    uint32_t guid[4];
+    snprintf((char *)guid, sizeof guid, "ai %u", sys_index);
     *status = 0;
-    return s_ai[sys_index];
+    return new stubAI(sys_index, guid);
 }
 
 }; // namespace nFRC_2012_1_6_4
@@ -515,7 +487,7 @@ private:
     unsigned char m_pwmValueRegisters[kNumPWMValueRegisters];
 
 public:
-    stubDIO( unsigned char sys_index, const uint32_t guid[] ) {
+    stubDIO( unsigned char sys_index, const uint32_t guid[] ) : tDIO() {
 	m_index = sys_index;
 	m_systemInterface = new stubSystemInterface(guid);
 	m_i2cDataToSend = 0;
@@ -1051,8 +1023,7 @@ public:
     }
 
 private:
-    stubDIO(const stubDIO&);
-    void operator=(const stubDIO&);
+    DISALLOW_COPY_AND_ASSIGN(stubDIO);
 };
 
 tDIO* tDIO::create(
@@ -1060,20 +1031,10 @@ tDIO* tDIO::create(
 	tRioStatusCode *status
     )
 {
-    static stubDIO *s_dio[tDIO::kNumSystems];
-
-    if (sys_index >= tDIO::kNumSystems) {
-	*status = NiFpga_Status_InvalidParameter;
-	return NULL;
-    }
-
-    if (!s_dio[sys_index]) {
-	uint32_t guid[4];
-	snprintf((char *)guid, sizeof guid, "ai %u", sys_index);
-	s_dio[sys_index] = new stubDIO(sys_index, guid);
-    }
+    uint32_t guid[4];
+    snprintf((char *)guid, sizeof guid, "dio %u", sys_index);
     *status = 0;
-    return s_dio[sys_index];
+    return new stubDIO(sys_index, guid);
 }
 
 }; // namespace nFRC_2012_1_6_4
@@ -1098,7 +1059,7 @@ private:
     unsigned int m_timer;
 
 public:
-    stubWatchdog( const uint32_t guid[] ) {
+    stubWatchdog( const uint32_t guid[] ) : tWatchdog() {
 	m_systemInterface = new stubSystemInterface(guid);
 	m_status.value = 0;
 	m_immortal = false;
@@ -1235,21 +1196,15 @@ public:
     }
 
 private:
-    stubWatchdog(const stubWatchdog&);
-    void operator=(const stubWatchdog&);
+    DISALLOW_COPY_AND_ASSIGN(stubWatchdog);
 };
 
 tWatchdog* tWatchdog::create( tRioStatusCode *status )
 {
-    static stubWatchdog * theWatchdog;
-
-    if (!theWatchdog) {
-	uint32_t guid[4];
-	snprintf((char *)guid, sizeof guid, "global");
-	theWatchdog = new stubWatchdog(guid);
-    }
+    uint32_t guid[4];
+    snprintf((char *)guid, sizeof guid, "watchdog");
     *status = 0;
-    return theWatchdog;
+    return new stubWatchdog(guid);
 }
 
 }; // namespace nFRC_2012_1_6_4
