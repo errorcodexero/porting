@@ -11,6 +11,9 @@
 #include "NetworkCommunication/FRCComm.h"
 #include "NetworkCommunication/UsageReporting.h"
 
+uint8_t fakeMAC[] = { 0x00, 0x80, 0x2f, 0x11, 0xd8, 0x2a };
+char fakeVersion[] = "06300800";
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // libpcap replacement for logging traffic to pcap file
@@ -183,13 +186,11 @@ public:
 private:
     pcap *m_pcap;
 
-    int m_commSocket;
-    sockaddr_in m_commAddr;
+    int m_recvSocket;
+    sockaddr_in m_recvAddr;
 
-#ifdef HAVE_FRC_WATCHDOG
-    int m_wdogSocket;
-    sockaddr_in m_wdogAddr;
-#endif
+    int m_sendSocket;
+    sockaddr_in m_sendAddr;
 
     Task *m_commTask;
     static void FRCCommTask( FNC * );
@@ -213,7 +214,7 @@ private:
 	uint32_t crc;			// 32-bit CRC
     } m_recvPkt;
 #pragma pack(pop)
-    sockaddr_in m_recvAddr;		// sending driver station's address
+    sockaddr_in m_fromAddr;		// sending driver station's address
     FRCCommonControlData m_recvData;	// control data in host byte order
 
 public:
@@ -333,7 +334,7 @@ private:
 	uint8_t lcdData[448];		// optional
     } m_sendPkt;
 #pragma pack(pop)
-    sockaddr_in m_sendAddr;
+    sockaddr_in m_toAddr;
     uint32_t m_sendPktLength;
 
 private:
@@ -365,37 +366,35 @@ FNC::FNC( SEM_ID dataAvailable )
 {
     m_pcap = new pcap("robot.pcap");
 
-    m_commSocket = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
-    if (m_commSocket == -1) {
+    m_recvSocket = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
+    if (m_recvSocket == -1) {
 	perror("socket");
 	abort();
     }
 
-    m_commAddr.sin_family = AF_INET;
-    m_commAddr.sin_addr.s_addr = INADDR_ANY;
-    m_commAddr.sin_port = htons(ROBOT_COMM_PORT);
+    m_recvAddr.sin_family = AF_INET;
+    m_recvAddr.sin_addr.s_addr = INADDR_ANY;
+    m_recvAddr.sin_port = htons(ROBOT_COMM_PORT);
 
-    if (bind(m_commSocket, (struct sockaddr *)&m_commAddr, sizeof m_commAddr) == -1) {
+    if (bind(m_recvSocket, (struct sockaddr *)&m_recvAddr, sizeof m_recvAddr) == -1) {
 	perror("bind");
 	abort();
     }
 
-#ifdef HAVE_FRC_WATCHDOG
-    m_wdogSocket = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
-    if (m_wdogSocket == -1) {
+    m_sendSocket = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
+    if (m_sendSocket == -1) {
 	perror("socket");
 	abort();
     }
 
-    m_wdogAddr.sin_family = AF_INET;
-    m_wdogAddr.sin_addr.s_addr = INADDR_ANY;
-    m_wdogAddr.sin_port = htons(ROBOT_WDOG_PORT);
+    m_sendAddr.sin_family = AF_INET;
+    m_sendAddr.sin_addr.s_addr = INADDR_ANY;
+    m_sendAddr.sin_port = htons(ROBOT_COMM_PORT+1);
 
-    if (bind(m_wdogSocket, (struct sockaddr *)&m_wdogAddr, sizeof m_wdogAddr) == -1) {
+    if (bind(m_sendSocket, (struct sockaddr *)&m_sendAddr, sizeof m_sendAddr) == -1) {
 	perror("bind");
 	abort();
     }
-#endif
 
     m_reset = true;
 
@@ -403,11 +402,6 @@ FNC::FNC( SEM_ID dataAvailable )
     m_dataMutex = semMCreate(SEM_Q_PRIORITY|SEM_DELETE_SAFE|SEM_INVERSION_SAFE);
     m_commTask = new Task( "NetRecv", (FUNCPTR) FNC::FRCCommTask );
     m_commTask->Start((uint32_t)this);
-
-#ifdef HAVE_FRC_WATCHDOG
-    m_wdogTask = new Task( "NetWatchdog", (FUNCPTR) FNC::FRCWatchdogTask );
-    m_wdogTask->Start((uint32_t)this);
-#endif
 }
 
 FNC::~FNC()
@@ -416,7 +410,7 @@ FNC::~FNC()
     //   without releasing it
     semTake(m_dataMutex, WAIT_FOREVER);
     delete m_commTask;
-    close(m_commSocket);
+    close(m_recvSocket);
     delete m_pcap;
     semDelete(m_dataMutex);
 }
@@ -443,23 +437,24 @@ STATUS FNC::Recv()
     struct sockaddr_in fromAddr;
     socklen_t fromAddrLen = sizeof fromAddr;
 
-    int n = recvfrom(m_commSocket, (char *)&m_recvPkt, sizeof m_recvPkt, 0,
+    int n = recvfrom(m_recvSocket, (char *)&m_recvPkt, sizeof m_recvPkt, 0,
 		     (struct sockaddr *)&fromAddr, &fromAddrLen);
     if (n == -1) {
 	perror("FRC_NetworkCommunication::Recv::recvfrom");
 	return ERROR;
     }
 
-    if (m_commAddr.sin_addr.s_addr == INADDR_ANY) {
+    if (m_recvAddr.sin_addr.s_addr == INADDR_ANY) {
 	// fill in my own address based on:
 	// DS at 10.TE.AM.xx
 	// robot at 10.TE.AM.2
 	in_addr_t ipaddr = ntohl(fromAddr.sin_addr.s_addr);
 	ipaddr = (ipaddr & 0xFFFFFF00) | 0x02;
-	m_commAddr.sin_addr.s_addr = htonl(ipaddr);
+	m_recvAddr.sin_addr.s_addr = htonl(ipaddr);
+	m_sendAddr.sin_addr.s_addr = htonl(ipaddr);
     }
 
-    m_pcap->write_record(&fromAddr, &m_commAddr, (char *)&m_recvPkt, n);
+    m_pcap->write_record(&fromAddr, &m_recvAddr, (char *)&m_recvPkt, n);
 
     if (n != sizeof m_recvPkt) {
 	printf("FRC_NetworkCommunication::Recv: wrong size (%d)\n", n);
@@ -618,7 +613,7 @@ STATUS FNC::Recv()
 #endif
 
 	// save sender's address for reply
-	memcpy(&m_recvAddr, &fromAddr, sizeof m_recvAddr);
+	memcpy(&m_fromAddr, &fromAddr, sizeof m_fromAddr);
 
 	// tell DriverStation object that new data is available
 	// semFlush will awaken any task that's waiting to take the semaphore
@@ -994,11 +989,10 @@ int FNC::Send()
     m_sendPkt.teamID = htons(m_recvData.teamID);
 
     // fake the cRIO MAC address - does the DS care about this?
-    memcpy(m_sendPkt.macAddr, "\000\002\004\006\010\012", 6);
+    memcpy(m_sendPkt.macAddr, fakeMAC, 6);
 
-    // copy DS version number from DS control packet
-    strncpy(m_sendPkt.versionData, m_recvData.versionData,
-    	    sizeof m_sendPkt.versionData);
+    // fake the FRC_NetworkCommunications version
+    strncpy(m_sendPkt.versionData, fakeVersion, sizeof m_sendPkt.versionData);
 
     m_sendPkt.unknown2[0] = 0;
     m_sendPkt.unknown2[1] = 0;
@@ -1081,79 +1075,21 @@ int FNC::Send()
 	FreeLCDData();
     }
 
-    m_sendAddr.sin_family = AF_INET;
-    m_sendAddr.sin_addr.s_addr = m_recvAddr.sin_addr.s_addr;
-    m_sendAddr.sin_port = htons(DS_COMM_PORT);
+    m_toAddr.sin_family = AF_INET;
+    m_toAddr.sin_addr.s_addr = m_fromAddr.sin_addr.s_addr;
+    m_toAddr.sin_port = htons(DS_COMM_PORT);
 
-    int n = sendto(m_commSocket, (char *)&m_sendPkt, m_sendPktLength, 0,
-		    (struct sockaddr *)&m_sendAddr, sizeof m_sendAddr);
+    int n = sendto(m_sendSocket, (char *)&m_sendPkt, m_sendPktLength, 0,
+		    (struct sockaddr *)&m_toAddr, sizeof m_toAddr);
     if (n == -1) {
 	perror("FRC_NetworkCommunication::Recv::sendto");
 	return ERROR;
     }
 
-    m_pcap->write_record(&m_commAddr, &m_sendAddr, (char *)&m_sendPkt, n);
+    m_pcap->write_record(&m_sendAddr, &m_toAddr, (char *)&m_sendPkt, n);
 
     return OK;
 }
-
-#ifdef HAVE_FRC_WATCHDOG
-void FNC::FRCWatchdogTask( FNC *pObj )
-{
-    while (1) {
-	if (pObj->Watchdog() == ERROR) {
-	    break;
-	}
-    }
-}
-
-STATUS FNC::Watchdog()
-{
-    struct sockaddr_in fromAddr;
-    socklen_t fromAddrLen = sizeof fromAddr;
-    char wdogPacket[64];
-
-    int n = recvfrom(m_wdogSocket, wdogPacket, sizeof wdogPacket, 0,
-		     (struct sockaddr *)&fromAddr, &fromAddrLen);
-    if (n == -1) {
-	perror("FRC_NetworkCommunication::Watchdog::recvfrom");
-	return ERROR;
-    }
-
-    if (m_wdogAddr.sin_addr.s_addr == INADDR_ANY) {
-	// fill in my own address based on:
-	// DS at 10.TE.AM.xx
-	// robot at 10.TE.AM.2
-	in_addr_t ipaddr = ntohl(fromAddr.sin_addr.s_addr);
-	ipaddr = (ipaddr & 0xFFFFFF00) | 0x02;
-	m_wdogAddr.sin_addr.s_addr = htonl(ipaddr);
-    }
-
-    m_pcap->write_record(&fromAddr, &m_wdogAddr, wdogPacket, n);
-
-    if (n == 64) {
-	// keep bytes 0-3
-	memset(&wdogPacket[4], 0, 32);
-	wdogPacket[4] = 1;
-	wdogPacket[24] = 0xff;
-	wdogPacket[25] = 0xff;
-	wdogPacket[26] = 0xff;
-	wdogPacket[27] = 0xbe;
-
-	wdogPacket[31] = 0x20;
-
-	if (sendto(m_wdogSocket, wdogPacket, 36, 0,
-	       (struct sockaddr *)&fromAddr, fromAddrLen) == -1) {
-	    perror("FRC_NetworkCommunication::Watchdog::sendto");
-	    return ERROR;
-	}
-
-	m_pcap->write_record(&m_wdogAddr, &fromAddr, wdogPacket, 36);
-    }
-
-    return OK;
-}
-#endif // HAVE_FRC_WATCHDOG
 
 ///////////////////////////////////////////////////////////////////////////////
 //
