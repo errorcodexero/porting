@@ -132,10 +132,10 @@ void DriverStation::Run()
 			FRC_NetworkCommunication_observeUserProgramDisabled();
 		if (m_userInAutonomous)
 			FRC_NetworkCommunication_observeUserProgramAutonomous();
-        if (m_userInTeleop)
-            FRC_NetworkCommunication_observeUserProgramTeleop();
-        if (m_userInTest)
-            FRC_NetworkCommunication_observeUserProgramTest();
+		if (m_userInTeleop)
+			FRC_NetworkCommunication_observeUserProgramTeleop();
+		if (m_userInTest)
+			FRC_NetworkCommunication_observeUserProgramTest();
 	}
 }
 
