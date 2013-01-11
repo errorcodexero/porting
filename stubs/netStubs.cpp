@@ -167,10 +167,10 @@ pcap::~pcap()
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#define	ROBOT_COMM_PORT	1110
-#define	DS_COMM_PORT	1150
-#define	ROBOT_WDOG_PORT	17185		// 0x4321
-#define	DS_WDOG_PORT	750		// 0x02EE
+#define	ROBOT_ADDR	0x0a0e1902
+#define	ROBOT_RECV_PORT	1110
+#define	ROBOT_SEND_PORT	1025
+#define	DS_REPLY_PORT	1150
 
 class FNC // FRC_NetworkCommunication
 {
@@ -373,8 +373,8 @@ FNC::FNC( SEM_ID dataAvailable )
     }
 
     m_recvAddr.sin_family = AF_INET;
-    m_recvAddr.sin_addr.s_addr = INADDR_ANY;
-    m_recvAddr.sin_port = htons(ROBOT_COMM_PORT);
+    m_recvAddr.sin_addr.s_addr = htonl(ROBOT_ADDR);
+    m_recvAddr.sin_port = htons(ROBOT_RECV_PORT);
 
     if (bind(m_recvSocket, (struct sockaddr *)&m_recvAddr, sizeof m_recvAddr) == -1) {
 	perror("bind");
@@ -388,8 +388,8 @@ FNC::FNC( SEM_ID dataAvailable )
     }
 
     m_sendAddr.sin_family = AF_INET;
-    m_sendAddr.sin_addr.s_addr = INADDR_ANY;
-    m_sendAddr.sin_port = htons(ROBOT_COMM_PORT+1);
+    m_sendAddr.sin_addr.s_addr = htonl(ROBOT_ADDR);
+    m_sendAddr.sin_port = htons(ROBOT_SEND_PORT);
 
     if (bind(m_sendSocket, (struct sockaddr *)&m_sendAddr, sizeof m_sendAddr) == -1) {
 	perror("bind");
@@ -1077,7 +1077,7 @@ int FNC::Send()
 
     m_toAddr.sin_family = AF_INET;
     m_toAddr.sin_addr.s_addr = m_fromAddr.sin_addr.s_addr;
-    m_toAddr.sin_port = htons(DS_COMM_PORT);
+    m_toAddr.sin_port = htons(DS_REPLY_PORT);
 
     int n = sendto(m_sendSocket, (char *)&m_sendPkt, m_sendPktLength, 0,
 		    (struct sockaddr *)&m_toAddr, sizeof m_toAddr);
