@@ -90,8 +90,8 @@ public:
 	    m_count = 0;
 	    m_owner = (pthread_t) 0;
 	    pthread_cond_signal( &m_cond );
-	    pthread_mutex_unlock( &m_mutex );
 	}
+	pthread_mutex_unlock( &m_mutex );
 	return OK;
     }
 
