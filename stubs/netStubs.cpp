@@ -26,14 +26,14 @@ private:
     SEM_ID m_mutex;
 
 public:
-    pcap( char *name );
+    pcap( const char *name );
     ~pcap();
 
     void write_record( const sockaddr_in *src, const sockaddr_in *dst,
     			const char *data, int len );
 };
 
-pcap::pcap( char *name )
+pcap::pcap( const char *name )
 {
     m_file = fopen(name, "wb");
     if (!m_file) {

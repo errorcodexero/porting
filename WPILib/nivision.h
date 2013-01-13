@@ -5118,7 +5118,7 @@ IMAQ_FUNC QuantifyReport*  IMAQ_STDCALL imaqQuantify(const Image* image, const I
 //  Error Management functions
 //============================================================================
 IMAQ_FUNC int         IMAQ_STDCALL imaqClearError(void);
-IMAQ_FUNC char*       IMAQ_STDCALL imaqGetErrorText(int errorCode);
+IMAQ_FUNC const char* IMAQ_STDCALL imaqGetErrorText(int errorCode);
 IMAQ_FUNC int         IMAQ_STDCALL imaqGetLastError(void);
 IMAQ_FUNC const char* IMAQ_STDCALL imaqGetLastErrorFunc(void);
 IMAQ_FUNC int         IMAQ_STDCALL imaqSetError(int errorCode, const char* function);

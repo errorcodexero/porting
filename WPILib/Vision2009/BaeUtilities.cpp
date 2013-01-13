@@ -47,7 +47,7 @@ void SetDebugFlag ( DebugOutputType flag  )
  * The file line number will also be printed.
  * @param tempString The format string.
  */
-void dprintf ( char * tempString, ...  )  /* Variable argument list */
+void dprintf ( const char * tempString, ...  )  /* Variable argument list */
 {
   va_list	args;			  /* Input argument list */
   int		line_number;      /* Line number passed in argument */
@@ -59,7 +59,7 @@ void dprintf ( char * tempString, ...  )  /* Variable argument list */
   FILE		*outfile_fd;      /* Output file pointer */
   char		filepath[128];    /* Text string */
   int		fatalFlag=0;
-  char		*filename;
+  const char	*filename;
   int		index;
   int		tempStringLen;
 
