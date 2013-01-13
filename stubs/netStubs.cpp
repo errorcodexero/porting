@@ -176,6 +176,7 @@ class FNC // FRC_NetworkCommunication
 {
 private:
     friend void setNewDataSem( SEM_ID );
+    friend STATUS waitForDS();
 
     FNC( SEM_ID );
     void SetNewDataSem( SEM_ID );
@@ -192,8 +193,10 @@ private:
     int m_sendSocket;
     sockaddr_in m_sendAddr;
 
+#ifndef SINGLE_THREADED
     Task *m_commTask;
     static void FRCCommTask( FNC * );
+#endif
 
     SEM_ID m_dataAvailable;
     SEM_ID m_dataMutex;
@@ -201,20 +204,23 @@ private:
 private:
     STATUS Recv();
 
-    static const size_t FRCCCDSize = sizeof (FRCCommonControlData); // 80
+#define FRCCCDSIZE sizeof (FRCCommonControlData) // 80
+#define	FRCEXTDSIZE 940
 
 #pragma pack(push,1)
     struct FRCRecvPkt {			// received data in network order...
 	FRCCommonControlData ctrl;	// common control data: 80 bytes
-	char ext[940];			// extension data: up to 940 bytes
+	char extData[FRCEXTDSIZE];	// extension data: up to 940 bytes
 	uint32_t crc;			// 32-bit CRC
     } m_recvPkt;
 #pragma pack(pop)
     sockaddr_in m_fromAddr;		// sending driver station's address
     FRCCommonControlData m_recvData;	// control data in host byte order
+    UINT8 m_extData[FRCEXTDSIZE];	// dynamic data in unknown byte order
 
 public:
     int GetCommonControlData( FRCCommonControlData *data );
+    int GetDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength );
 
 public:
     // keep a local copy of user data to be sent to the DS
@@ -392,12 +398,16 @@ FNC::FNC( SEM_ID dataAvailable )
 	abort();
     }
 
-    m_reset = true;
+    m_reset = false;
+
+    m_battery = 37.37;
 
     m_dataAvailable = dataAvailable;
     m_dataMutex = semMCreate(SEM_Q_PRIORITY|SEM_DELETE_SAFE|SEM_INVERSION_SAFE);
+#ifndef SINGLE_THREADED
     m_commTask = new Task( "FRC_NetRecv", (FUNCPTR) FNC::FRCCommTask );
     m_commTask->Start((uint32_t)this);
+#endif
 }
 
 FNC::~FNC()
@@ -405,7 +415,9 @@ FNC::~FNC()
     // can't use Synchronized here since we need to destroy the semaphore
     //   without releasing it
     semTake(m_dataMutex, WAIT_FOREVER);
+#ifndef SINGLE_THREADED
     delete m_commTask;
+#endif
     close(m_recvSocket);
     delete m_pcap;
     semDelete(m_dataMutex);
@@ -416,6 +428,7 @@ void FNC::SetNewDataSem( SEM_ID sem )
     m_dataAvailable = sem;
 }
 
+#ifndef SINGLE_THREADED
 void FNC::FRCCommTask( FNC *pObj )
 {
     while (1) {
@@ -427,6 +440,28 @@ void FNC::FRCCommTask( FNC *pObj )
 	}
     }
 }
+#endif
+
+#ifdef SINGLE_THREADED
+extern "C" STATUS waitForDS()
+{
+    if (!netCommObj) {
+	fprintf(stderr, "%s: network communications task not initialized\n",
+		__FUNCTION__);
+	abort();
+    }
+
+    if (netCommObj->Recv() == ERROR) {
+	return ERROR;
+    }
+
+    if (netCommObj->Send() == ERROR) {
+	return ERROR;
+    }
+
+    return OK;
+}
+#endif
 
 STATUS FNC::Recv()
 {
@@ -608,6 +643,11 @@ STATUS FNC::Recv()
 		&m_recvData.versionData[4], &m_recvData.versionData[6]);
 #endif
 
+	// copy the dynamic extensions
+	// we don't know the internal structure of these, so clients are
+	// responsible for unpacking their own data
+	memcpy(m_extData, m_recvPkt.extData, sizeof m_extData);
+
 	// save sender's address for reply
 	memcpy(&m_fromAddr, &fromAddr, sizeof m_fromAddr);
 
@@ -646,6 +686,43 @@ int FNC::GetCommonControlData( FRCCommonControlData *data )
 int getDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength,
 			   int wait_ms )
 {
+    if (!netCommObj) {
+	fprintf(stderr, "%s: network communications task not initialized\n",
+		__FUNCTION__);
+	abort();
+    }
+
+    // This assumes that wait_ms is always WAIT_FOREVER
+    // so we can safely ignore the parameter.
+    return netCommObj->GetDynamicControlData( type, dynamicData, maxLength );
+}
+
+int FNC::GetDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength )
+{
+    Synchronized sync(m_dataMutex);
+    
+    UINT8 *pData = m_extData;
+    UINT8 len;
+    UINT8 tag;
+
+    while (pData < &m_extData[FRCEXTDSIZE - 2]) {
+	len = pData[0];
+	tag = pData[1];
+	if (len == 0 || tag == 0) {
+	    break;
+	}
+	if (tag == type) {
+	    if (1+len > maxLength) {
+		fprintf(stderr, "%s: buffer too small, was %ld bytes,"
+			" need %u bytes\n", __FUNCTION__, maxLength, len+1);
+		return ERROR;
+	    }
+	    memcpy(dynamicData, pData, 1+len);
+	    return OK;
+	}
+	pData += 1 + len;
+    }
+
     return ERROR;
 }
 
@@ -955,14 +1032,19 @@ int FNC::Send()
     memset(&m_sendPkt, 0, sizeof m_sendPkt);
 
     // send our current control mode back to DS
-    m_sendPkt.reset = m_reset; m_reset = false;
+#if 0
+    m_sendPkt.reset = m_reset;
+#endif
+    m_reset = false;
     m_sendPkt.notEStop = true;
     m_sendPkt.enabled = m_enabled;
     m_sendPkt.autonomous = m_autonomous;
     m_sendPkt.test = m_test;
 
+#if 0
     // copy resync flag from DS control packet
     m_sendPkt.resync = m_recvData.resync;
+#endif
 
     // battery voltage - BCD scaled integer
     int vbat = (int)(m_battery * 100.0);
