@@ -26,14 +26,14 @@ private:
     SEM_ID m_mutex;
 
 public:
-    pcap( char *name );
+    pcap( const char *name );
     ~pcap();
 
     void write_record( const sockaddr_in *src, const sockaddr_in *dst,
     			const char *data, int len );
 };
 
-pcap::pcap( char *name )
+pcap::pcap( const char *name )
 {
     m_file = fopen(name, "wb");
     if (!m_file) {
@@ -194,10 +194,6 @@ private:
 
     Task *m_commTask;
     static void FRCCommTask( FNC * );
-
-    Task *m_wdogTask;
-    static void FRCWatchdogTask( FNC * );
-    STATUS Watchdog();
 
     SEM_ID m_dataAvailable;
     SEM_ID m_dataMutex;
@@ -400,7 +396,7 @@ FNC::FNC( SEM_ID dataAvailable )
 
     m_dataAvailable = dataAvailable;
     m_dataMutex = semMCreate(SEM_Q_PRIORITY|SEM_DELETE_SAFE|SEM_INVERSION_SAFE);
-    m_commTask = new Task( "NetRecv", (FUNCPTR) FNC::FRCCommTask );
+    m_commTask = new Task( "FRC_NetRecv", (FUNCPTR) FNC::FRCCommTask );
     m_commTask->Start((uint32_t)this);
 }
 
@@ -616,9 +612,6 @@ STATUS FNC::Recv()
 	memcpy(&m_fromAddr, &fromAddr, sizeof m_fromAddr);
 
 	// tell DriverStation object that new data is available
-	// semFlush will awaken any task that's waiting to take the semaphore
-	// without actually giving it the semaphore (so its semTake will
-	// fail, but it's supposed to ignore that).
 	semFlush(m_dataAvailable);
 
 	// end critical section
@@ -642,7 +635,6 @@ int getCommonControlData( FRCCommonControlData *data, int wait_ms )
 
 int FNC::GetCommonControlData( FRCCommonControlData *data )
 {
-    // use a Synchronized object and ignore the timeout.
     Synchronized sync(m_dataMutex);
 
     // copy received data to caller

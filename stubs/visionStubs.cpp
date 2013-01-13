@@ -1,6 +1,6 @@
 // stubs for NI Vision
 
-extern "C" char* imaqGetErrorText(int errorCode) {
+extern "C" const char* imaqGetErrorText(int errorCode) {
     return "NO_ERROR";
 }
 

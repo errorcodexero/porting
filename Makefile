@@ -1,6 +1,6 @@
 
-CC := gcc-3
-CXX := g++-3
+CC := gcc
+CXX := g++
 CINCLUDES := -I./ -I./WPILib/ -I./stubs/
 CFLAGS := -Wall -Werror -g -Oo $(CINCLUDES)
 CXXFLAGS := -Wall -Wno-deprecated -Wno-ctor-dtor-privacy -Werror -g $(CINCLUDES)
