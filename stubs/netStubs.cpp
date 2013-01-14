@@ -193,10 +193,8 @@ private:
     int m_sendSocket;
     sockaddr_in m_sendAddr;
 
-#ifndef SINGLE_THREADED
     Task *m_commTask;
     static void FRCCommTask( FNC * );
-#endif
 
     SEM_ID m_dataAvailable;
     SEM_ID m_dataMutex;
@@ -322,7 +320,7 @@ private:
 	uint8_t unknown2[6];
 	uint16_t packetIndex;		// copied from DS control packet
 	uint8_t updateNumber;		// from setStatusData()
-	uint8_t userData[951];		// contains:
+	uint8_t userData[911];		// contains:
 					// user data high len (4 bytes)
 					// user data high (n bytes)
 					// error string len (4 bytes)
@@ -330,10 +328,11 @@ private:
 					// user data low len (4 bytes)
 					// user data low (n bytes)
 					// ...or as much as will fit
+	uint8_t watchdog[40];
 	uint8_t eioConfig[32];		// DSEIO status_block_t + padding
 	uint8_t unknown3[4];
 	uint32_t crc;
-	uint8_t lcdData[448];		// optional
+	uint8_t lcdData[USER_DS_LCD_DATA_SIZE];	// optional
     } m_sendPkt;
 #pragma pack(pop)
     sockaddr_in m_toAddr;
@@ -400,14 +399,12 @@ FNC::FNC( SEM_ID dataAvailable )
 
     m_reset = false;
 
-    m_battery = 37.37;
+    m_battery = 37.372;	// must round to 0x3737 when converted to BCD
 
     m_dataAvailable = dataAvailable;
     m_dataMutex = semMCreate(SEM_Q_PRIORITY|SEM_DELETE_SAFE|SEM_INVERSION_SAFE);
-#ifndef SINGLE_THREADED
     m_commTask = new Task( "FRC_NetRecv", (FUNCPTR) FNC::FRCCommTask );
     m_commTask->Start((uint32_t)this);
-#endif
 }
 
 FNC::~FNC()
@@ -415,9 +412,7 @@ FNC::~FNC()
     // can't use Synchronized here since we need to destroy the semaphore
     //   without releasing it
     semTake(m_dataMutex, WAIT_FOREVER);
-#ifndef SINGLE_THREADED
     delete m_commTask;
-#endif
     close(m_recvSocket);
     delete m_pcap;
     semDelete(m_dataMutex);
@@ -428,40 +423,18 @@ void FNC::SetNewDataSem( SEM_ID sem )
     m_dataAvailable = sem;
 }
 
-#ifndef SINGLE_THREADED
 void FNC::FRCCommTask( FNC *pObj )
 {
     while (1) {
 	if (pObj->Recv() == ERROR) {
 	    break;
 	}
+	sleep(1);
 	if (pObj->Send() == ERROR) {
 	    break;
 	}
     }
 }
-#endif
-
-#ifdef SINGLE_THREADED
-extern "C" STATUS waitForDS()
-{
-    if (!netCommObj) {
-	fprintf(stderr, "%s: network communications task not initialized\n",
-		__FUNCTION__);
-	abort();
-    }
-
-    if (netCommObj->Recv() == ERROR) {
-	return ERROR;
-    }
-
-    if (netCommObj->Send() == ERROR) {
-	return ERROR;
-    }
-
-    return OK;
-}
-#endif
 
 STATUS FNC::Recv()
 {
@@ -1005,11 +978,16 @@ int FNC::SetLCDData( const char *lcdData, int lcdDataLength, int wait_ms )
     if (lcdData) {
 	// discard any unsent data
 	FreeLCDData();
-	// copy new data to local storage until we can send it to DS
-	int lcdlen = 1 + (uint8_t)lcdData[0];
-	m_lcdData = new char[lcdlen];
-	memcpy(m_lcdData, lcdData, lcdlen);
-	m_lcdDataLength = lcdlen;
+
+	if (lcdDataLength == USER_DS_LCD_DATA_SIZE) {
+	    // copy new data to local storage until we can send it to DS
+	    m_lcdData = new char[lcdDataLength];
+	    memcpy(m_lcdData, lcdData, lcdDataLength);
+	    m_lcdDataLength = lcdDataLength;
+	} else {
+	    fprintf(stderr, "%s: wrong length (%d), expected (%d)\n",
+		__FUNCTION__, lcdDataLength, USER_DS_LCD_DATA_SIZE);
+	}
     }
 
     return OK;
@@ -1032,10 +1010,10 @@ int FNC::Send()
     memset(&m_sendPkt, 0, sizeof m_sendPkt);
 
     // send our current control mode back to DS
-#if 0
-    m_sendPkt.reset = m_reset;
-#endif
-    m_reset = false;
+    if (m_reset) {
+	m_sendPkt.reset = m_reset;
+	m_reset = false;
+    }
     m_sendPkt.notEStop = true;
     m_sendPkt.enabled = m_enabled;
     m_sendPkt.autonomous = m_autonomous;
@@ -1128,6 +1106,13 @@ int FNC::Send()
 	    FreeUserDataLow();
 	}
     }
+
+    
+    // this is a hack
+    // the real robot code updates this data once/second
+    // and it's not clear how the numbers are generated
+    // (or why it needs to be 40 bytes long!)
+    clock_gettime(CLOCK_REALTIME, (timespec *)m_sendPkt.watchdog);
 
     // DS Enhanced I/O configuration
     if (m_eioConfig) {

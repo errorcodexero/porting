@@ -20,6 +20,8 @@ private:
     uint32_t autonomous_continuous;
     uint32_t teleop_periodic;
     uint32_t teleop_continuous;
+    uint32_t test_periodic;
+    uint32_t test_continuous;
 
 public:
     MyRobot();
@@ -29,14 +31,17 @@ public:
     virtual void DisabledInit();
     virtual void AutonomousInit();
     virtual void TeleopInit();
+    virtual void TestInit();
 
     virtual void DisabledPeriodic();
     virtual void AutonomousPeriodic();
     virtual void TeleopPeriodic();
+    virtual void TestPeriodic();
 
     virtual void DisabledContinuous();
     virtual void AutonomousContinuous();
     virtual void TeleopContinuous();
+    virtual void TestContinuous();
 };
 
 #define	COMPRESSOR_SWITCH	1
