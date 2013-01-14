@@ -81,33 +81,51 @@ do
   local f_r2d_control = ProtoField.uint8("r2d.command", "Control", base.HEX)
   local f_r2d_battery = ProtoField.uint16("r2d.battery", "Battery", base.HEX)
   local f_r2d_output  = ProtoField.uint8("r2d.output", "Digital Outputs", base.BIN)
-  local f_r2d_unknown_1 = ProtoField.bytes("r2d.unknown1", "Unknown 1")
+  local f_r2d_unk_1   = ProtoField.bytes("r2d.unknown1", "Unknown 1")
   local f_r2d_team    = ProtoField.uint16("r2d.team", "Team Number", base.DEC)
   local f_r2d_mac     = ProtoField.bytes("r2d.mac", "MAC Address")
   local f_r2d_version = ProtoField.string("r2d.version", "Version")
-  local f_r2d_unknown_2 = ProtoField.bytes("r2d.unknown2", "Unknown 2")
+  local f_r2d_unk_2 = ProtoField.bytes("r2d.unknown2", "Unknown 2")
   local f_r2d_packet  = ProtoField.uint16("r2d.packet", "Packet Index", base.DEC)
   local f_r2d_update  = ProtoField.uint8("r2d.packet", "Update Number", base.DEC)
   local f_r2d_user    = ProtoField.bytes("r2d.user", "User Data")
+  local f_r2d_wdog    = ProtoField.bytes("r2d.watchdog", "Watchdog")
   local f_r2d_eio     = ProtoField.bytes("r2d.eio", "Enhanced I/O Data")
-  local f_r2d_unknown_3 = ProtoField.bytes("r2d.unknown3", "Unknown 3")
+  local f_r2d_unk_3   = ProtoField.bytes("r2d.unknown3", "Unknown 3")
   local f_r2d_crc     = ProtoField.uint32("r2d.crc", "CRC", base.HEX)
+  local f_r2d_lcd     = ProtoField.string("r2d.lcd", "LCD")
+  local f_r2d_lcd_cmd = ProtoField.uint16("r2d.lcd.cmd", "LCD command", base.HEX)
+  local f_r2d_lcd_row1 = ProtoField.string("r2d.lcd.row1", "LCD row 1")
+  local f_r2d_lcd_row2 = ProtoField.string("r2d.lcd.row2", "LCD row 2")
+  local f_r2d_lcd_row3 = ProtoField.string("r2d.lcd.row3", "LCD row 3")
+  local f_r2d_lcd_row4 = ProtoField.string("r2d.lcd.row4", "LCD row 4")
+  local f_r2d_lcd_row5 = ProtoField.string("r2d.lcd.row5", "LCD row 5")
+  local f_r2d_lcd_row6 = ProtoField.string("r2d.lcd.row6", "LCD row 6")
 
   p_r2d.fields = {
     f_r2d_control,
     f_r2d_battery,
     f_r2d_output,
-    f_r2d_unknown_1,
+    f_r2d_unk_1,
     f_r2d_team,
     f_r2d_mac,
     f_r2d_version,
-    f_r2d_unknown_2,
+    f_r2d_unk_2,
     f_r2d_packet,
     f_r2d_update,
     f_r2d_user,
+    f_r2d_wdog,
     f_r2d_eio,
-    f_r2d_unknown_3,
-    f_r2d_crc
+    f_r2d_unk_3,
+    f_r2d_crc,
+    f_r2d_lcd,
+    f_r2d_lcd_cmd,
+    f_r2d_lcd_row1,
+    f_r2d_lcd_row2,
+    f_r2d_lcd_row3,
+    f_r2d_lcd_row4,
+    f_r2d_lcd_row5,
+    f_r2d_lcd_row6
   }
 
   function p_r2d.dissector (buf, pkt, root)
@@ -143,23 +161,32 @@ do
     out:add("Output 7: " .. (hasbit(val, bit(6)) and "Set" or "Unset"))
     out:add("Output 8: " .. (hasbit(val, bit(7)) and "Set" or "Unset"))
     
-    subtree:add(f_r2d_unknown_1, buf(4, 4))
+    subtree:add(f_r2d_unk_1, buf(4, 4))
     subtree:add(f_r2d_team, buf(8, 2))
     subtree:add(f_r2d_mac, buf(10,6))
     subtree:add(f_r2d_version, buf(16, 8))
-    subtree:add(f_r2d_unknown_2, buf(24, 6))
+    subtree:add(f_r2d_unk_2, buf(24, 6))
     subtree:add(f_r2d_packet, buf(30,2))
     subtree:add(f_r2d_update, buf(32,1))
-    subtree:add(f_r2d_user, buf(33, 951))
-
+    subtree:add(f_r2d_user, buf(33, 911))
+    subtree:add(f_r2d_wdog, buf(944, 40))
     local eio = subtree:add(f_r2d_eio, buf(984,32))
     local eioout_size = buf(984,1):uint()
     if (eioout_size > 0) then
 	p_eioout:call(buf(984,eioout_size+1), pkt, eio)
     end
-
-    subtree:add(f_r2d_unknown_3, buf(1016, 4))
+    subtree:add(f_r2d_unk_3, buf(1016, 4))
     subtree:add(f_r2d_crc, buf(1020, 4))
+    if (buf:len() > 1024) then
+	local lcd = subtree:add(f_r2d_lcd, buf(1024))
+	lcd:add(f_r2d_lcd_cmd, buf(1024,2))
+	lcd:add(f_r2d_lcd_row1, buf(1026, 21))
+	lcd:add(f_r2d_lcd_row2, buf(1047, 21))
+	lcd:add(f_r2d_lcd_row3, buf(1068, 21))
+	lcd:add(f_r2d_lcd_row4, buf(1089, 21))
+	lcd:add(f_r2d_lcd_row5, buf(1110, 21))
+	lcd:add(f_r2d_lcd_row6, buf(1131, 19))
+    end
   end
 
   -- DS-to-Robot protocol and its fields
@@ -273,9 +300,7 @@ do
     subtree:add(f_d2r_alliance, buf(6,1))
     subtree:add(f_d2r_position, buf(7,1))
 
-    local driver = subtree:add("driver controls")
-    
-    local js1 = driver:add(f_d2r_joystick1, buf(8, 6))
+    local js1 = subtree:add(f_d2r_joystick1, buf(8, 6))
     js1:add(f_d2r_js_btn1, buf(14, 2))
     js1:add("Axis 1: " .. buf(8,1))
     js1:add("Axis 2: " .. buf(9,1))
@@ -284,7 +309,7 @@ do
     js1:add("Axis 5: " .. buf(12,1))
     js1:add("Axis 6: " .. buf(13,1))
     
-    local js2 = driver:add(f_d2r_joystick2, buf(16, 6))
+    local js2 = subtree:add(f_d2r_joystick2, buf(16, 6))
     js2:add(f_d2r_js_btn2, buf(22, 2))
     js2:add("Axis 1: " .. buf(16,1))
     js2:add("Axis 2: " .. buf(17,1))
@@ -293,7 +318,7 @@ do
     js2:add("Axis 5: " .. buf(20,1))
     js2:add("Axis 6: " .. buf(21,1))
     
-    local js3 = driver:add(f_d2r_joystick3, buf(24, 6))
+    local js3 = subtree:add(f_d2r_joystick3, buf(24, 6))
     js3:add(f_d2r_js_btn3, buf(30, 2))
     js3:add("Axis 1: " .. buf(24,1))
     js3:add("Axis 2: " .. buf(25,1))
@@ -302,7 +327,7 @@ do
     js3:add("Axis 5: " .. buf(28,1))
     js3:add("Axis 6: " .. buf(29,1))
     
-    local js4 = driver:add(f_d2r_joystick4, buf(32, 6))
+    local js4 = subtree:add(f_d2r_joystick4, buf(32, 6))
     js4:add(f_d2r_js_btn4, buf(38, 2))
     js4:add("Axis 1: " .. buf(32,1))
     js4:add("Axis 2: " .. buf(33,1))
@@ -311,21 +336,19 @@ do
     js4:add("Axis 5: " .. buf(36,1))
     js4:add("Axis 6: " .. buf(37,1))
     
-    driver:add(f_d2r_analog1, buf(40, 2))
-    driver:add(f_d2r_analog2, buf(42, 2))
-    driver:add(f_d2r_analog3, buf(44, 2))
-    driver:add(f_d2r_analog4, buf(46, 2))
+    subtree:add(f_d2r_analog1, buf(40, 2))
+    subtree:add(f_d2r_analog2, buf(42, 2))
+    subtree:add(f_d2r_analog3, buf(44, 2))
+    subtree:add(f_d2r_analog4, buf(46, 2))
     
-    local checksums = subtree:add("checksums")
+    subtree:add(f_d2r_crio_chk, buf(48, 8))
 
-    checksums:add(f_d2r_crio_chk, buf(48, 8))
-
-    checksums:add(f_d2r_fpga_chk1, buf(56, 4))
-    checksums:add(f_d2r_fpga_chk2, buf(60, 4))
-    checksums:add(f_d2r_fpga_chk3, buf(64, 4))
-    checksums:add(f_d2r_fpga_chk4, buf(68, 4))
+    subtree:add(f_d2r_fpga_chk1, buf(56, 4))
+    subtree:add(f_d2r_fpga_chk2, buf(60, 4))
+    subtree:add(f_d2r_fpga_chk3, buf(64, 4))
+    subtree:add(f_d2r_fpga_chk4, buf(68, 4))
     
-    checksums:add(f_d2r_version, buf(72, 8))
+    subtree:add(f_d2r_version, buf(72, 8))
     
     local ext = subtree:add(f_d2r_ext, buf(80))
     local ext_off = 80
