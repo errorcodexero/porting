@@ -426,7 +426,6 @@ void FNC::FRCCommTask( FNC *pObj )
 	if (pObj->Recv() == ERROR) {
 	    break;
 	}
-	sleep(1);
 	if (pObj->Send() == ERROR) {
 	    break;
 	}
@@ -1001,10 +1000,6 @@ int FNC::Send()
     // keep the same bit ordering sent from the DS
     m_sendPkt.control = m_recvPkt.ctrl.control;
 
-#if 0
-    m_sendPkt.resync = false;
-#endif
-
     // battery voltage - BCD scaled integer
     int vbat = (int)(m_battery * 100.0);
     m_sendPkt.battery[0] = (((vbat / 1000) % 10) << 4) | ((vbat / 100) % 10);
@@ -1023,7 +1018,7 @@ int FNC::Send()
     strncpy(m_sendPkt.versionData, commVersion, sizeof m_sendPkt.versionData);
 
     // robot operating mode
-    m_sendPkt.mode = m_mode;
+    m_sendPkt.mode = htons(m_mode);
 
     // copy last received packet number from DS control packet
     m_sendPkt.packetIndex = htons(m_recvData.packetIndex);
