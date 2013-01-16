@@ -12,7 +12,7 @@
 #include "NetworkCommunication/UsageReporting.h"
 
 uint8_t fakeMAC[] = { 0x00, 0x80, 0x2f, 0x11, 0xd8, 0x2a };
-char fakeVersion[] = "06300800";
+char commVersion[] = "06300800";
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -233,10 +233,7 @@ public:
 			int wait_ms );
 
 private:
-    bool m_reset;
-    bool m_enabled;
-    bool m_autonomous;
-    bool m_test;
+    UINT16 m_mode;
 
     float m_battery;
     UINT8 m_dsDigitalOut;
@@ -285,7 +282,7 @@ private:
 
 #pragma pack(push,1)
     struct FRCStatusPkt {
-	union {
+/*000*/	union {
 		UINT8 control;
 #if (__BYTE_ORDER == __LITTLE_ENDIAN)
 		struct {
@@ -311,16 +308,17 @@ private:
 		};
 #endif
 	};
-	uint8_t battery[2];		// 2 bytes, scaled integer
-	uint8_t dsDigitalOut;		// DS digital outputs
-	uint8_t unknown1[4];
-	uint16_t teamID;		// copy of team ID from DS
-	uint8_t macAddr[6];		// cRIO MAC address
-	char versionData[8];		// DS version?
-	uint8_t unknown2[6];
-	uint16_t packetIndex;		// copied from DS control packet
-	uint8_t updateNumber;		// from setStatusData()
-	uint8_t userData[911];		// contains:
+/*001*/	uint8_t battery[2];		// 2 bytes, scaled integer
+/*003*/	uint8_t dsDigitalOut;		// DS digital outputs
+/*004*/	uint8_t unknown1[4];
+/*008*/	uint16_t teamID;		// copy of team ID from DS
+/*00A*/	uint8_t macAddr[6];		// cRIO MAC address
+/*010*/	char versionData[8];		// FRC comm protocol version
+/*018*/	uint8_t unknown2[4];
+/*01C*/ uint16_t mode;			// robot operating mode
+/*01E*/	uint16_t packetIndex;		// copied from DS control packet
+/*020*/	uint8_t updateNumber;		// from setStatusData()
+/*021*/	uint8_t userData[911];		// contains:
 					// user data high len (4 bytes)
 					// user data high (n bytes)
 					// error string len (4 bytes)
@@ -328,11 +326,10 @@ private:
 					// user data low len (4 bytes)
 					// user data low (n bytes)
 					// ...or as much as will fit
-	uint8_t watchdog[40];
-	uint8_t eioConfig[32];		// DSEIO status_block_t + padding
-	uint8_t unknown3[4];
-	uint32_t crc;
-	uint8_t lcdData[USER_DS_LCD_DATA_SIZE];	// optional
+/*3B0*/	uint8_t sysstat[44];		// system status data
+/*3DC*/	uint8_t eioConfig[32];		// DSEIO status_block_t
+/*3FC*/	uint32_t crc;
+/*400*/	uint8_t lcdData[USER_DS_LCD_DATA_SIZE];	// optional
     } m_sendPkt;
 #pragma pack(pop)
     sockaddr_in m_toAddr;
@@ -397,7 +394,7 @@ FNC::FNC( SEM_ID dataAvailable )
 	abort();
     }
 
-    m_reset = false;
+    m_mode = 0;
 
     m_battery = 37.372;	// must round to 0x3737 when converted to BCD
 
@@ -718,14 +715,8 @@ void FRC_NetworkCommunication_observeUserProgramStarting()
 void FNC::ObserveUserProgramStarting()
 {
     Synchronized sync(m_dataMutex);
-    if (!m_reset) {
-	printf("FRC_NetworkCommunication: user program is Starting\n");
-	// this should make the driver station switch to disabled mode!
-	m_reset = true;
-	m_enabled = false;
-	m_autonomous = false;
-	m_test = false;
-    }
+    printf("FRC_NetworkCommunication: user program is Starting\n");
+    m_mode = 0x00;
 }
 
 void FRC_NetworkCommunication_observeUserProgramDisabled()
@@ -743,9 +734,9 @@ void FRC_NetworkCommunication_observeUserProgramDisabled()
 void FNC::ObserveUserProgramDisabled()
 {
     Synchronized sync(m_dataMutex);
-    if (m_enabled) {
+    if (m_mode != 0x01) {
 	printf("FRC_NetworkCommunication: user program is in Disabled mode\n");
-	m_enabled = false;
+	m_mode = 0x01;
     }
 }
 
@@ -764,10 +755,9 @@ void FRC_NetworkCommunication_observeUserProgramAutonomous()
 void FNC::ObserveUserProgramAutonomous()
 {
     Synchronized sync(m_dataMutex);
-    if (!m_autonomous) {
+    if (m_mode != 0x02) {
 	printf("FRC_NetworkCommunication: user program is in Autonomous mode\n");
-	m_autonomous = true;
-	m_test = false;
+	m_mode = 0x02;
     }
 }
 
@@ -786,10 +776,9 @@ void FRC_NetworkCommunication_observeUserProgramTeleop()
 void FNC::ObserveUserProgramTeleop()
 {
     Synchronized sync(m_dataMutex);
-    if (m_autonomous || m_test) {
+    if (m_mode != 0x04) {
 	printf("FRC_NetworkCommunication: user program is in Teleop mode\n");
-	m_autonomous = false;
-	m_test = false;
+	m_mode = 0x04;
     }
 }
 
@@ -808,10 +797,9 @@ void FRC_NetworkCommunication_observeUserProgramTest()
 void FNC::ObserveUserProgramTest()
 {
     Synchronized sync(m_dataMutex);
-    if (!m_test) {
+    if (m_mode != 0x08) {
 	printf("FRC_NetworkCommunication: user program is in Test mode\n");
-	m_autonomous = false;
-	m_test = true;
+	m_mode = 0x08;
     }
 }
 
@@ -1010,18 +998,11 @@ int FNC::Send()
     memset(&m_sendPkt, 0, sizeof m_sendPkt);
 
     // send our current control mode back to DS
-    if (m_reset) {
-	m_sendPkt.reset = m_reset;
-	m_reset = false;
-    }
-    m_sendPkt.notEStop = true;
-    m_sendPkt.enabled = m_enabled;
-    m_sendPkt.autonomous = m_autonomous;
-    m_sendPkt.test = m_test;
+    // keep the same bit ordering sent from the DS
+    m_sendPkt.control = m_recvPkt.ctrl.control;
 
 #if 0
-    // copy resync flag from DS control packet
-    m_sendPkt.resync = m_recvData.resync;
+    m_sendPkt.resync = false;
 #endif
 
     // battery voltage - BCD scaled integer
@@ -1032,26 +1013,17 @@ int FNC::Send()
     // 8 bits of "digital outputs" displayed on DS
     m_sendPkt.dsDigitalOut = m_dsDigitalOut;
 
-    m_sendPkt.unknown1[0] = 0;
-    m_sendPkt.unknown1[1] = 0;
-    m_sendPkt.unknown1[2] = 0;
-    m_sendPkt.unknown1[3] = 0;
-
     // copy team ID from DS control packet
     m_sendPkt.teamID = htons(m_recvData.teamID);
 
     // fake the cRIO MAC address - does the DS care about this?
     memcpy(m_sendPkt.macAddr, fakeMAC, 6);
 
-    // fake the FRC_NetworkCommunications version
-    strncpy(m_sendPkt.versionData, fakeVersion, sizeof m_sendPkt.versionData);
+    // fake the FRC_NetworkCommunication version
+    strncpy(m_sendPkt.versionData, commVersion, sizeof m_sendPkt.versionData);
 
-    m_sendPkt.unknown2[0] = 0;
-    m_sendPkt.unknown2[1] = 0;
-    m_sendPkt.unknown2[2] = 0;
-    m_sendPkt.unknown2[3] = 0;
-    m_sendPkt.unknown2[4] = 0;
-    m_sendPkt.unknown2[5] = 0;
+    // robot operating mode
+    m_sendPkt.mode = m_mode;
 
     // copy last received packet number from DS control packet
     m_sendPkt.packetIndex = htons(m_recvData.packetIndex);
@@ -1107,12 +1079,13 @@ int FNC::Send()
 	}
     }
 
-    
+#if 0
     // this is a hack
     // the real robot code updates this data once/second
     // and it's not clear how the numbers are generated
     // (or why it needs to be 40 bytes long!)
-    clock_gettime(CLOCK_REALTIME, (timespec *)m_sendPkt.watchdog);
+    clock_gettime(CLOCK_REALTIME, (timespec *)m_sendPkt.sysstat);
+#endif
 
     // DS Enhanced I/O configuration
     if (m_eioConfig) {

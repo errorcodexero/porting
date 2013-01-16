@@ -84,8 +84,9 @@ do
   local f_r2d_unk_1   = ProtoField.bytes("r2d.unknown1", "Unknown 1")
   local f_r2d_team    = ProtoField.uint16("r2d.team", "Team Number", base.DEC)
   local f_r2d_mac     = ProtoField.bytes("r2d.mac", "MAC Address")
-  local f_r2d_version = ProtoField.string("r2d.version", "Version")
+  local f_r2d_comm_ver = ProtoField.string("r2d.comm", "FRC Comm Version")
   local f_r2d_unk_2 = ProtoField.bytes("r2d.unknown2", "Unknown 2")
+  local f_r2d_mode    = ProtoField.uint16("r2d.mode", "Operating Mode", base.HEX)
   local f_r2d_packet  = ProtoField.uint16("r2d.packet", "Packet Index", base.DEC)
   local f_r2d_update  = ProtoField.uint8("r2d.packet", "Update Number", base.DEC)
   local f_r2d_user    = ProtoField.bytes("r2d.user", "User Data")
@@ -109,8 +110,9 @@ do
     f_r2d_unk_1,
     f_r2d_team,
     f_r2d_mac,
-    f_r2d_version,
+    f_r2d_comm_ver,
     f_r2d_unk_2,
+    f_r2d_mode,
     f_r2d_packet,
     f_r2d_update,
     f_r2d_user,
@@ -164,8 +166,9 @@ do
     subtree:add(f_r2d_unk_1, buf(4, 4))
     subtree:add(f_r2d_team, buf(8, 2))
     subtree:add(f_r2d_mac, buf(10,6))
-    subtree:add(f_r2d_version, buf(16, 8))
-    subtree:add(f_r2d_unk_2, buf(24, 6))
+    subtree:add(f_r2d_comm_ver, buf(16, 8))
+    subtree:add(f_r2d_unk_2, buf(24, 4))
+    subtree:add(f_r2d_mode, buf(28, 2))
     subtree:add(f_r2d_packet, buf(30,2))
     subtree:add(f_r2d_update, buf(32,1))
     subtree:add(f_r2d_user, buf(33, 911))
