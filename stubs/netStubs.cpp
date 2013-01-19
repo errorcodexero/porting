@@ -326,8 +326,8 @@ private:
 					// user data low len (4 bytes)
 					// user data low (n bytes)
 					// ...or as much as will fit
-/*3B0*/	uint8_t sysstat[44];		// system status data
-/*3DC*/	uint8_t eioConfig[32];		// DSEIO status_block_t
+/*3B0*/	uint8_t sysstat[40];		// system status data
+/*3D8*/	uint8_t eioConfig[36];		// DSEIO status_block_t
 /*3FC*/	uint32_t crc;
 /*400*/	uint8_t lcdData[USER_DS_LCD_DATA_SIZE];	// optional
     } m_sendPkt;

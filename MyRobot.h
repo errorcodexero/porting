@@ -10,9 +10,14 @@ class MyRobot : public IterativeRobot
 {
 private:
     DriverStation *m_pDS;
-    DriverStationEnhancedIO *m_pIO;
+    Joystick *m_pJoy;
+    DriverStationEnhancedIO *m_pEIO;
     DriverStationLCD *m_pLCD;
     // Compressor *m_compressor;
+    Solenoid *m_pSol1;
+    Solenoid *m_pSol2;
+    Solenoid *m_pSol3;
+    Solenoid *m_pSol4;
 
     uint32_t disabled_periodic;
     uint32_t disabled_continuous;

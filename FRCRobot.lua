@@ -13,9 +13,9 @@ do
 
   local f_eioout_size       = ProtoField.uint16("eioout.size","size", base.DEC)
   local f_eioout_id         = ProtoField.uint16("eioout.id","ID", base.DEC)
-  local f_eioout_dio        = ProtoField.uint16("eioout.dio","digital I/O", base.BIN)
-  local f_eioout_oe         = ProtoField.uint16("eioout.oe","output enable", base.BIN)
-  local f_eioout_pe         = ProtoField.uint16("eioout.pe","pullup enable", base.BIN)
+  local f_eioout_dio        = ProtoField.uint16("eioout.dio","digital I/O", base.HEX)
+  local f_eioout_oe         = ProtoField.uint16("eioout.oe","output enable", base.HEX)
+  local f_eioout_pe         = ProtoField.uint16("eioout.pe","pullup enable", base.HEX)
   local f_eioout_pwm_cmp_1  = ProtoField.uint16("eioout.pwmcmp1","PWM Compare 1", base.DEC)
   local f_eioout_pwm_cmp_2  = ProtoField.uint16("eioout.pwmcmp2","PWM Compare 2", base.DEC)
   local f_eioout_pwm_cmp_3  = ProtoField.uint16("eioout.pwmcmp3","PWM Compare 3", base.DEC)
@@ -24,9 +24,9 @@ do
   local f_eioout_pwm_per_2  = ProtoField.uint16("eioout.pwmper2","PWM period 2", base.DEC)
   local f_eioout_dac_1      = ProtoField.uint8("eioout.dac1","DAC out 1", base.DEC)
   local f_eioout_dac_2      = ProtoField.uint8("eioout.dac2","DAC out 2", base.DEC)
-  local f_eioout_leds       = ProtoField.uint8("eioout.leds","LEDs", base.BIN)
+  local f_eioout_leds       = ProtoField.uint8("eioout.leds","LEDs", base.HEX)
   local f_eioout_enables    = ProtoField.uint8("eioout.enables","enables", base.HEX)
-  local f_eioout_fixed      = ProtoField.uint8("eioout.fixed","fixed digital out", base.BIN)
+  local f_eioout_fixed      = ProtoField.uint8("eioout.fixed","fixed digital out", base.HEX)
   local f_eioout_flags      = ProtoField.uint8("eioout.flags","flags", base.HEX)
 
   p_eioout.fields = {
@@ -80,7 +80,7 @@ do
 
   local f_r2d_control = ProtoField.uint8("r2d.command", "Control", base.HEX)
   local f_r2d_battery = ProtoField.uint16("r2d.battery", "Battery", base.HEX)
-  local f_r2d_output  = ProtoField.uint8("r2d.output", "Digital Outputs", base.BIN)
+  local f_r2d_output  = ProtoField.uint8("r2d.output", "Digital Outputs", base.HEX)
   local f_r2d_unk_1   = ProtoField.bytes("r2d.unknown1", "Unknown 1")
   local f_r2d_team    = ProtoField.uint16("r2d.team", "Team Number", base.DEC)
   local f_r2d_mac     = ProtoField.bytes("r2d.mac", "MAC Address")
@@ -90,9 +90,8 @@ do
   local f_r2d_packet  = ProtoField.uint16("r2d.packet", "Packet Index", base.DEC)
   local f_r2d_update  = ProtoField.uint8("r2d.packet", "Update Number", base.DEC)
   local f_r2d_user    = ProtoField.bytes("r2d.user", "User Data")
-  local f_r2d_wdog    = ProtoField.bytes("r2d.watchdog", "Watchdog")
+  local f_r2d_status  = ProtoField.bytes("r2d.status", "Robot Status")
   local f_r2d_eio     = ProtoField.bytes("r2d.eio", "Enhanced I/O Data")
-  local f_r2d_unk_3   = ProtoField.bytes("r2d.unknown3", "Unknown 3")
   local f_r2d_crc     = ProtoField.uint32("r2d.crc", "CRC", base.HEX)
   local f_r2d_lcd     = ProtoField.string("r2d.lcd", "LCD")
   local f_r2d_lcd_cmd = ProtoField.uint16("r2d.lcd.cmd", "LCD command", base.HEX)
@@ -116,9 +115,8 @@ do
     f_r2d_packet,
     f_r2d_update,
     f_r2d_user,
-    f_r2d_wdog,
+    f_r2d_status,
     f_r2d_eio,
-    f_r2d_unk_3,
     f_r2d_crc,
     f_r2d_lcd,
     f_r2d_lcd_cmd,
@@ -172,13 +170,13 @@ do
     subtree:add(f_r2d_packet, buf(30,2))
     subtree:add(f_r2d_update, buf(32,1))
     subtree:add(f_r2d_user, buf(33, 911))
-    subtree:add(f_r2d_wdog, buf(944, 40))
-    local eio = subtree:add(f_r2d_eio, buf(984,32))
+    subtree:add(f_r2d_status, buf(944, 40))
+    local eio = subtree:add(f_r2d_eio, buf(984,36))
     local eioout_size = buf(984,1):uint()
     if (eioout_size > 0) then
-	p_eioout:call(buf(984,eioout_size+1), pkt, eio)
+	local dis = Dissector.get("eioout")
+	dis:call(buf(984):tvb(), pkt, eio)
     end
-    subtree:add(f_r2d_unk_3, buf(1016, 4))
     subtree:add(f_r2d_crc, buf(1020, 4))
     if (buf:len() > 1024) then
 	local lcd = subtree:add(f_r2d_lcd, buf(1024))
@@ -197,18 +195,18 @@ do
 
   local f_d2r_packet    = ProtoField.uint16("d2r.packet", "Packet Index", base.DEC)
   local f_d2r_control   = ProtoField.uint8("d2r.command", "Control", base.HEX)
-  local f_d2r_input     = ProtoField.uint8("d2r.input", "Digital Input", base.BIN)
+  local f_d2r_input     = ProtoField.uint8("d2r.input", "Digital Input", base.HEX)
   local f_d2r_team      = ProtoField.uint16("d2r.team", "Team Number", base.DEC)
   local f_d2r_alliance  = ProtoField.string("d2r.alliance", "Team Alliance")
   local f_d2r_position  = ProtoField.string("d2r.position", "Team Position")
   local f_d2r_joystick1 = ProtoField.bytes("d2r.joystick1", "Joystick 1")
-  local f_d2r_js_btn1   = ProtoField.uint16("d2r.jsbtn1", "Joystick 1 Buttons", base.BIN)
+  local f_d2r_js_btn1   = ProtoField.uint16("d2r.jsbtn1", "Joystick 1 Buttons", base.HEX)
   local f_d2r_joystick2 = ProtoField.bytes("d2r.joystick2", "Joystick 2")
-  local f_d2r_js_btn2   = ProtoField.uint16("d2r.jsbtn2", "Joystick 2 Buttons", base.BIN)
+  local f_d2r_js_btn2   = ProtoField.uint16("d2r.jsbtn2", "Joystick 2 Buttons", base.HEX)
   local f_d2r_joystick3 = ProtoField.bytes("d2r.joystick3", "Joystick 3")
-  local f_d2r_js_btn3   = ProtoField.uint16("d2r.jsbtn3", "Joystick 3 Buttons", base.BIN)
+  local f_d2r_js_btn3   = ProtoField.uint16("d2r.jsbtn3", "Joystick 3 Buttons", base.HEX)
   local f_d2r_joystick4 = ProtoField.bytes("d2r.joystick4", "Joystick 4")
-  local f_d2r_js_btn4   = ProtoField.uint16("d2r.jsbtn4", "Joystick 4 Buttons", base.BIN)
+  local f_d2r_js_btn4   = ProtoField.uint16("d2r.jsbtn4", "Joystick 4 Buttons", base.HEX)
   local f_d2r_analog1   = ProtoField.uint16("d2r.analog1", "Analog 1", base.DEC)
   local f_d2r_analog2   = ProtoField.uint16("d2r.analog2", "Analog 2", base.DEC)
   local f_d2r_analog3   = ProtoField.uint16("d2r.analog3", "Analog 3", base.DEC)
