@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -19,25 +19,25 @@ extern Resource *interruptsResource;
  */
 void DigitalOutput::InitDigitalOutput(UINT8 moduleNumber, UINT32 channel)
 {
-	char buf[64];
-	if (!CheckDigitalModule(moduleNumber))
-	{
-		snprintf(buf, 64, "Digital Module %d", moduleNumber);
-		wpi_setWPIErrorWithContext(ModuleIndexOutOfRange, buf);
-		return;
-	}
-	if (!CheckDigitalChannel(channel))
-	{
-		snprintf(buf, 64, "Digital Channel %lu", channel);
-		wpi_setWPIErrorWithContext(ChannelIndexOutOfRange, buf);
-		return;
-	}
-	m_channel = channel;
-	m_pwmGenerator = ~0ul;
-	m_module = DigitalModule::GetInstance(moduleNumber);
-	m_module->AllocateDIO(m_channel, false);
+    char buf[64];
+    if (!CheckDigitalModule(moduleNumber))
+    {
+	snprintf(buf, 64, "Digital Module %d", moduleNumber);
+	wpi_setWPIErrorWithContext(ModuleIndexOutOfRange, buf);
+	return;
+    }
+    if (!CheckDigitalChannel(channel))
+    {
+	snprintf(buf, 64, "Digital Channel %lu", channel);
+	wpi_setWPIErrorWithContext(ChannelIndexOutOfRange, buf);
+	return;
+    }
+    m_channel = channel;
+    m_pwmGenerator = ~0ul;
+    m_module = DigitalModule::GetInstance(moduleNumber);
+    m_module->AllocateDIO(m_channel, false);
 
-	nUsageReporting::report(nUsageReporting::kResourceType_DigitalOutput, channel, moduleNumber - 1);
+    nUsageReporting::report(nUsageReporting::kResourceType_DigitalOutput, channel, moduleNumber - 1);
 }
 
 /**
@@ -48,7 +48,7 @@ void DigitalOutput::InitDigitalOutput(UINT8 moduleNumber, UINT32 channel)
  */
 DigitalOutput::DigitalOutput(UINT32 channel)
 {
-	InitDigitalOutput(GetDefaultDigitalModule(), channel);
+    InitDigitalOutput(GetDefaultDigitalModule(), channel);
 }
 
 /**
@@ -60,7 +60,7 @@ DigitalOutput::DigitalOutput(UINT32 channel)
  */
 DigitalOutput::DigitalOutput(UINT8 moduleNumber, UINT32 channel)
 {
-	InitDigitalOutput(moduleNumber, channel);
+    InitDigitalOutput(moduleNumber, channel);
 }
 
 /**
@@ -68,10 +68,10 @@ DigitalOutput::DigitalOutput(UINT8 moduleNumber, UINT32 channel)
  */
 DigitalOutput::~DigitalOutput()
 {
-	if (StatusIsFatal()) return;
-	// Disable the PWM in case it was running.
-	DisablePWM();
-	m_module->FreeDIO(m_channel);
+    if (StatusIsFatal()) return;
+    // Disable the PWM in case it was running.
+    DisablePWM();
+    m_module->FreeDIO(m_channel);
 }
 
 /**
@@ -80,8 +80,8 @@ DigitalOutput::~DigitalOutput()
  */
 void DigitalOutput::Set(UINT32 value)
 {
-	if (StatusIsFatal()) return;
-	m_module->SetDIO(m_channel, value);
+    if (StatusIsFatal()) return;
+    m_module->SetDIO(m_channel, value);
 }
 
 /**
@@ -89,7 +89,7 @@ void DigitalOutput::Set(UINT32 value)
  */
 UINT32 DigitalOutput::GetChannel()
 {
-	return m_channel;
+    return m_channel;
 }
 
 /**
@@ -100,8 +100,8 @@ UINT32 DigitalOutput::GetChannel()
  */
 void DigitalOutput::Pulse(float length)
 {
-	if (StatusIsFatal()) return;
-	m_module->Pulse(m_channel, length);
+    if (StatusIsFatal()) return;
+    m_module->Pulse(m_channel, length);
 }
 
 /**
@@ -110,72 +110,72 @@ void DigitalOutput::Pulse(float length)
  */
 bool DigitalOutput::IsPulsing()
 {
-	if (StatusIsFatal()) return false;
-	return m_module->IsPulsing(m_channel);
+    if (StatusIsFatal()) return false;
+    return m_module->IsPulsing(m_channel);
 }
 
 /**
  * Change the PWM frequency of the PWM output on a Digital Output line.
- * 
+ *
  * The valid range is from 0.6 Hz to 19 kHz.  The frequency resolution is logarithmic.
- * 
+ *
  * There is only one PWM frequency per digital module.
- * 
+ *
  * @param rate The frequency to output all digital output PWM signals on this module.
  */
 void DigitalOutput::SetPWMRate(float rate)
 {
-	if (StatusIsFatal()) return;
-	m_module->SetDO_PWMRate(rate);
+    if (StatusIsFatal()) return;
+    m_module->SetDO_PWMRate(rate);
 }
 
 /**
  * Enable a PWM Output on this line.
- * 
+ *
  * Allocate one of the 4 DO PWM generator resources from this module.
- * 
+ *
  * Supply the initial duty-cycle to output so as to avoid a glitch when first starting.
- * 
+ *
  * The resolution of the duty cycle is 8-bit for low frequencies (1kHz or less)
  * but is reduced the higher the frequency of the PWM signal is.
- * 
+ *
  * @param initialDutyCycle The duty-cycle to start generating. [0..1]
  */
 void DigitalOutput::EnablePWM(float initialDutyCycle)
 {
-	if (StatusIsFatal()) return;
-	if (m_pwmGenerator != ~0ul) return;
-	m_pwmGenerator = m_module->AllocateDO_PWM();
-	m_module->SetDO_PWMDutyCycle(m_pwmGenerator, initialDutyCycle);
-	m_module->SetDO_PWMOutputChannel(m_pwmGenerator, m_channel);
+    if (StatusIsFatal()) return;
+    if (m_pwmGenerator != ~0ul) return;
+    m_pwmGenerator = m_module->AllocateDO_PWM();
+    m_module->SetDO_PWMDutyCycle(m_pwmGenerator, initialDutyCycle);
+    m_module->SetDO_PWMOutputChannel(m_pwmGenerator, m_channel);
 }
 
 /**
  * Change this line from a PWM output back to a static Digital Output line.
- * 
+ *
  * Free up one of the 4 DO PWM generator resources that were in use.
  */
 void DigitalOutput::DisablePWM()
 {
-	if (StatusIsFatal()) return;
-	// Disable the output by routing to a dead bit.
-	m_module->SetDO_PWMOutputChannel(m_pwmGenerator, kDigitalChannels);
-	m_module->FreeDO_PWM(m_pwmGenerator);
-	m_pwmGenerator = ~0ul;
+    if (StatusIsFatal()) return;
+    // Disable the output by routing to a dead bit.
+    m_module->SetDO_PWMOutputChannel(m_pwmGenerator, kDigitalChannels);
+    m_module->FreeDO_PWM(m_pwmGenerator);
+    m_pwmGenerator = ~0ul;
 }
 
 /**
  * Change the duty-cycle that is being generated on the line.
- * 
+ *
  * The resolution of the duty cycle is 8-bit for low frequencies (1kHz or less)
  * but is reduced the higher the frequency of the PWM signal is.
- * 
+ *
  * @param dutyCycle The duty-cycle to change to. [0..1]
  */
 void DigitalOutput::UpdateDutyCycle(float dutyCycle)
 {
-	if (StatusIsFatal()) return;
-	m_module->SetDO_PWMDutyCycle(m_pwmGenerator, dutyCycle);
+    if (StatusIsFatal()) return;
+    m_module->SetDO_PWMDutyCycle(m_pwmGenerator, dutyCycle);
 }
 
 /**
@@ -183,7 +183,7 @@ void DigitalOutput::UpdateDutyCycle(float dutyCycle)
  */
 UINT32 DigitalOutput::GetChannelForRouting()
 {
-	return DigitalModule::RemapDigitalChannel(GetChannel() - 1);
+    return DigitalModule::RemapDigitalChannel(GetChannel() - 1);
 }
 
 /**
@@ -191,8 +191,8 @@ UINT32 DigitalOutput::GetChannelForRouting()
  */
 UINT32 DigitalOutput::GetModuleForRouting()
 {
-	if (StatusIsFatal()) return 0;
-	return m_module->GetNumber() - 1;
+    if (StatusIsFatal()) return 0;
+    return m_module->GetNumber() - 1;
 }
 
 /**
@@ -200,7 +200,7 @@ UINT32 DigitalOutput::GetModuleForRouting()
  */
 bool DigitalOutput::GetAnalogTriggerForRouting()
 {
-	return false;
+    return false;
 }
 
 /**
@@ -213,27 +213,27 @@ bool DigitalOutput::GetAnalogTriggerForRouting()
  */
 void DigitalOutput::RequestInterrupts(tInterruptHandler handler, void *param)
 {
-	if (StatusIsFatal()) return;
-	UINT32 index = interruptsResource->Allocate("Sync Interrupt");
-	if (index == ~0ul)
-	{
-		CloneError(interruptsResource);
-		return;
-	}
-	m_interruptIndex = index;
+    if (StatusIsFatal()) return;
+    UINT32 index = interruptsResource->Allocate("Sync Interrupt");
+    if (index == ~0ul)
+    {
+	CloneError(interruptsResource);
+	return;
+    }
+    m_interruptIndex = index;
 
-	// Creates a manager too
-	AllocateInterrupts(false);
+    // Creates a manager too
+    AllocateInterrupts(false);
 
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	m_interrupt->writeConfig_WaitForAck(false, &localStatus);
-	m_interrupt->writeConfig_Source_AnalogTrigger(GetAnalogTriggerForRouting(), &localStatus);
-	m_interrupt->writeConfig_Source_Channel(GetChannelForRouting(), &localStatus);
-	m_interrupt->writeConfig_Source_Module(GetModuleForRouting(), &localStatus);
-	SetUpSourceEdge(true, false);
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    m_interrupt->writeConfig_WaitForAck(false, &localStatus);
+    m_interrupt->writeConfig_Source_AnalogTrigger(GetAnalogTriggerForRouting(), &localStatus);
+    m_interrupt->writeConfig_Source_Channel(GetChannelForRouting(), &localStatus);
+    m_interrupt->writeConfig_Source_Module(GetModuleForRouting(), &localStatus);
+    SetUpSourceEdge(true, false);
 
-	m_manager->registerHandler(handler, param, &localStatus);
-	wpi_setError(localStatus);
+    m_manager->registerHandler(handler, param, &localStatus);
+    wpi_setError(localStatus);
 }
 
 /**
@@ -244,68 +244,68 @@ void DigitalOutput::RequestInterrupts(tInterruptHandler handler, void *param)
  */
 void DigitalOutput::RequestInterrupts()
 {
-	if (StatusIsFatal()) return;
-	UINT32 index = interruptsResource->Allocate("Sync Interrupt");
-	if (index == ~0ul)
-	{
-		CloneError(interruptsResource);
-		return;
-	}
-	m_interruptIndex = index;
+    if (StatusIsFatal()) return;
+    UINT32 index = interruptsResource->Allocate("Sync Interrupt");
+    if (index == ~0ul)
+    {
+	CloneError(interruptsResource);
+	return;
+    }
+    m_interruptIndex = index;
 
-	AllocateInterrupts(true);
+    AllocateInterrupts(true);
 
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	m_interrupt->writeConfig_Source_AnalogTrigger(GetAnalogTriggerForRouting(), &localStatus);
-	m_interrupt->writeConfig_Source_Channel(GetChannelForRouting(), &localStatus);
-	m_interrupt->writeConfig_Source_Module(GetModuleForRouting(), &localStatus);
-	SetUpSourceEdge(true, false);
-	wpi_setError(localStatus);
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    m_interrupt->writeConfig_Source_AnalogTrigger(GetAnalogTriggerForRouting(), &localStatus);
+    m_interrupt->writeConfig_Source_Channel(GetChannelForRouting(), &localStatus);
+    m_interrupt->writeConfig_Source_Module(GetModuleForRouting(), &localStatus);
+    SetUpSourceEdge(true, false);
+    wpi_setError(localStatus);
 }
 
 void DigitalOutput::SetUpSourceEdge(bool risingEdge, bool fallingEdge)
 {
-	if (StatusIsFatal()) return;
-	if (m_interrupt == NULL)
-	{
-		wpi_setWPIErrorWithContext(NullParameter, "You must call RequestInterrupts before SetUpSourceEdge");
-		return;
-	}
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	if (m_interrupt != NULL)
-	{
-		m_interrupt->writeConfig_RisingEdge(risingEdge, &localStatus);
-		m_interrupt->writeConfig_FallingEdge(fallingEdge, &localStatus);
-	}
-	wpi_setError(localStatus);
+    if (StatusIsFatal()) return;
+    if (m_interrupt == NULL)
+    {
+	wpi_setWPIErrorWithContext(NullParameter, "You must call RequestInterrupts before SetUpSourceEdge");
+	return;
+    }
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    if (m_interrupt != NULL)
+    {
+	m_interrupt->writeConfig_RisingEdge(risingEdge, &localStatus);
+	m_interrupt->writeConfig_FallingEdge(fallingEdge, &localStatus);
+    }
+    wpi_setError(localStatus);
 }
 
 void DigitalOutput::ValueChanged(ITable* source, const std::string& key, EntryValue value, bool isNew) {
-	Set(value.b);
+    Set(value.b);
 }
 
 void DigitalOutput::UpdateTable() {
 }
 
 void DigitalOutput::StartLiveWindowMode() {
-	m_table->AddTableListener("Value", this, true);
+    m_table->AddTableListener("Value", this, true);
 }
 
 void DigitalOutput::StopLiveWindowMode() {
-	m_table->RemoveTableListener(this);
+    m_table->RemoveTableListener(this);
 }
 
 std::string DigitalOutput::GetSmartDashboardType() {
-	return "Digital Output";
+    return "Digital Output";
 }
 
 void DigitalOutput::InitTable(ITable *subTable) {
-	m_table = subTable;
-	UpdateTable();
+    m_table = subTable;
+    UpdateTable();
 }
 
 ITable * DigitalOutput::GetTable() {
-	return m_table;
+    return m_table;
 }
 
 

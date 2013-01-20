@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -8,7 +8,7 @@
 #include "WPIErrors.h"
 
 /** Private NI function needed to write to the VxWorks target */
-IMAQ_FUNC int Priv_SetWriteFileAllowed(UINT32 enable); 
+IMAQ_FUNC int Priv_SetWriteFileAllowed(UINT32 enable);
 
 BinaryImage::BinaryImage() : MonoImage()
 {
@@ -24,10 +24,10 @@ BinaryImage::~BinaryImage()
  */
 int BinaryImage::GetNumberParticles()
 {
-	int numParticles = 0;
-	int success = imaqCountParticles(m_imaqImage, 1, &numParticles);
-	wpi_setImaqErrorWithContext(success, "Error counting particles");
-	return numParticles;
+    int numParticles = 0;
+    int success = imaqCountParticles(m_imaqImage, 1, &numParticles);
+    wpi_setImaqErrorWithContext(success, "Error counting particles");
+    return numParticles;
 }
 
 /**
@@ -38,9 +38,9 @@ int BinaryImage::GetNumberParticles()
  */
 ParticleAnalysisReport BinaryImage::GetParticleAnalysisReport(int particleNumber)
 {
-	ParticleAnalysisReport par;
-	GetParticleAnalysisReport(particleNumber, &par);
-	return par;
+    ParticleAnalysisReport par;
+    GetParticleAnalysisReport(particleNumber, &par);
+    return par;
 }
 
 /**
@@ -52,43 +52,43 @@ ParticleAnalysisReport BinaryImage::GetParticleAnalysisReport(int particleNumber
  */
 void BinaryImage::GetParticleAnalysisReport(int particleNumber, ParticleAnalysisReport *par)
 {
-	int success;
-	int numParticles = 0;
+    int success;
+    int numParticles = 0;
 
-	success = imaqGetImageSize(m_imaqImage, &par->imageWidth, &par->imageHeight);
-	wpi_setImaqErrorWithContext(success, "Error getting image size");
-	if (StatusIsFatal())
-		return;
+    success = imaqGetImageSize(m_imaqImage, &par->imageWidth, &par->imageHeight);
+    wpi_setImaqErrorWithContext(success, "Error getting image size");
+    if (StatusIsFatal())
+	return;
 
-	success = imaqCountParticles(m_imaqImage, 1, &numParticles);
-	wpi_setImaqErrorWithContext(success, "Error counting particles");
-	if (StatusIsFatal())
-		return;
+    success = imaqCountParticles(m_imaqImage, 1, &numParticles);
+    wpi_setImaqErrorWithContext(success, "Error counting particles");
+    if (StatusIsFatal())
+	return;
 
-	if (particleNumber >= numParticles)
-	{
-		wpi_setWPIErrorWithContext(ParameterOutOfRange, "particleNumber");
-		return;
-	}
+    if (particleNumber >= numParticles)
+    {
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "particleNumber");
+	return;
+    }
 
-	par->particleIndex = particleNumber;
-	// Don't bother measuring the rest of the particle if one fails
-	bool good = ParticleMeasurement(particleNumber, IMAQ_MT_CENTER_OF_MASS_X, &par->center_mass_x);
-	good = good && ParticleMeasurement(particleNumber, IMAQ_MT_CENTER_OF_MASS_Y, &par->center_mass_y);
-	good = good && ParticleMeasurement(particleNumber, IMAQ_MT_AREA, &par->particleArea);
-	good = good && ParticleMeasurement(particleNumber, IMAQ_MT_BOUNDING_RECT_TOP, &par->boundingRect.top);
-	good = good && ParticleMeasurement(particleNumber, IMAQ_MT_BOUNDING_RECT_LEFT, &par->boundingRect.left);
-	good = good && ParticleMeasurement(particleNumber, IMAQ_MT_BOUNDING_RECT_HEIGHT, &par->boundingRect.height);
-	good = good && ParticleMeasurement(particleNumber, IMAQ_MT_BOUNDING_RECT_WIDTH, &par->boundingRect.width);
-	good = good && ParticleMeasurement(particleNumber, IMAQ_MT_AREA_BY_IMAGE_AREA, &par->particleToImagePercent);
-	good = good && ParticleMeasurement(particleNumber, IMAQ_MT_AREA_BY_PARTICLE_AND_HOLES_AREA, &par->particleQuality);
+    par->particleIndex = particleNumber;
+    // Don't bother measuring the rest of the particle if one fails
+    bool good = ParticleMeasurement(particleNumber, IMAQ_MT_CENTER_OF_MASS_X, &par->center_mass_x);
+    good = good && ParticleMeasurement(particleNumber, IMAQ_MT_CENTER_OF_MASS_Y, &par->center_mass_y);
+    good = good && ParticleMeasurement(particleNumber, IMAQ_MT_AREA, &par->particleArea);
+    good = good && ParticleMeasurement(particleNumber, IMAQ_MT_BOUNDING_RECT_TOP, &par->boundingRect.top);
+    good = good && ParticleMeasurement(particleNumber, IMAQ_MT_BOUNDING_RECT_LEFT, &par->boundingRect.left);
+    good = good && ParticleMeasurement(particleNumber, IMAQ_MT_BOUNDING_RECT_HEIGHT, &par->boundingRect.height);
+    good = good && ParticleMeasurement(particleNumber, IMAQ_MT_BOUNDING_RECT_WIDTH, &par->boundingRect.width);
+    good = good && ParticleMeasurement(particleNumber, IMAQ_MT_AREA_BY_IMAGE_AREA, &par->particleToImagePercent);
+    good = good && ParticleMeasurement(particleNumber, IMAQ_MT_AREA_BY_PARTICLE_AND_HOLES_AREA, &par->particleQuality);
 
-	if (good)
-	{
-		/* normalized position (-1 to 1) */
-		par->center_mass_x_normalized = NormalizeFromRange(par->center_mass_x, par->imageWidth);
-		par->center_mass_y_normalized = NormalizeFromRange(par->center_mass_y, par->imageHeight);
-	}
+    if (good)
+    {
+	/* normalized position (-1 to 1) */
+	par->center_mass_x_normalized = NormalizeFromRange(par->center_mass_x, par->imageWidth);
+	par->center_mass_y_normalized = NormalizeFromRange(par->center_mass_y, par->imageHeight);
+    }
 }
 
 
@@ -101,18 +101,18 @@ void BinaryImage::GetParticleAnalysisReport(int particleNumber, ParticleAnalysis
  */
 vector<ParticleAnalysisReport>* BinaryImage::GetOrderedParticleAnalysisReports()
 {
-	vector<ParticleAnalysisReport>* particles = new vector<ParticleAnalysisReport>;
-	int particleCount = GetNumberParticles();
-	for(int particleIndex = 0; particleIndex < particleCount; particleIndex++)
-	{
-		particles->push_back(GetParticleAnalysisReport(particleIndex));
-	}
-	// TODO: This is pretty inefficient since each compare in the sort copies
-	//   both reports being compared... do it manually instead... while we're
-	//   at it, we should provide a version that allows a preallocated buffer of
-	//   ParticleAnalysisReport structures
-	sort(particles->begin(), particles->end(), CompareParticleSizes);
-	return particles;
+    vector<ParticleAnalysisReport>* particles = new vector<ParticleAnalysisReport>;
+    int particleCount = GetNumberParticles();
+    for(int particleIndex = 0; particleIndex < particleCount; particleIndex++)
+    {
+	particles->push_back(GetParticleAnalysisReport(particleIndex));
+    }
+    // TODO: This is pretty inefficient since each compare in the sort copies
+    //   both reports being compared... do it manually instead... while we're
+    //   at it, we should provide a version that allows a preallocated buffer of
+    //   ParticleAnalysisReport structures
+    sort(particles->begin(), particles->end(), CompareParticleSizes);
+    return particles;
 }
 
 /**
@@ -122,15 +122,15 @@ vector<ParticleAnalysisReport>* BinaryImage::GetOrderedParticleAnalysisReports()
  */
 void BinaryImage::Write(const char *fileName)
 {
-	RGBValue colorTable[256];
-	Priv_SetWriteFileAllowed(1);
-	memset(colorTable, 0, sizeof(colorTable));
-	colorTable[0].R = 0;
-	colorTable[1].R = 255;
-	colorTable[0].G = colorTable[1].G = 0;
-	colorTable[0].B = colorTable[1].B = 0;
-	colorTable[0].alpha = colorTable[1].alpha = 0;
-	imaqWriteFile(m_imaqImage, fileName, colorTable);
+    RGBValue colorTable[256];
+    Priv_SetWriteFileAllowed(1);
+    memset(colorTable, 0, sizeof(colorTable));
+    colorTable[0].R = 0;
+    colorTable[1].R = 255;
+    colorTable[0].G = colorTable[1].G = 0;
+    colorTable[0].B = colorTable[1].B = 0;
+    colorTable[0].alpha = colorTable[1].alpha = 0;
+    imaqWriteFile(m_imaqImage, fileName, colorTable);
 }
 
 /**
@@ -144,10 +144,10 @@ void BinaryImage::Write(const char *fileName)
  */
 bool BinaryImage::ParticleMeasurement(int particleNumber, MeasurementType whatToMeasure, int *result)
 {
-	double resultDouble;
-	bool success = ParticleMeasurement(particleNumber, whatToMeasure, &resultDouble);
-	*result = (int)resultDouble;
-	return success;
+    double resultDouble;
+    bool success = ParticleMeasurement(particleNumber, whatToMeasure, &resultDouble);
+    *result = (int)resultDouble;
+    return success;
 }
 
 /**
@@ -161,16 +161,16 @@ bool BinaryImage::ParticleMeasurement(int particleNumber, MeasurementType whatTo
  */
 bool BinaryImage::ParticleMeasurement(int particleNumber, MeasurementType whatToMeasure, double *result)
 {
-	int success;
-	success = imaqMeasureParticle(m_imaqImage, particleNumber, 0, whatToMeasure, result);
-	wpi_setImaqErrorWithContext(success, "Error measuring particle");
-	return !StatusIsFatal();
+    int success;
+    success = imaqMeasureParticle(m_imaqImage, particleNumber, 0, whatToMeasure, result);
+    wpi_setImaqErrorWithContext(success, "Error measuring particle");
+    return !StatusIsFatal();
 }
 
 //Normalizes to [-1,1]
 double BinaryImage::NormalizeFromRange(double position, int range)
 {
-	return (position * 2.0 / (double)range) - 1.0;
+    return (position * 2.0 / (double)range) - 1.0;
 }
 
 /**
@@ -182,41 +182,41 @@ double BinaryImage::NormalizeFromRange(double position, int range)
  */
 bool BinaryImage::CompareParticleSizes(ParticleAnalysisReport particle1, ParticleAnalysisReport particle2)
 {
-	//we want descending sort order
-	return particle1.particleToImagePercent > particle2.particleToImagePercent;
+    //we want descending sort order
+    return particle1.particleToImagePercent > particle2.particleToImagePercent;
 }
 
 BinaryImage *BinaryImage::RemoveSmallObjects(bool connectivity8, int erosions)
 {
-	BinaryImage *result = new BinaryImage();
-	int success = imaqSizeFilter(result->GetImaqImage(), m_imaqImage, connectivity8, erosions, IMAQ_KEEP_LARGE, NULL);
-	wpi_setImaqErrorWithContext(success, "Error in RemoveSmallObjects");
-	return result;
+    BinaryImage *result = new BinaryImage();
+    int success = imaqSizeFilter(result->GetImaqImage(), m_imaqImage, connectivity8, erosions, IMAQ_KEEP_LARGE, NULL);
+    wpi_setImaqErrorWithContext(success, "Error in RemoveSmallObjects");
+    return result;
 }
 
 BinaryImage *BinaryImage::RemoveLargeObjects(bool connectivity8, int erosions)
 {
-	BinaryImage *result = new BinaryImage();
-	int success = imaqSizeFilter(result->GetImaqImage(), m_imaqImage, connectivity8, erosions, IMAQ_KEEP_SMALL, NULL);
-	wpi_setImaqErrorWithContext(success, "Error in RemoveLargeObjects");
-	return result;
+    BinaryImage *result = new BinaryImage();
+    int success = imaqSizeFilter(result->GetImaqImage(), m_imaqImage, connectivity8, erosions, IMAQ_KEEP_SMALL, NULL);
+    wpi_setImaqErrorWithContext(success, "Error in RemoveLargeObjects");
+    return result;
 }
 
 BinaryImage *BinaryImage::ConvexHull(bool connectivity8)
 {
-	BinaryImage *result = new BinaryImage();
-	int success = imaqConvexHull(result->GetImaqImage(), m_imaqImage, connectivity8);
-	wpi_setImaqErrorWithContext(success, "Error in convex hull operation");
-	return result;
+    BinaryImage *result = new BinaryImage();
+    int success = imaqConvexHull(result->GetImaqImage(), m_imaqImage, connectivity8);
+    wpi_setImaqErrorWithContext(success, "Error in convex hull operation");
+    return result;
 }
 
 BinaryImage *BinaryImage::ParticleFilter(ParticleFilterCriteria2 *criteria, int criteriaCount)
 {
-	BinaryImage *result = new BinaryImage();
-	int numParticles;
-	ParticleFilterOptions2 filterOptions = {0, 0, 0, 1};
-	int success = imaqParticleFilter4(result->GetImaqImage(), m_imaqImage, criteria, criteriaCount, &filterOptions, NULL, &numParticles);
-	wpi_setImaqErrorWithContext(success, "Error in particle filter operation");
-	return result;
+    BinaryImage *result = new BinaryImage();
+    int numParticles;
+    ParticleFilterOptions2 filterOptions = {0, 0, 0, 1};
+    int success = imaqParticleFilter4(result->GetImaqImage(), m_imaqImage, criteria, criteriaCount, &filterOptions, NULL, &numParticles);
+    wpi_setImaqErrorWithContext(success, "Error in particle filter operation");
+    return result;
 }
 

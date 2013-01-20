@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -26,34 +26,34 @@ const UINT8 HiTechnicColorSensor::kRawBlueRegister;
 
 /**
  * Constructor.
- * 
+ *
  * @param moduleNumber The digital module that the sensor is plugged into (1 or 2).
  */
 HiTechnicColorSensor::HiTechnicColorSensor(UINT8 moduleNumber)
-	: m_i2c (NULL)
+    : m_i2c (NULL)
 {
-	DigitalModule *module = DigitalModule::GetInstance(moduleNumber);
-	m_mode = kActive;
-	
-	if (module)
+    DigitalModule *module = DigitalModule::GetInstance(moduleNumber);
+    m_mode = kActive;
+
+    if (module)
+    {
+	m_i2c = module->GetI2C(kAddress);
+
+	// Verify Sensor
+	const UINT8 kExpectedManufacturer[] = "HiTechnc";
+	const UINT8 kExpectedSensorType[] = "ColorPD ";
+	if ( ! m_i2c->VerifySensor(kManufacturerBaseRegister, kManufacturerSize, kExpectedManufacturer) )
 	{
-		m_i2c = module->GetI2C(kAddress);
-	
-		// Verify Sensor
-		const UINT8 kExpectedManufacturer[] = "HiTechnc";
-		const UINT8 kExpectedSensorType[] = "ColorPD ";
-		if ( ! m_i2c->VerifySensor(kManufacturerBaseRegister, kManufacturerSize, kExpectedManufacturer) )
-		{
-			wpi_setWPIError(CompassManufacturerError);
-			return;
-		}
-		if ( ! m_i2c->VerifySensor(kSensorTypeBaseRegister, kSensorTypeSize, kExpectedSensorType) )
-		{
-			wpi_setWPIError(CompassTypeError);
-		}
-		
-		nUsageReporting::report(nUsageReporting::kResourceType_HiTechnicColorSensor, moduleNumber - 1);
+	    wpi_setWPIError(CompassManufacturerError);
+	    return;
 	}
+	if ( ! m_i2c->VerifySensor(kSensorTypeBaseRegister, kSensorTypeSize, kExpectedSensorType) )
+	{
+	    wpi_setWPIError(CompassTypeError);
+	}
+
+	nUsageReporting::report(nUsageReporting::kResourceType_HiTechnicColorSensor, moduleNumber - 1);
+    }
 }
 
 /**
@@ -61,8 +61,8 @@ HiTechnicColorSensor::HiTechnicColorSensor(UINT8 moduleNumber)
  */
 HiTechnicColorSensor::~HiTechnicColorSensor()
 {
-	delete m_i2c;
-	m_i2c = NULL;
+    delete m_i2c;
+    m_i2c = NULL;
 }
 
 /**
@@ -76,24 +76,24 @@ HiTechnicColorSensor::~HiTechnicColorSensor()
  */
 UINT8 HiTechnicColorSensor::GetColor()
 {
-	UINT8 color = 0;
-	
-	if(m_mode != kActive)
-	{
-		SetMode(kActive);
-	}
-	if (m_i2c)
-	{
-		m_i2c->Read(kColorRegister, sizeof(color), &color);
-	}
-	return color;
+    UINT8 color = 0;
+
+    if(m_mode != kActive)
+    {
+	SetMode(kActive);
+    }
+    if (m_i2c)
+    {
+	m_i2c->Read(kColorRegister, sizeof(color), &color);
+    }
+    return color;
 }
 
 /**
  * Get the Red value.
  *
  * Gets the (0-255) red value from the sensor.
- * 
+ *
  * The sensor must be in active mode to access the regular RGB data
  * if the sensor is not in active mode, it will be placed into active
  * mode by this method.
@@ -102,69 +102,69 @@ UINT8 HiTechnicColorSensor::GetColor()
  */
 UINT8 HiTechnicColorSensor::GetRed()
 {
-	UINT8 red = 0;
-	
-	if(m_mode != kActive)
-	{
-		SetMode(kActive);
-	}
-	if (m_i2c)
-	{
-		m_i2c->Read(kRedRegister, sizeof(red), &red);
-	}
-	return red;
+    UINT8 red = 0;
+
+    if(m_mode != kActive)
+    {
+	SetMode(kActive);
+    }
+    if (m_i2c)
+    {
+	m_i2c->Read(kRedRegister, sizeof(red), &red);
+    }
+    return red;
 }
 
 /**
  * Get the Green value.
  *
  * Gets the(0-255) green value from the sensor.
- * 
+ *
  * The sensor must be in active mode to access the regular RGB data
  * if the sensor is not in active mode, it will be placed into active
  * mode by this method.
- * 
+ *
  * @return The Green sensor value.
  */
 UINT8 HiTechnicColorSensor::GetGreen()
 {
-	UINT8 green = 0;
-	
-	if(m_mode != kActive)
-	{
-		SetMode(kActive);
-	}
-	if (m_i2c)
-	{
-		m_i2c->Read(kGreenRegister, sizeof(green), &green);
-	}
-	return green;
+    UINT8 green = 0;
+
+    if(m_mode != kActive)
+    {
+	SetMode(kActive);
+    }
+    if (m_i2c)
+    {
+	m_i2c->Read(kGreenRegister, sizeof(green), &green);
+    }
+    return green;
 }
 
 /**
  * Get the Blue value.
  *
  * Gets the raw (0-255) blue value from the sensor.
- * 
+ *
  * The sensor must be in active mode to access the regular RGB data
  * if the sensor is not in active mode, it will be placed into active
  * mode by this method.
- * 
+ *
  * @return The Blue sensor value.
  */
 UINT8 HiTechnicColorSensor::GetBlue()
 {
-	UINT8 blue = 0;
-	
-	if(m_mode != kActive)
-	{
-		SetMode(kActive);
-	}
-	if (m_i2c)
-	{
-		m_i2c->Read(kBlueRegister, sizeof(blue), &blue);
-	}
-	return blue;
+    UINT8 blue = 0;
+
+    if(m_mode != kActive)
+    {
+	SetMode(kActive);
+    }
+    if (m_i2c)
+    {
+	m_i2c->Read(kBlueRegister, sizeof(blue), &blue);
+    }
+    return blue;
 }
 
 /**
@@ -172,39 +172,39 @@ UINT8 HiTechnicColorSensor::GetBlue()
  * Using this method ensures that all three values come from the
  * same sensor reading, using the individual color methods provides
  * no such guarantee.
- * 
+ *
  * The sensor must be in active mode to access the regular RGB data.
  * If the sensor is not in active mode, it will be placed into active
  * mode by this method.
- * 
+ *
  * @return RGB object with the three color values
  */
 HiTechnicColorSensor::RGB HiTechnicColorSensor::GetRGB()
 {
-	UINT8 colors[3] = {0,0,0};
-	RGB result;
-	
-	if(m_mode != kActive)
-	{
-		SetMode(kActive);
-	}
-	if(m_i2c)
-	{
-		m_i2c->Read(kRawRedRegister, sizeof(colors), (UINT8*)&colors);
-	}
-	
-	result.red = colors[0];
-	result.green = colors[1];
-	result.blue = colors[2];
-	
-	return result;
+    UINT8 colors[3] = {0,0,0};
+    RGB result;
+
+    if(m_mode != kActive)
+    {
+	SetMode(kActive);
+    }
+    if(m_i2c)
+    {
+	m_i2c->Read(kRawRedRegister, sizeof(colors), (UINT8*)&colors);
+    }
+
+    result.red = colors[0];
+    result.green = colors[1];
+    result.blue = colors[2];
+
+    return result;
 }
 
 /**
  * Get the Raw Red value.
  *
  * Gets the (0-65536) raw red value from the sensor.
- * 
+ *
  * The sensor must be in raw or passive mode to access the regular RGB data
  * if the sensor is not in raw or passive mode, it will be placed into raw
  * mode by this method.
@@ -213,24 +213,24 @@ HiTechnicColorSensor::RGB HiTechnicColorSensor::GetRGB()
  */
 UINT16 HiTechnicColorSensor::GetRawRed()
 {
-	UINT16 rawRed = 0;
-	
-	if(m_mode == kActive)
-	{
-		SetMode(kRaw);
-	}
-	if (m_i2c)
-	{
-		m_i2c->Read(kRawRedRegister, sizeof(rawRed), (UINT8 *)&rawRed);
-	}
-	return rawRed;
+    UINT16 rawRed = 0;
+
+    if(m_mode == kActive)
+    {
+	SetMode(kRaw);
+    }
+    if (m_i2c)
+    {
+	m_i2c->Read(kRawRedRegister, sizeof(rawRed), (UINT8 *)&rawRed);
+    }
+    return rawRed;
 }
 
 /**
    * Get the Raw Green value.
    *
    * Gets the (0-65536) raw green value from the sensor.
-   * 
+   *
    * The sensor must be in raw or passive mode to access the regular RGB data
    * if the sensor is not in raw or passive mode, it will be placed into raw
    * mode by this method.
@@ -239,24 +239,24 @@ UINT16 HiTechnicColorSensor::GetRawRed()
    */
 UINT16 HiTechnicColorSensor::GetRawGreen()
 {
-	UINT16 rawGreen = 0;
-	
-	if(m_mode == kActive)
-	{
-		SetMode(kRaw);
-	}
-	if (m_i2c)
-	{
-		m_i2c->Read(kRawGreenRegister, sizeof(rawGreen), (UINT8 *)&rawGreen);
-	}
-	return rawGreen;
+    UINT16 rawGreen = 0;
+
+    if(m_mode == kActive)
+    {
+	SetMode(kRaw);
+    }
+    if (m_i2c)
+    {
+	m_i2c->Read(kRawGreenRegister, sizeof(rawGreen), (UINT8 *)&rawGreen);
+    }
+    return rawGreen;
 }
 
 /**
  * Get the Raw Blue value.
  *
  * Gets the (0-65536) raw blue value from the sensor.
- * 
+ *
  * The sensor must be in raw or passive mode to access the regular RGB data
  * if the sensor is not in raw or passive mode, it will be placed into raw
  * mode by this method.
@@ -265,17 +265,17 @@ UINT16 HiTechnicColorSensor::GetRawGreen()
  */
 UINT16 HiTechnicColorSensor::GetRawBlue()
 {
-	UINT16 rawBlue = 0;
-	
-	if(m_mode == kActive)
-	{
-		SetMode(kRaw);
-	}
-	if (m_i2c)
-	{
-		m_i2c->Read(kRawBlueRegister, sizeof(rawBlue), (UINT8 *)&rawBlue);
-	}
-	return rawBlue;
+    UINT16 rawBlue = 0;
+
+    if(m_mode == kActive)
+    {
+	SetMode(kRaw);
+    }
+    if (m_i2c)
+    {
+	m_i2c->Read(kRawBlueRegister, sizeof(rawBlue), (UINT8 *)&rawBlue);
+    }
+    return rawBlue;
 }
 
 /**
@@ -285,7 +285,7 @@ UINT16 HiTechnicColorSensor::GetRawBlue()
  * no such guarantee.
  *
  * Gets the (0-65536) raw color values from the sensor.
- * 
+ *
  * The sensor must be in raw or passive mode to access the regular RGB data
  * if the sensor is not in raw or passive mode, it will be placed into raw
  * mode by this method.
@@ -294,23 +294,23 @@ UINT16 HiTechnicColorSensor::GetRawBlue()
  */
 HiTechnicColorSensor::RGB HiTechnicColorSensor::GetRawRGB()
 {
-	UINT8 colors[6] = {0,0,0,0,0,0};
-	RGB result;
-	
-	if(m_mode != kActive)
-	{
-		SetMode(kActive);
-	}
-	if(m_i2c)
-	{
-		m_i2c->Read(kRedRegister, sizeof(colors), (UINT8*)&colors);
-	}
-	
-	result.red = (colors[0]<<8) + colors[1];
-	result.green = (colors[2]<<8) + colors[3];
-	result.blue = (colors[4]<<8) + colors[5];
-	
-	return result;
+    UINT8 colors[6] = {0,0,0,0,0,0};
+    RGB result;
+
+    if(m_mode != kActive)
+    {
+	SetMode(kActive);
+    }
+    if(m_i2c)
+    {
+	m_i2c->Read(kRedRegister, sizeof(colors), (UINT8*)&colors);
+    }
+
+    result.red = (colors[0]<<8) + colors[1];
+    result.green = (colors[2]<<8) + colors[3];
+    result.blue = (colors[4]<<8) + colors[5];
+
+    return result;
 }
 
 /**
@@ -324,10 +324,10 @@ HiTechnicColorSensor::RGB HiTechnicColorSensor::GetRawRGB()
  */
 void HiTechnicColorSensor::SetMode(tColorMode mode)
 {
-	if(m_i2c)
-	{
-		m_i2c->Write(kModeRegister, (UINT8)mode);
-	}
+    if(m_i2c)
+    {
+	m_i2c->Write(kModeRegister, (UINT8)mode);
+    }
 }
 
 /*
@@ -368,7 +368,7 @@ ITable* HiTechnicColorSensor::GetTable()
  */
 void HiTechnicColorSensor::StartLiveWindowMode()
 {
-	
+
 }
 
 /**
@@ -376,5 +376,5 @@ void HiTechnicColorSensor::StartLiveWindowMode()
  */
 void HiTechnicColorSensor::StopLiveWindowMode()
 {
-	
+
 }

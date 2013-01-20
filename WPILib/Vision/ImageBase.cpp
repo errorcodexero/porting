@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -8,7 +8,7 @@
 #include "nivision.h"
 
 /** Private NI function needed to write to the VxWorks target */
-IMAQ_FUNC int Priv_SetWriteFileAllowed(UINT32 enable); 
+IMAQ_FUNC int Priv_SetWriteFileAllowed(UINT32 enable);
 
 /**
  * Create a new instance of an ImageBase.
@@ -18,7 +18,7 @@ IMAQ_FUNC int Priv_SetWriteFileAllowed(UINT32 enable);
  */
 ImageBase::ImageBase(ImageType type)
 {
-	m_imaqImage = imaqCreateImage(type, DEFAULT_BORDER_SIZE);
+    m_imaqImage = imaqCreateImage(type, DEFAULT_BORDER_SIZE);
 }
 
 /**
@@ -27,8 +27,8 @@ ImageBase::ImageBase(ImageType type)
  */
 ImageBase::~ImageBase()
 {
-	if(m_imaqImage)
-		imaqDispose(m_imaqImage);
+    if(m_imaqImage)
+	imaqDispose(m_imaqImage);
 }
 
 /**
@@ -38,9 +38,9 @@ ImageBase::~ImageBase()
  */
 void ImageBase::Write(const char *fileName)
 {
-	Priv_SetWriteFileAllowed(1);
-	int success = imaqWriteFile(m_imaqImage, fileName, NULL);
-	wpi_setImaqErrorWithContext(success, "Imaq Image writeFile error");
+    Priv_SetWriteFileAllowed(1);
+    int success = imaqWriteFile(m_imaqImage, fileName, NULL);
+    wpi_setImaqErrorWithContext(success, "Imaq Image writeFile error");
 }
 
 /**
@@ -49,9 +49,9 @@ void ImageBase::Write(const char *fileName)
  */
 int ImageBase::GetHeight()
 {
-	int height;
-	imaqGetImageSize(m_imaqImage, NULL, &height);
-	return height;
+    int height;
+    imaqGetImageSize(m_imaqImage, NULL, &height);
+    return height;
 }
 
 /**
@@ -60,18 +60,18 @@ int ImageBase::GetHeight()
  */
 int ImageBase::GetWidth()
 {
-	int width;
-	imaqGetImageSize(m_imaqImage, &width, NULL);
-	return width;
+    int width;
+    imaqGetImageSize(m_imaqImage, &width, NULL);
+    return width;
 }
 
 /**
  * Access the internal IMAQ Image data structure.
- * 
+ *
  * @return A pointer to the internal IMAQ Image data structure.
  */
 Image *ImageBase::GetImaqImage()
 {
-	return m_imaqImage;
+    return m_imaqImage;
 }
 

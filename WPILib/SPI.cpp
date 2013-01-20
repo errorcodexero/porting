@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -23,13 +23,13 @@ SEM_ID SPI::m_semaphore = NULL;
  *
  * @param clk	The digital output for the clock signal.
  * @param mosi	The digital output for the written data to the slave
- *				(master-out slave-in).
+ *		(master-out slave-in).
  * @param miso	The digital input for the input data from the slave
- *				(master-in slave-out).
+ *		(master-in slave-out).
  */
 SPI::SPI(DigitalOutput &clk, DigitalOutput &mosi, DigitalInput &miso)
 {
-	Init(&clk, &mosi, &miso);
+    Init(&clk, &mosi, &miso);
 }
 
 /**
@@ -37,13 +37,13 @@ SPI::SPI(DigitalOutput &clk, DigitalOutput &mosi, DigitalInput &miso)
  *
  * @param clk	The digital output for the clock signal.
  * @param mosi	The digital output for the written data to the slave
- *				(master-out slave-in).
+ *		(master-out slave-in).
  * @param miso	The digital input for the input data from the slave
- *				(master-in slave-out).
+ *		(master-in slave-out).
  */
 SPI::SPI(DigitalOutput *clk, DigitalOutput *mosi, DigitalInput *miso)
 {
-	Init(clk, mosi, miso);
+    Init(clk, mosi, miso);
 }
 
 /**
@@ -51,11 +51,11 @@ SPI::SPI(DigitalOutput *clk, DigitalOutput *mosi, DigitalInput *miso)
  *
  * @param clk	The digital output for the clock signal.
  * @param mosi	The digital output for the written data to the slave
- *				(master-out slave-in).
+ *		(master-out slave-in).
  */
 SPI::SPI(DigitalOutput &clk, DigitalOutput &mosi)
 {
-	Init(&clk, &mosi, NULL);
+    Init(&clk, &mosi, NULL);
 }
 
 /**
@@ -63,11 +63,11 @@ SPI::SPI(DigitalOutput &clk, DigitalOutput &mosi)
  *
  * @param clk	The digital output for the clock signal.
  * @param mosi	The digital output for the written data to the slave
- *				(master-out slave-in).
+ *		(master-out slave-in).
  */
 SPI::SPI(DigitalOutput *clk, DigitalOutput *mosi)
 {
-	Init(clk, mosi, NULL);
+    Init(clk, mosi, NULL);
 }
 
 /**
@@ -75,11 +75,11 @@ SPI::SPI(DigitalOutput *clk, DigitalOutput *mosi)
  *
  * @param clk	The digital output for the clock signal.
  * @param miso	The digital input for the input data from the slave
- *				(master-in slave-out).
+ *		(master-in slave-out).
  */
 SPI::SPI(DigitalOutput &clk, DigitalInput &miso)
 {
-	Init(&clk, NULL, &miso);
+    Init(&clk, NULL, &miso);
 }
 
 /**
@@ -87,11 +87,11 @@ SPI::SPI(DigitalOutput &clk, DigitalInput &miso)
  *
  * @param clk	The digital output for the clock signal.
  * @param miso	The digital input for the input data from the slave
- *				(master-in slave-out).
+ *		(master-in slave-out).
  */
 SPI::SPI(DigitalOutput *clk, DigitalInput *miso)
 {
-	Init(clk, NULL, miso);
+    Init(clk, NULL, miso);
 }
 
 /**
@@ -99,7 +99,7 @@ SPI::SPI(DigitalOutput *clk, DigitalInput *miso)
  */
 SPI::~SPI()
 {
-	delete m_spi;
+    delete m_spi;
 }
 
 /**
@@ -107,63 +107,63 @@ SPI::~SPI()
  *
  * @param clk	The digital output for the clock signal.
  * @param mosi	The digital output for the written data to the slave
- *				(master-out slave-in).
+ *		(master-out slave-in).
  * @param miso	The digital input for the input data from the slave
- *				(master-in slave-out).
+ *		(master-in slave-out).
  */
 void SPI::Init(DigitalOutput *clk, DigitalOutput *mosi, DigitalInput *miso)
 {
-	if (m_semaphore == NULL)
-	{
-		m_semaphore = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
-	}
+    if (m_semaphore == NULL)
+    {
+	m_semaphore = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
+    }
 
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	m_spi = tSPI::create(&localStatus);
-	wpi_setError(localStatus);
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    m_spi = tSPI::create(&localStatus);
+    wpi_setError(localStatus);
 
-	m_config.BusBitWidth = 8;
-	m_config.ClockHalfPeriodDelay = 0;
-	m_config.MSBfirst = 0;
-	m_config.DataOnFalling = 0;
-	m_config.LatchFirst = 0;
-	m_config.LatchLast = 0;
-	m_config.FramePolarity = 0;
-	m_config.WriteOnly = miso ? 0 : 1;
-	m_config.ClockPolarity = 0;
+    m_config.BusBitWidth = 8;
+    m_config.ClockHalfPeriodDelay = 0;
+    m_config.MSBfirst = 0;
+    m_config.DataOnFalling = 0;
+    m_config.LatchFirst = 0;
+    m_config.LatchLast = 0;
+    m_config.FramePolarity = 0;
+    m_config.WriteOnly = miso ? 0 : 1;
+    m_config.ClockPolarity = 0;
 
-	m_channels.SCLK_Channel = clk->GetChannelForRouting();
-	m_channels.SCLK_Module = clk->GetModuleForRouting();
-	m_channels.SS_Channel = 0;
-	m_channels.SS_Module = 0;
+    m_channels.SCLK_Channel = clk->GetChannelForRouting();
+    m_channels.SCLK_Module = clk->GetModuleForRouting();
+    m_channels.SS_Channel = 0;
+    m_channels.SS_Module = 0;
 
-	if (mosi)
-	{
-		m_channels.MOSI_Channel = mosi->GetChannelForRouting();
-		m_channels.MOSI_Module = mosi->GetModuleForRouting();
-	}
-	else
-	{
-		m_channels.MOSI_Channel = 0;
-		m_channels.MOSI_Module = 0;
-	}
+    if (mosi)
+    {
+	m_channels.MOSI_Channel = mosi->GetChannelForRouting();
+	m_channels.MOSI_Module = mosi->GetModuleForRouting();
+    }
+    else
+    {
+	m_channels.MOSI_Channel = 0;
+	m_channels.MOSI_Module = 0;
+    }
 
-	if (miso)
-	{
-		m_channels.MISO_Channel = miso->GetChannelForRouting();
-		m_channels.MISO_Module = miso->GetModuleForRouting();
-	}
-	else
-	{
-		m_channels.MISO_Channel = 0;
-		m_channels.MISO_Module = 0;
-	}
+    if (miso)
+    {
+	m_channels.MISO_Channel = miso->GetChannelForRouting();
+	m_channels.MISO_Module = miso->GetModuleForRouting();
+    }
+    else
+    {
+	m_channels.MISO_Channel = 0;
+	m_channels.MISO_Module = 0;
+    }
 
-	m_ss = NULL;
+    m_ss = NULL;
 
-	static INT32 instances = 0;
-	instances++;
-	nUsageReporting::report(nUsageReporting::kResourceType_SPI, instances);
+    static INT32 instances = 0;
+    instances++;
+    nUsageReporting::report(nUsageReporting::kResourceType_SPI, instances);
 }
 
 /**
@@ -174,7 +174,7 @@ void SPI::Init(DigitalOutput *clk, DigitalOutput *mosi, DigitalInput *miso)
  */
 void SPI::SetBitsPerWord(UINT32 bits)
 {
-	m_config.BusBitWidth = bits;
+    m_config.BusBitWidth = bits;
 }
 
 /**
@@ -185,7 +185,7 @@ void SPI::SetBitsPerWord(UINT32 bits)
  */
 UINT32 SPI::GetBitsPerWord()
 {
-	return m_config.BusBitWidth;
+    return m_config.BusBitWidth;
 }
 
 /**
@@ -196,23 +196,23 @@ UINT32 SPI::GetBitsPerWord()
  */
 void SPI::SetClockRate(double hz)
 {
-	int delay = 0;
-	// TODO: compute the appropriate values based on digital loop timing
-	if (hz <= 76628.4)
-	{
-		double v = (1.0/hz)/1.305e-5;
-		int intv = (int)v;
-		if (v-intv > 0.5)
-			delay = intv;
-		else
-			delay = intv-1;
-	}
-	if (delay > 255)
-	{
-		wpi_setWPIError(SPIClockRateTooLow);
-		delay = 255;
-	}
-	m_config.ClockHalfPeriodDelay = delay;
+    int delay = 0;
+    // TODO: compute the appropriate values based on digital loop timing
+    if (hz <= 76628.4)
+    {
+	double v = (1.0/hz)/1.305e-5;
+	int intv = (int)v;
+	if (v-intv > 0.5)
+	    delay = intv;
+	else
+	    delay = intv-1;
+    }
+    if (delay > 255)
+    {
+	wpi_setWPIError(SPIClockRateTooLow);
+	delay = 255;
+    }
+    m_config.ClockHalfPeriodDelay = delay;
 }
 
 /**
@@ -221,7 +221,7 @@ void SPI::SetClockRate(double hz)
  */
 void SPI::SetMSBFirst()
 {
-	m_config.MSBfirst = 1;
+    m_config.MSBfirst = 1;
 }
 
 /**
@@ -230,7 +230,7 @@ void SPI::SetMSBFirst()
  */
 void SPI::SetLSBFirst()
 {
-	m_config.MSBfirst = 0;
+    m_config.MSBfirst = 0;
 }
 
 /**
@@ -239,7 +239,7 @@ void SPI::SetLSBFirst()
  */
 void SPI::SetSampleDataOnFalling()
 {
-	m_config.DataOnFalling = 1;
+    m_config.DataOnFalling = 1;
 }
 
 /**
@@ -248,7 +248,7 @@ void SPI::SetSampleDataOnFalling()
  */
 void SPI::SetSampleDataOnRising()
 {
-	m_config.DataOnFalling = 0;
+    m_config.DataOnFalling = 0;
 }
 
 /**
@@ -256,47 +256,47 @@ void SPI::SetSampleDataOnRising()
  *
  * @param ss slave select digital output.
  * @param mode Frame mode:
- *			   kChipSelect: active for the duration of the frame.
- *			   kPreLatchPulse: pulses before the transfer of each frame.
- *			   kPostLatchPulse: pulses after the transfer of each frame.
- *			   kPreAndPostLatchPulse: pulses before and after each frame.
+ *	       kChipSelect: active for the duration of the frame.
+ *	       kPreLatchPulse: pulses before the transfer of each frame.
+ *	       kPostLatchPulse: pulses after the transfer of each frame.
+ *	       kPreAndPostLatchPulse: pulses before and after each frame.
  * @param activeLow True if slave select line is active low.
  */
 void SPI::SetSlaveSelect(DigitalOutput *ss, tFrameMode mode, bool activeLow)
 {
-	if (ss)
-	{
-		m_channels.SS_Channel = ss->GetChannelForRouting();
-		m_channels.SS_Module = ss->GetModuleForRouting();
-	}
-	else
-	{
-		m_channels.SS_Channel = 0;
-		m_channels.SS_Module = 0;
-	}
-	m_ss = ss;
+    if (ss)
+    {
+	m_channels.SS_Channel = ss->GetChannelForRouting();
+	m_channels.SS_Module = ss->GetModuleForRouting();
+    }
+    else
+    {
+	m_channels.SS_Channel = 0;
+	m_channels.SS_Module = 0;
+    }
+    m_ss = ss;
 
-	switch (mode)
-	{
-		case kChipSelect:
-			m_config.LatchFirst = 0;
-			m_config.LatchLast = 0;
-			break;
-		case kPreLatchPulse:
-			m_config.LatchFirst = 1;
-			m_config.LatchLast = 0;
-			break;
-		case kPostLatchPulse:
-			m_config.LatchFirst = 0;
-			m_config.LatchLast = 1;
-			break;
-		case kPreAndPostLatchPulse:
-			m_config.LatchFirst = 1;
-			m_config.LatchLast = 1;
-			break;
-	}
+    switch (mode)
+    {
+	case kChipSelect:
+	    m_config.LatchFirst = 0;
+	    m_config.LatchLast = 0;
+	    break;
+	case kPreLatchPulse:
+	    m_config.LatchFirst = 1;
+	    m_config.LatchLast = 0;
+	    break;
+	case kPostLatchPulse:
+	    m_config.LatchFirst = 0;
+	    m_config.LatchLast = 1;
+	    break;
+	case kPreAndPostLatchPulse:
+	    m_config.LatchFirst = 1;
+	    m_config.LatchLast = 1;
+	    break;
+    }
 
-	m_config.FramePolarity = activeLow ? 1 : 0;
+    m_config.FramePolarity = activeLow ? 1 : 0;
 }
 
 /**
@@ -304,39 +304,39 @@ void SPI::SetSlaveSelect(DigitalOutput *ss, tFrameMode mode, bool activeLow)
  *
  * @param ss slave select digital output.
  * @param mode Frame mode:
- *			   kChipSelect: active for the duration of the frame.
- *			   kPreLatchPulse: pulses before the transfer of each frame.
- *			   kPostLatchPulse: pulses after the transfer of each frame.
- *			   kPreAndPostLatchPulse: pulses before and after each frame.
+ *	       kChipSelect: active for the duration of the frame.
+ *	       kPreLatchPulse: pulses before the transfer of each frame.
+ *	       kPostLatchPulse: pulses after the transfer of each frame.
+ *	       kPreAndPostLatchPulse: pulses before and after each frame.
  * @param activeLow True if slave select line is active low.
  */
 void SPI::SetSlaveSelect(DigitalOutput &ss, tFrameMode mode, bool activeLow)
 {
-	SetSlaveSelect(&ss, mode, activeLow);
+    SetSlaveSelect(&ss, mode, activeLow);
 }
 
 /**
  * Get the slave select line behavior.
  *
  * @param mode Frame mode:
- *			   kChipSelect: active for the duration of the frame.
- *			   kPreLatchPulse: pulses before the transfer of each frame.
- *			   kPostLatchPulse: pulses after the transfer of each frame.
- *			   kPreAndPostLatchPulse: pulses before and after each frame.
+ *	       kChipSelect: active for the duration of the frame.
+ *	       kPreLatchPulse: pulses before the transfer of each frame.
+ *	       kPostLatchPulse: pulses after the transfer of each frame.
+ *	       kPreAndPostLatchPulse: pulses before and after each frame.
  * @param activeLow True if slave select line is active low.
  * @return The slave select digital output.
  */
 DigitalOutput *SPI::GetSlaveSelect(tFrameMode *mode, bool *activeLow)
 {
-	if (mode != NULL)
-	{
-		*mode = (tFrameMode) (m_config.LatchFirst | (m_config.LatchLast << 1));
-	}
-	if (activeLow != NULL)
-	{
-		*activeLow = m_config.FramePolarity != 0;
-	}
-	return m_ss;
+    if (mode != NULL)
+    {
+	*mode = (tFrameMode) (m_config.LatchFirst | (m_config.LatchLast << 1));
+    }
+    if (activeLow != NULL)
+    {
+	*activeLow = m_config.FramePolarity != 0;
+    }
+    return m_ss;
 }
 
 /**
@@ -345,7 +345,7 @@ DigitalOutput *SPI::GetSlaveSelect(tFrameMode *mode, bool *activeLow)
  */
 void SPI::SetClockActiveLow()
 {
-	m_config.ClockPolarity = 1;
+    m_config.ClockPolarity = 1;
 }
 
 /**
@@ -354,7 +354,7 @@ void SPI::SetClockActiveLow()
  */
 void SPI::SetClockActiveHigh()
 {
-	m_config.ClockPolarity = 0;
+    m_config.ClockPolarity = 0;
 }
 
 /**
@@ -362,13 +362,13 @@ void SPI::SetClockActiveHigh()
  */
 void SPI::ApplyConfig()
 {
-	Synchronized sync(m_semaphore);
+    Synchronized sync(m_semaphore);
 
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	m_spi->writeConfig(m_config, &localStatus);
-	m_spi->writeChannels(m_channels, &localStatus);
-	m_spi->strobeReset(&localStatus);
-	wpi_setError(localStatus);
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    m_spi->writeConfig(m_config, &localStatus);
+    m_spi->writeChannels(m_channels, &localStatus);
+    m_spi->strobeReset(&localStatus);
+    wpi_setError(localStatus);
 }
 
 /**
@@ -379,10 +379,10 @@ void SPI::ApplyConfig()
  */
 UINT16 SPI::GetOutputFIFOAvailable()
 {
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	UINT16 result = m_spi->readAvailableToLoad(&localStatus);
-	wpi_setError(localStatus);
-	return result;
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    UINT16 result = m_spi->readAvailableToLoad(&localStatus);
+    wpi_setError(localStatus);
+    return result;
 }
 
 /**
@@ -393,10 +393,10 @@ UINT16 SPI::GetOutputFIFOAvailable()
  */
 UINT16 SPI::GetNumReceived()
 {
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	UINT16 result = m_spi->readReceivedElements(&localStatus);
-	wpi_setError(localStatus);
-	return result;
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    UINT16 result = m_spi->readReceivedElements(&localStatus);
+    wpi_setError(localStatus);
+    return result;
 }
 
 /**
@@ -406,10 +406,10 @@ UINT16 SPI::GetNumReceived()
  */
 bool SPI::IsDone()
 {
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	bool result = m_spi->readStatus_Idle(&localStatus);
-	wpi_setError(localStatus);
-	return result;
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    bool result = m_spi->readStatus_Idle(&localStatus);
+    wpi_setError(localStatus);
+    return result;
 }
 
 /**
@@ -420,10 +420,10 @@ bool SPI::IsDone()
  */
 bool SPI::HadReceiveOverflow()
 {
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	bool result = m_spi->readStatus_ReceivedDataOverflow(&localStatus);
-	wpi_setError(localStatus);
-	return result;
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    bool result = m_spi->readStatus_ReceivedDataOverflow(&localStatus);
+    wpi_setError(localStatus);
+    return result;
 }
 
 /**
@@ -435,21 +435,21 @@ bool SPI::HadReceiveOverflow()
  */
 void SPI::Write(UINT32 data)
 {
-	if (m_channels.MOSI_Channel == 0 && m_channels.MOSI_Module == 0)
-	{
-		wpi_setWPIError(SPIWriteNoMOSI);
-		return;
-	}
+    if (m_channels.MOSI_Channel == 0 && m_channels.MOSI_Module == 0)
+    {
+	wpi_setWPIError(SPIWriteNoMOSI);
+	return;
+    }
 
-	Synchronized sync(m_semaphore);
+    Synchronized sync(m_semaphore);
 
-	while (GetOutputFIFOAvailable() == 0)
-		taskDelay(NO_WAIT);
+    while (GetOutputFIFOAvailable() == 0)
+	taskDelay(NO_WAIT);
 
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	m_spi->writeDataToLoad(data, &localStatus);
-	m_spi->strobeLoad(&localStatus);
-	wpi_setError(localStatus);
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    m_spi->writeDataToLoad(data, &localStatus);
+    m_spi->strobeLoad(&localStatus);
+    wpi_setError(localStatus);
 }
 
 /**
@@ -460,51 +460,51 @@ void SPI::Write(UINT32 data)
  * If the receive FIFO is empty, there is no active transfer, and initiate
  * is false, errors.
  *
- * @param initiate	If true, this function pushes "0" into the
- *				    transmit buffer and initiates a transfer.
- *				    If false, this function assumes that data is
- *				    already in the receive FIFO from a previous write.
+ * @param initiate  If true, this function pushes "0" into the
+ *		    transmit buffer and initiates a transfer.
+ *		    If false, this function assumes that data is
+ *		    already in the receive FIFO from a previous write.
  */
 UINT32 SPI::Read(bool initiate)
 {
-	if (m_channels.MISO_Channel == 0 && m_channels.MISO_Module == 0)
+    if (m_channels.MISO_Channel == 0 && m_channels.MISO_Module == 0)
+    {
+	wpi_setWPIError(SPIReadNoMISO);
+	return 0;
+    }
+
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    UINT32 data;
+    {
+	Synchronized sync(m_semaphore);
+
+	if (initiate)
 	{
-		wpi_setWPIError(SPIReadNoMISO);
+	    m_spi->writeDataToLoad(0, &localStatus);
+	    m_spi->strobeLoad(&localStatus);
+	}
+
+	// Do we have anything ready to read?
+	if (GetNumReceived() == 0)
+	{
+	    if (!initiate && IsDone() && GetOutputFIFOAvailable() == kTransmitFIFODepth)
+	    {
+		// Nothing to read: error out
+		wpi_setWPIError(SPIReadNoData);
 		return 0;
+	    }
+
+	    // Wait for the transaction to complete
+	    while (GetNumReceived() == 0)
+		taskDelay(NO_WAIT);
 	}
 
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	UINT32 data;
-	{
-		Synchronized sync(m_semaphore);
+	m_spi->strobeReadReceivedData(&localStatus);
+	data = m_spi->readReceivedData(&localStatus);
+    }
+    wpi_setError(localStatus);
 
-		if (initiate)
-		{
-			m_spi->writeDataToLoad(0, &localStatus);
-			m_spi->strobeLoad(&localStatus);
-		}
-
-		// Do we have anything ready to read?
-		if (GetNumReceived() == 0)
-		{
-			if (!initiate && IsDone() && GetOutputFIFOAvailable() == kTransmitFIFODepth)
-			{
-				// Nothing to read: error out
-				wpi_setWPIError(SPIReadNoData);
-				return 0;
-			}
-
-			// Wait for the transaction to complete
-			while (GetNumReceived() == 0)
-				taskDelay(NO_WAIT);
-		}
-
-		m_spi->strobeReadReceivedData(&localStatus);
-		data = m_spi->readReceivedData(&localStatus);
-	}
-	wpi_setError(localStatus);
-
-	return data;
+    return data;
 }
 
 /**
@@ -512,9 +512,9 @@ UINT32 SPI::Read(bool initiate)
  */
 void SPI::Reset()
 {
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	m_spi->strobeReset(&localStatus);
-	wpi_setError(localStatus);
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    m_spi->strobeReset(&localStatus);
+    wpi_setError(localStatus);
 }
 
 /**
@@ -522,7 +522,7 @@ void SPI::Reset()
  */
 void SPI::ClearReceivedData()
 {
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	m_spi->strobeClearReceivedData(&localStatus);
-	wpi_setError(localStatus);
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    m_spi->strobeClearReceivedData(&localStatus);
+    wpi_setError(localStatus);
 }

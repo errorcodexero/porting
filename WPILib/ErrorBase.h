@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -38,33 +38,33 @@ class ErrorBase
 {
 //TODO: Consider initializing instance variables and cleanup in destructor
 public:
-	virtual ~ErrorBase();
-	virtual Error& GetError();
-	virtual const Error& GetError() const;
-	virtual void SetErrnoError(const char *contextMessage,
-		const char* filename, const char* function, UINT32 lineNumber) const;
-	virtual void SetImaqError(int success, const char *contextMessage,
+    virtual ~ErrorBase();
+    virtual Error& GetError();
+    virtual const Error& GetError() const;
+    virtual void SetErrnoError(const char *contextMessage,
+	const char* filename, const char* function, UINT32 lineNumber) const;
+    virtual void SetImaqError(int success, const char *contextMessage,
         const char* filename, const char* function, UINT32 lineNumber) const;
-	virtual void SetError(Error::Code code, const char *contextMessage,
-		const char* filename, const char* function, UINT32 lineNumber) const;
-	virtual void SetWPIError(const char *errorMessage, const char *contextMessage,
-		const char* filename, const char* function, UINT32 lineNumber) const;
-	virtual void CloneError(ErrorBase *rhs) const;
-	virtual void ClearError() const;
-	virtual bool StatusIsFatal() const;
-	static void SetGlobalError(Error::Code code, const char *contextMessage,
-		const char* filename, const char* function, UINT32 lineNumber);
-	static void SetGlobalWPIError(const char *errorMessage, const char *contextMessage,
-		const char* filename, const char* function, UINT32 lineNumber);
-	static Error& GetGlobalError();
+    virtual void SetError(Error::Code code, const char *contextMessage,
+	const char* filename, const char* function, UINT32 lineNumber) const;
+    virtual void SetWPIError(const char *errorMessage, const char *contextMessage,
+	const char* filename, const char* function, UINT32 lineNumber) const;
+    virtual void CloneError(ErrorBase *rhs) const;
+    virtual void ClearError() const;
+    virtual bool StatusIsFatal() const;
+    static void SetGlobalError(Error::Code code, const char *contextMessage,
+	const char* filename, const char* function, UINT32 lineNumber);
+    static void SetGlobalWPIError(const char *errorMessage, const char *contextMessage,
+	const char* filename, const char* function, UINT32 lineNumber);
+    static Error& GetGlobalError();
 protected:
-	mutable Error m_error;
-	// TODO: Replace globalError with a global list of all errors.
-	static SEM_ID _globalErrorMutex;
-	static Error _globalError;
-	ErrorBase();
+    mutable Error m_error;
+    // TODO: Replace globalError with a global list of all errors.
+    static SEM_ID _globalErrorMutex;
+    static Error _globalError;
+    ErrorBase();
 private:
-	DISALLOW_COPY_AND_ASSIGN(ErrorBase);
+    DISALLOW_COPY_AND_ASSIGN(ErrorBase);
 };
 
 #endif

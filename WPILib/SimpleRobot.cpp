@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -11,23 +11,23 @@
 #include "Timer.h"
 #include "SmartDashboard/SmartDashboard.h"
 #include "LiveWindow/LiveWindow.h"
-#include "NetworkTables/NetworkTable.h"
+#include "networktables/NetworkTable.h"
 
 SimpleRobot::SimpleRobot()
-	: m_robotMainOverridden (true)
+    : m_robotMainOverridden (true)
 {
-	m_watchdog.SetEnabled(false);
+    m_watchdog.SetEnabled(false);
 }
 
 /**
  * Robot-wide initialization code should go here.
- * 
+ *
  * Programmers should override this method for default Robot-wide initialization which will
  * be called each time the robot enters the disabled state.
  */
 void SimpleRobot::RobotInit()
 {
-	printf("Default %s() method... Override me!\n", __FUNCTION__);
+    printf("Default %s() method... Override me!\n", __FUNCTION__);
 }
 
 /**
@@ -37,7 +37,7 @@ void SimpleRobot::RobotInit()
  */
 void SimpleRobot::Disabled()
 {
-	printf("Default %s() method... Override me!\n", __FUNCTION__);
+    printf("Default %s() method... Override me!\n", __FUNCTION__);
 }
 
 /**
@@ -48,7 +48,7 @@ void SimpleRobot::Disabled()
  */
 void SimpleRobot::Autonomous()
 {
-	printf("Default %s() method... Override me!\n", __FUNCTION__);
+    printf("Default %s() method... Override me!\n", __FUNCTION__);
 }
 
 /**
@@ -59,7 +59,7 @@ void SimpleRobot::Autonomous()
  */
 void SimpleRobot::OperatorControl()
 {
-	printf("Default %s() method... Override me!\n", __FUNCTION__);
+    printf("Default %s() method... Override me!\n", __FUNCTION__);
 }
 
 /**
@@ -69,23 +69,23 @@ void SimpleRobot::OperatorControl()
  */
 void SimpleRobot::Test()
 {
-	printf("Default %s() method... Override me!\n", __FUNCTION__);
+    printf("Default %s() method... Override me!\n", __FUNCTION__);
 }
 
 /**
  * Robot main program for free-form programs.
- * 
+ *
  * This should be overridden by user subclasses if the intent is to not use the Autonomous() and
  * OperatorControl() methods. In that case, the program is responsible for sensing when to run
  * the autonomous and operator control functions in their program.
- * 
+ *
  * This method will be called immediately after the constructor is called. If it has not been
  * overridden by a user subclass (i.e. the default version runs), then the Autonomous() and
  * OperatorControl() methods will be called.
  */
 void SimpleRobot::RobotMain()
 {
-	m_robotMainOverridden = false;
+    m_robotMainOverridden = false;
 }
 
 /**
@@ -98,55 +98,55 @@ void SimpleRobot::RobotMain()
  */
 void SimpleRobot::StartCompetition()
 {
-	LiveWindow *lw = LiveWindow::GetInstance();
+    LiveWindow *lw = LiveWindow::GetInstance();
 
-	nUsageReporting::report(nUsageReporting::kResourceType_Framework, nUsageReporting::kFramework_Simple);
+    nUsageReporting::report(nUsageReporting::kResourceType_Framework, nUsageReporting::kFramework_Simple);
 
-	SmartDashboard::init();
-	NetworkTable::GetTable("LiveWindow")->GetSubTable("~STATUS~")->PutBoolean("LW Enabled", false);
+    SmartDashboard::init();
+    NetworkTable::GetTable("LiveWindow")->GetSubTable("~STATUS~")->PutBoolean("LW Enabled", false);
 
-	RobotMain();
-	
-	if (!m_robotMainOverridden)
+    RobotMain();
+
+    if (!m_robotMainOverridden)
+    {
+	// first and one-time initialization
+
+	lw->SetEnabled(false);
+
+	RobotInit();
+
+	while (true)
 	{
-		// first and one-time initialization
-		
-		lw->SetEnabled(false);
-		
-		RobotInit();
-
-		while (true)
-		{
-			if (IsDisabled())
-			{
-				m_ds->InDisabled(true);
-				Disabled();
-				m_ds->InDisabled(false);
-				while (IsDisabled()) m_ds->WaitForData();
-			}
-			else if (IsAutonomous())
-			{
-				m_ds->InAutonomous(true);
-				Autonomous();
-				m_ds->InAutonomous(false);
-				while (IsAutonomous() && IsEnabled()) m_ds->WaitForData();
-			}
+	    if (IsDisabled())
+	    {
+		m_ds->InDisabled(true);
+		Disabled();
+		m_ds->InDisabled(false);
+		while (IsDisabled()) m_ds->WaitForData();
+	    }
+	    else if (IsAutonomous())
+	    {
+		m_ds->InAutonomous(true);
+		Autonomous();
+		m_ds->InAutonomous(false);
+		while (IsAutonomous() && IsEnabled()) m_ds->WaitForData();
+	    }
             else if (IsTest())
             {
-            	lw->SetEnabled(true);
+		lw->SetEnabled(true);
                 m_ds->InTest(true);
                 Test();
                 m_ds->InTest(false);
                 while (IsTest() && IsEnabled()) m_ds->WaitForData();
                 lw->SetEnabled(false);
             }
-			else
-			{
-				m_ds->InOperatorControl(true);
-				OperatorControl();
-				m_ds->InOperatorControl(false);
-				while (IsOperatorControl() && IsEnabled()) m_ds->WaitForData();
-			}
-		}
+	    else
+	    {
+		m_ds->InOperatorControl(true);
+		OperatorControl();
+		m_ds->InOperatorControl(false);
+		while (IsOperatorControl() && IsEnabled()) m_ds->WaitForData();
+	    }
 	}
+    }
 }

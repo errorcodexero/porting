@@ -6,7 +6,7 @@
 
 #include "SmartDashboard/SendablePIDController.h"
 
-#include "NetworkTables/NetworkTable.h"
+#include "networktables/NetworkTable.h"
 
 static const char *kP = "p";
 static const char *kI = "i";

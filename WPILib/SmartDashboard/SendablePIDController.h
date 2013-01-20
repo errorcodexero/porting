@@ -7,7 +7,7 @@
 #ifndef __SENDABLE_PID_CONTROLLER_H__
 #define __SENDABLE_PID_CONTROLLER_H__
 
-#include "NetworkTables/NetworkTableChangeListener.h"
+#include "networktables/NetworkTableChangeListener.h"
 #include "PIDController.h"
 #include "SmartDashboard/SmartDashboardData.h"
 

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -18,11 +18,11 @@
  * @param numChoices The number of choices in the enumeration set.
  */
 EnumCameraParameter::EnumCameraParameter(const char *setString, const char *getString, bool requiresRestart,
-													const char *const*choices, int numChoices)
-	: IntCameraParameter(setString, getString, requiresRestart)
+						    const char *const*choices, int numChoices)
+    : IntCameraParameter(setString, getString, requiresRestart)
 {
-	m_enumValues = choices;
-	m_numChoices = numChoices;
+    m_enumValues = choices;
+    m_numChoices = numChoices;
 }
 
 /*
@@ -33,14 +33,14 @@ EnumCameraParameter::EnumCameraParameter(const char *setString, const char *getS
  */
 bool EnumCameraParameter::CheckChanged(bool &changed, char *param)
 {
-	changed = m_changed;
-	if (m_changed)
-	{
-		m_changed = false;
-		sprintf(param, m_setString, m_enumValues[m_value]);
-		return m_requiresRestart;
-	}
-	return false;
+    changed = m_changed;
+    if (m_changed)
+    {
+	m_changed = false;
+	sprintf(param, m_setString, m_enumValues[m_value]);
+	return m_requiresRestart;
+    }
+    return false;
 }
 
 /**
@@ -51,17 +51,17 @@ bool EnumCameraParameter::CheckChanged(bool &changed, char *param)
  */
 void EnumCameraParameter::GetParamFromString(const char *string, int stringLength)
 {
-	char resultString[50];
-	if (SearchForParam(m_getString, string, stringLength, resultString) < 0) return;
-	for (int i = 0; i < m_numChoices; i++)
+    char resultString[50];
+    if (SearchForParam(m_getString, string, stringLength, resultString) < 0) return;
+    for (int i = 0; i < m_numChoices; i++)
+    {
+	if (strcmp(resultString, m_enumValues[i]) == 0)
 	{
-		if (strcmp(resultString, m_enumValues[i]) == 0)
-		{
-			if (!m_changed)	  // don't change parameter that's been set in code
-			{
-				m_value = i;
-			}
-		}
+	    if (!m_changed)   // don't change parameter that's been set in code
+	    {
+		m_value = i;
+	    }
 	}
+    }
 }
 

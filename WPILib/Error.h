@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -21,38 +21,38 @@ class ErrorBase;
 class Error
 {
 public:
-	typedef tRioStatusCode Code;
+    typedef tRioStatusCode Code;
 
-	Error();
-	~Error();
-	void Clone(Error &error);
-	Code GetCode() const;
-	const char *GetMessage() const;
-	const char *GetFilename() const;
-	const char *GetFunction() const;
-	UINT32 GetLineNumber() const;
-	const ErrorBase* GetOriginatingObject() const;
-	double GetTime() const;
-	void Clear();
-	void Set(Code code, const char* contextMessage, const char* filename,
-		const char *function, UINT32 lineNumber, const ErrorBase* originatingObject);
-	static void EnableStackTrace(bool enable) { m_stackTraceEnabled=enable; }
-	static void EnableSuspendOnError(bool enable) { m_suspendOnErrorEnabled=enable; }
+    Error();
+    ~Error();
+    void Clone(Error &error);
+    Code GetCode() const;
+    const char *GetMessage() const;
+    const char *GetFilename() const;
+    const char *GetFunction() const;
+    UINT32 GetLineNumber() const;
+    const ErrorBase* GetOriginatingObject() const;
+    double GetTime() const;
+    void Clear();
+    void Set(Code code, const char* contextMessage, const char* filename,
+	const char *function, UINT32 lineNumber, const ErrorBase* originatingObject);
+    static void EnableStackTrace(bool enable) { m_stackTraceEnabled=enable; }
+    static void EnableSuspendOnError(bool enable) { m_suspendOnErrorEnabled=enable; }
 
 private:
-	void Report();
+    void Report();
 
-	Code m_code;
-	std::string m_message;
-	std::string m_filename;
-	std::string m_function;
-	UINT32 m_lineNumber;
-	const ErrorBase* m_originatingObject;
-	double m_timestamp;
+    Code m_code;
+    std::string m_message;
+    std::string m_filename;
+    std::string m_function;
+    UINT32 m_lineNumber;
+    const ErrorBase* m_originatingObject;
+    double m_timestamp;
 
-	static bool m_stackTraceEnabled;
-	static bool m_suspendOnErrorEnabled;
-	DISALLOW_COPY_AND_ASSIGN(Error);
+    static bool m_stackTraceEnabled;
+    static bool m_suspendOnErrorEnabled;
+    DISALLOW_COPY_AND_ASSIGN(Error);
 };
 
 #endif

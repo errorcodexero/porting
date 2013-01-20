@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -12,26 +12,26 @@
 
 /**
  * Internal task.
- * 
+ *
  * Task which checks the compressor pressure switch and operates the relay as necessary
  * depending on the pressure.
- * 
+ *
  * Do not call this function directly.
  */
 static void CompressorChecker(Compressor *c)
 {
-	while (1)
+    while (1)
+    {
+	if (c->Enabled())
 	{
-		if (c->Enabled())
-		{
-			c->SetRelayValue( c->GetPressureSwitchValue() == 0 ? Relay::kOn : Relay::kOff );
-		}
-		else
-		{
-			c->SetRelayValue(Relay::kOff);
-		}
-		Wait(0.5);
+	    c->SetRelayValue( c->GetPressureSwitchValue() == 0 ? Relay::kOn : Relay::kOff );
 	}
+	else
+	{
+	    c->SetRelayValue(Relay::kOff);
+	}
+	Wait(0.5);
+    }
 }
 
 /**
@@ -39,66 +39,66 @@ static void CompressorChecker(Compressor *c)
  * This method is the common initialization code for all the constructors for the Compressor
  * object. It takes the relay channel and pressure switch channel and spawns a task that polls the
  * compressor and sensor.
- * 
+ *
  * You MUST start the compressor by calling the Start() method.
  */
 void Compressor::InitCompressor(UINT8 pressureSwitchModuleNumber,
-		UINT32 pressureSwitchChannel,
-		UINT8 compresssorRelayModuleNumber,
-		UINT32 compressorRelayChannel)
+	UINT32 pressureSwitchChannel,
+	UINT8 compresssorRelayModuleNumber,
+	UINT32 compressorRelayChannel)
 {
-	m_enabled = false;
-	m_pressureSwitch = new DigitalInput(pressureSwitchModuleNumber, pressureSwitchChannel);
-	m_relay = new Relay(compresssorRelayModuleNumber, compressorRelayChannel, Relay::kForwardOnly);
+    m_enabled = false;
+    m_pressureSwitch = new DigitalInput(pressureSwitchModuleNumber, pressureSwitchChannel);
+    m_relay = new Relay(compresssorRelayModuleNumber, compressorRelayChannel, Relay::kForwardOnly);
 
-	nUsageReporting::report(nUsageReporting::kResourceType_Compressor, 0);
+    nUsageReporting::report(nUsageReporting::kResourceType_Compressor, 0);
 
-	if (!m_task.Start((INT32)this))
-	{
-		wpi_setWPIError(CompressorTaskError);
-	}
+    if (!m_task.Start((INT32)this))
+    {
+	wpi_setWPIError(CompressorTaskError);
+    }
 }
 
 /**
  * Compressor constructor.
  * Given a fully specified relay channel and pressure switch channel, initialize the Compressor object.
- * 
+ *
  * You MUST start the compressor by calling the Start() method.
- * 
+ *
  * @param pressureSwitchModuleNumber The digital module that the pressure switch is attached to.
  * @param pressureSwitchChannel The GPIO channel that the pressure switch is attached to.
  * @param compresssorRelayModuleNumber The digital module that the compressor relay is attached to.
  * @param compressorRelayChannel The relay channel that the compressor relay is attached to.
  */
 Compressor::Compressor(UINT8 pressureSwitchModuleNumber,
-		UINT32 pressureSwitchChannel,
-		UINT8 compresssorRelayModuleNumber,
-		UINT32 compressorRelayChannel)
-	: m_task ("Compressor", (FUNCPTR)CompressorChecker)
+	UINT32 pressureSwitchChannel,
+	UINT8 compresssorRelayModuleNumber,
+	UINT32 compressorRelayChannel)
+    : m_task ("Compressor", (FUNCPTR)CompressorChecker)
 {
-	InitCompressor(pressureSwitchModuleNumber,
-		pressureSwitchChannel,
-		compresssorRelayModuleNumber,
-		compressorRelayChannel);
+    InitCompressor(pressureSwitchModuleNumber,
+	pressureSwitchChannel,
+	compresssorRelayModuleNumber,
+	compressorRelayChannel);
 }
 
 /**
  * Compressor constructor.
  * Given a relay channel and pressure switch channel (both in the default digital module), initialize
  * the Compressor object.
- * 
+ *
  * You MUST start the compressor by calling the Start() method.
- * 
+ *
  * @param pressureSwitchChannel The GPIO channel that the pressure switch is attached to.
  * @param compressorRelayChannel The relay channel that the compressor relay is attached to.
  */
 Compressor::Compressor(UINT32 pressureSwitchChannel, UINT32 compressorRelayChannel)
-	: m_task ("Compressor", (FUNCPTR)CompressorChecker)
+    : m_task ("Compressor", (FUNCPTR)CompressorChecker)
 {
-	InitCompressor(GetDefaultDigitalModule(),
-			pressureSwitchChannel,
-			GetDefaultDigitalModule(),
-			compressorRelayChannel);
+    InitCompressor(GetDefaultDigitalModule(),
+	    pressureSwitchChannel,
+	    GetDefaultDigitalModule(),
+	    compressorRelayChannel);
 }
 
 /**
@@ -108,8 +108,8 @@ Compressor::Compressor(UINT32 pressureSwitchChannel, UINT32 compressorRelayChann
  */
 Compressor::~Compressor()
 {
-	delete m_pressureSwitch;
-	delete m_relay;
+    delete m_pressureSwitch;
+    delete m_relay;
 }
 
 /**
@@ -119,18 +119,18 @@ Compressor::~Compressor()
  */
 void Compressor::SetRelayValue(Relay::Value relayValue)
 {
-	m_relay->Set(relayValue);
+    m_relay->Set(relayValue);
 }
 
 /**
  * Get the pressure switch value.
  * Read the pressure switch digital input.
- * 
+ *
  * @return The current state of the pressure switch.
  */
 UINT32 Compressor::GetPressureSwitchValue()
 {
-	return m_pressureSwitch->Get();
+    return m_pressureSwitch->Get();
 }
 
 /**
@@ -140,7 +140,7 @@ UINT32 Compressor::GetPressureSwitchValue()
  */
 void Compressor::Start()
 {
-	m_enabled = true;
+    m_enabled = true;
 }
 
 /**
@@ -149,46 +149,46 @@ void Compressor::Start()
  */
 void Compressor::Stop()
 {
-	m_enabled = false;
+    m_enabled = false;
 }
 
 /**
  * Get the state of the enabled flag.
  * Return the state of the enabled flag for the compressor and pressure switch
  * combination.
- * 
+ *
  * @return The state of the compressor thread's enable flag.
  */
 bool Compressor::Enabled()
 {
-	return m_enabled;
+    return m_enabled;
 }
 
 void Compressor::UpdateTable() {
-	if (m_table != NULL) {
-		m_table->PutBoolean("Enabled", m_enabled);
-		m_table->PutBoolean("Pressure switch", GetPressureSwitchValue());
-	}
+    if (m_table != NULL) {
+	m_table->PutBoolean("Enabled", m_enabled);
+	m_table->PutBoolean("Pressure switch", GetPressureSwitchValue());
+    }
 }
 
 void Compressor::StartLiveWindowMode() {
-	
+
 }
 
 void Compressor::StopLiveWindowMode() {
-	
+
 }
 
 std::string Compressor::GetSmartDashboardType() {
-	return "Compressor";
+    return "Compressor";
 }
 
 void Compressor::InitTable(ITable *subTable) {
-	m_table = subTable;
-	UpdateTable();
+    m_table = subTable;
+    UpdateTable();
 }
 
 ITable * Compressor::GetTable() {
-	return m_table;
+    return m_table;
 }
 

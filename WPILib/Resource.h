@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -23,22 +23,22 @@
 class Resource : public ErrorBase
 {
 public:
-	virtual ~Resource();
-	static void CreateResourceObject(Resource **r, UINT32 elements);
-	UINT32 Allocate(const char *resourceDesc);
-	UINT32 Allocate(UINT32 index, const char *resourceDesc);
-	void Free(UINT32 index);
+    virtual ~Resource();
+    static void CreateResourceObject(Resource **r, UINT32 elements);
+    UINT32 Allocate(const char *resourceDesc);
+    UINT32 Allocate(UINT32 index, const char *resourceDesc);
+    void Free(UINT32 index);
 
 private:
-	explicit Resource(UINT32 size);
+    explicit Resource(UINT32 size);
 
-	bool *m_isAllocated;
-	ReentrantSemaphore m_allocateLock;
-	UINT32 m_size;
+    bool *m_isAllocated;
+    ReentrantSemaphore m_allocateLock;
+    UINT32 m_size;
 
-	static ReentrantSemaphore m_createLock;
+    static ReentrantSemaphore m_createLock;
 
-	DISALLOW_COPY_AND_ASSIGN(Resource);
+    DISALLOW_COPY_AND_ASSIGN(Resource);
 };
 
 #endif

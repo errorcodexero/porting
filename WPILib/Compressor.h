@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -22,38 +22,38 @@ class DigitalInput;
  * relay for a FIRST robot pneumatics system. The Compressor object starts a task which runs in the
  * backround and periodically polls the pressure sensor and operates the relay that controls the
  * compressor.
- */ 
+ */
 class Compressor: public SensorBase, public LiveWindowSendable
 {
 public:
-	Compressor(UINT32 pressureSwitchChannel, UINT32 compressorRelayChannel);
-	Compressor(UINT8 pressureSwitchModuleNumber, UINT32 pressureSwitchChannel,
-			UINT8 compresssorRelayModuleNumber, UINT32 compressorRelayChannel);
-	~Compressor();
+    Compressor(UINT32 pressureSwitchChannel, UINT32 compressorRelayChannel);
+    Compressor(UINT8 pressureSwitchModuleNumber, UINT32 pressureSwitchChannel,
+	    UINT8 compresssorRelayModuleNumber, UINT32 compressorRelayChannel);
+    ~Compressor();
 
-	void Start();
-	void Stop();
-	bool Enabled();
-	UINT32 GetPressureSwitchValue();
-	void SetRelayValue(Relay::Value relayValue);
-	
-	void UpdateTable();
-	void StartLiveWindowMode();
-	void StopLiveWindowMode();
-	std::string GetSmartDashboardType();
-	void InitTable(ITable *subTable);
-	ITable * GetTable();
+    void Start();
+    void Stop();
+    bool Enabled();
+    UINT32 GetPressureSwitchValue();
+    void SetRelayValue(Relay::Value relayValue);
+
+    void UpdateTable();
+    void StartLiveWindowMode();
+    void StopLiveWindowMode();
+    std::string GetSmartDashboardType();
+    void InitTable(ITable *subTable);
+    ITable * GetTable();
 
 private:
-	void InitCompressor(UINT8 pressureSwitchModuleNumber, UINT32 pressureSwitchChannel,
-				UINT8 compresssorRelayModuleNumber, UINT32 compressorRelayChannel);
+    void InitCompressor(UINT8 pressureSwitchModuleNumber, UINT32 pressureSwitchChannel,
+		UINT8 compresssorRelayModuleNumber, UINT32 compressorRelayChannel);
 
-	DigitalInput *m_pressureSwitch;
-	Relay *m_relay;
-	bool m_enabled;
-	Task m_task;
-	
-	ITable *m_table;
+    DigitalInput *m_pressureSwitch;
+    Relay *m_relay;
+    bool m_enabled;
+    Task m_task;
+
+    ITable *m_table;
 };
 
 #endif

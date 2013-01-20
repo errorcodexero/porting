@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -24,53 +24,53 @@ static Resource *quadEncoders = NULL;
  */
 void Encoder::InitEncoder(bool reverseDirection, EncodingType encodingType)
 {
-	m_encodingType = encodingType;
-	tRioStatusCode localStatus = NiFpga_Status_Success;
-	UINT32 index;
-	switch (encodingType)
+    m_encodingType = encodingType;
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    UINT32 index;
+    switch (encodingType)
+    {
+    case k4X:
+	Resource::CreateResourceObject(&quadEncoders, tEncoder::kNumSystems);
+	index = quadEncoders->Allocate("4X Encoder");
+	if (index == ~0ul)
 	{
-	case k4X:
-		Resource::CreateResourceObject(&quadEncoders, tEncoder::kNumSystems);
-		index = quadEncoders->Allocate("4X Encoder");
-		if (index == ~0ul)
-		{
-			CloneError(quadEncoders);
-			return;
-		}
-		if (m_aSource->StatusIsFatal())
-		{
-			CloneError(m_aSource);
-			return;
-		}
-		if (m_bSource->StatusIsFatal())
-		{
-			CloneError(m_bSource);
-			return;
-		}
-		m_index = index;
-		m_encoder = tEncoder::create(m_index, &localStatus);
-		m_encoder->writeConfig_ASource_Module(m_aSource->GetModuleForRouting(), &localStatus);
-		m_encoder->writeConfig_ASource_Channel(m_aSource->GetChannelForRouting(), &localStatus);
-		m_encoder->writeConfig_ASource_AnalogTrigger(m_aSource->GetAnalogTriggerForRouting(), &localStatus);
-		m_encoder->writeConfig_BSource_Module(m_bSource->GetModuleForRouting(), &localStatus);
-		m_encoder->writeConfig_BSource_Channel(m_bSource->GetChannelForRouting(), &localStatus);
-		m_encoder->writeConfig_BSource_AnalogTrigger(m_bSource->GetAnalogTriggerForRouting(), &localStatus);
-		m_encoder->strobeReset(&localStatus);
-		m_encoder->writeConfig_Reverse(reverseDirection, &localStatus);
-		m_encoder->writeTimerConfig_AverageSize(4, &localStatus);
-		m_counter = NULL;
-		break;
-	case k1X:
-	case k2X:
-		m_counter = new Counter(m_encodingType, m_aSource, m_bSource, reverseDirection);
-		m_index = m_counter->GetIndex();
-		break;
+	    CloneError(quadEncoders);
+	    return;
 	}
-	m_distancePerPulse = 1.0;
-	m_pidSource = kDistance;
-	wpi_setError(localStatus);
+	if (m_aSource->StatusIsFatal())
+	{
+	    CloneError(m_aSource);
+	    return;
+	}
+	if (m_bSource->StatusIsFatal())
+	{
+	    CloneError(m_bSource);
+	    return;
+	}
+	m_index = index;
+	m_encoder = tEncoder::create(m_index, &localStatus);
+	m_encoder->writeConfig_ASource_Module(m_aSource->GetModuleForRouting(), &localStatus);
+	m_encoder->writeConfig_ASource_Channel(m_aSource->GetChannelForRouting(), &localStatus);
+	m_encoder->writeConfig_ASource_AnalogTrigger(m_aSource->GetAnalogTriggerForRouting(), &localStatus);
+	m_encoder->writeConfig_BSource_Module(m_bSource->GetModuleForRouting(), &localStatus);
+	m_encoder->writeConfig_BSource_Channel(m_bSource->GetChannelForRouting(), &localStatus);
+	m_encoder->writeConfig_BSource_AnalogTrigger(m_bSource->GetAnalogTriggerForRouting(), &localStatus);
+	m_encoder->strobeReset(&localStatus);
+	m_encoder->writeConfig_Reverse(reverseDirection, &localStatus);
+	m_encoder->writeTimerConfig_AverageSize(4, &localStatus);
+	m_counter = NULL;
+	break;
+    case k1X:
+    case k2X:
+	m_counter = new Counter(m_encodingType, m_aSource, m_bSource, reverseDirection);
+	m_index = m_counter->GetIndex();
+	break;
+    }
+    m_distancePerPulse = 1.0;
+    m_pidSource = kDistance;
+    wpi_setError(localStatus);
 
-	nUsageReporting::report(nUsageReporting::kResourceType_Encoder, m_index, encodingType);
+    nUsageReporting::report(nUsageReporting::kResourceType_Encoder, m_index, encodingType);
 }
 
 /**
@@ -89,16 +89,16 @@ void Encoder::InitEncoder(bool reverseDirection, EncodingType encodingType)
  * or be double (2x) the spec'd count.
  */
 Encoder::Encoder(UINT8 aModuleNumber, UINT32 aChannel,
-						UINT8 bModuleNumber, UINT32 bChannel,
-						bool reverseDirection, EncodingType encodingType) :
-	m_encoder(NULL),
-	m_counter(NULL)
+			UINT8 bModuleNumber, UINT32 bChannel,
+			bool reverseDirection, EncodingType encodingType) :
+    m_encoder(NULL),
+    m_counter(NULL)
 {
-	m_aSource = new DigitalInput(aModuleNumber, aChannel);
-	m_bSource = new DigitalInput(bModuleNumber, bChannel);
-	InitEncoder(reverseDirection, encodingType);
-	m_allocatedASource = true;
-	m_allocatedBSource = true;
+    m_aSource = new DigitalInput(aModuleNumber, aChannel);
+    m_bSource = new DigitalInput(bModuleNumber, bChannel);
+    InitEncoder(reverseDirection, encodingType);
+    m_allocatedASource = true;
+    m_allocatedBSource = true;
 }
 
 /**
@@ -115,14 +115,14 @@ Encoder::Encoder(UINT8 aModuleNumber, UINT32 aChannel,
  * or be double (2x) the spec'd count.
  */
 Encoder::Encoder(UINT32 aChannel, UINT32 bChannel, bool reverseDirection, EncodingType encodingType) :
-	m_encoder(NULL),
-	m_counter(NULL)
+    m_encoder(NULL),
+    m_counter(NULL)
 {
-	m_aSource = new DigitalInput(aChannel);
-	m_bSource = new DigitalInput(bChannel);
-	InitEncoder(reverseDirection, encodingType);
-	m_allocatedASource = true;
-	m_allocatedBSource = true;
+    m_aSource = new DigitalInput(aChannel);
+    m_bSource = new DigitalInput(bChannel);
+    InitEncoder(reverseDirection, encodingType);
+    m_allocatedASource = true;
+    m_allocatedBSource = true;
 }
 
 /**
@@ -141,17 +141,17 @@ Encoder::Encoder(UINT32 aChannel, UINT32 bChannel, bool reverseDirection, Encodi
  * or be double (2x) the spec'd count.
  */
 Encoder::Encoder(DigitalSource *aSource, DigitalSource *bSource, bool reverseDirection, EncodingType encodingType) :
-	m_encoder(NULL),
-	m_counter(NULL)
+    m_encoder(NULL),
+    m_counter(NULL)
 {
-	m_aSource = aSource;
-	m_bSource = bSource;
-	m_allocatedASource = false;
-	m_allocatedBSource = false;
-	if (m_aSource == NULL || m_bSource == NULL)
-		wpi_setWPIError(NullParameter);
-	else
-		InitEncoder(reverseDirection, encodingType);
+    m_aSource = aSource;
+    m_bSource = bSource;
+    m_allocatedASource = false;
+    m_allocatedBSource = false;
+    if (m_aSource == NULL || m_bSource == NULL)
+	wpi_setWPIError(NullParameter);
+    else
+	InitEncoder(reverseDirection, encodingType);
 }
 
 /**
@@ -170,14 +170,14 @@ Encoder::Encoder(DigitalSource *aSource, DigitalSource *bSource, bool reverseDir
  * or be double (2x) the spec'd count.
  */
 Encoder::Encoder(DigitalSource &aSource, DigitalSource &bSource, bool reverseDirection, EncodingType encodingType) :
-	m_encoder(NULL),
-	m_counter(NULL)
+    m_encoder(NULL),
+    m_counter(NULL)
 {
-	m_aSource = &aSource;
-	m_bSource = &bSource;
-	m_allocatedASource = false;
-	m_allocatedBSource = false;
-	InitEncoder(reverseDirection, encodingType);
+    m_aSource = &aSource;
+    m_bSource = &bSource;
+    m_allocatedASource = false;
+    m_allocatedBSource = false;
+    InitEncoder(reverseDirection, encodingType);
 }
 
 /**
@@ -186,17 +186,17 @@ Encoder::Encoder(DigitalSource &aSource, DigitalSource &bSource, bool reverseDir
  */
 Encoder::~Encoder()
 {
-	if (m_allocatedASource) delete m_aSource;
-	if (m_allocatedBSource) delete m_bSource;
-	if (m_counter)
-	{
-		delete m_counter;
-	}
-	else
-	{
-		quadEncoders->Free(m_index);
-		delete m_encoder;
-	}
+    if (m_allocatedASource) delete m_aSource;
+    if (m_allocatedBSource) delete m_bSource;
+    if (m_counter)
+    {
+	delete m_counter;
+    }
+    else
+    {
+	quadEncoders->Free(m_index);
+	delete m_encoder;
+    }
 }
 
 /**
@@ -205,15 +205,15 @@ Encoder::~Encoder()
  */
 void Encoder::Start()
 {
-	if (StatusIsFatal()) return;
-	if (m_counter)
-		m_counter->Start();
-	else
-	{
-		tRioStatusCode localStatus = NiFpga_Status_Success;
-		m_encoder->writeConfig_Enable(1, &localStatus);
-		wpi_setError(localStatus);
-	}
+    if (StatusIsFatal()) return;
+    if (m_counter)
+	m_counter->Start();
+    else
+    {
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_encoder->writeConfig_Enable(1, &localStatus);
+	wpi_setError(localStatus);
+    }
 }
 
 /**
@@ -221,15 +221,15 @@ void Encoder::Start()
  */
 void Encoder::Stop()
 {
-	if (StatusIsFatal()) return;
-	if (m_counter)
-		m_counter->Stop();
-	else
-	{
-		tRioStatusCode localStatus = NiFpga_Status_Success;
-		m_encoder->writeConfig_Enable(0, &localStatus);
-		wpi_setError(localStatus);
-	}
+    if (StatusIsFatal()) return;
+    if (m_counter)
+	m_counter->Stop();
+    else
+    {
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_encoder->writeConfig_Enable(0, &localStatus);
+	wpi_setError(localStatus);
+    }
 }
 
 /**
@@ -240,30 +240,30 @@ void Encoder::Stop()
  */
 INT32 Encoder::GetRaw()
 {
-	if (StatusIsFatal()) return 0;
-	INT32 value;
-	if (m_counter)
-		value = m_counter->Get();
-	else
-	{
-		tRioStatusCode localStatus = NiFpga_Status_Success;
-		value = m_encoder->readOutput_Value(&localStatus);
-		wpi_setError(localStatus);
-	}
-	return value;
+    if (StatusIsFatal()) return 0;
+    INT32 value;
+    if (m_counter)
+	value = m_counter->Get();
+    else
+    {
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	value = m_encoder->readOutput_Value(&localStatus);
+	wpi_setError(localStatus);
+    }
+    return value;
 }
 
 /**
  * Gets the current count.
  * Returns the current count on the Encoder.
  * This method compensates for the decoding type.
- * 
+ *
  * @return Current count from the Encoder adjusted for the 1x, 2x, or 4x scale factor.
  */
 INT32 Encoder::Get()
 {
-	if (StatusIsFatal()) return 0;
-	return (INT32) (GetRaw() * DecodingScaleFactor());
+    if (StatusIsFatal()) return 0;
+    return (INT32) (GetRaw() * DecodingScaleFactor());
 }
 
 /**
@@ -272,54 +272,54 @@ INT32 Encoder::Get()
  */
 void Encoder::Reset()
 {
-	if (StatusIsFatal()) return;
-	if (m_counter)
-		m_counter->Reset();
-	else
-	{
-		tRioStatusCode localStatus = NiFpga_Status_Success;
-		m_encoder->strobeReset(&localStatus);
-		wpi_setError(localStatus);
-	}
+    if (StatusIsFatal()) return;
+    if (m_counter)
+	m_counter->Reset();
+    else
+    {
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_encoder->strobeReset(&localStatus);
+	wpi_setError(localStatus);
+    }
 }
 
 /**
  * Returns the period of the most recent pulse.
  * Returns the period of the most recent Encoder pulse in seconds.
  * This method compenstates for the decoding type.
- * 
+ *
  * @deprecated Use GetRate() in favor of this method.  This returns unscaled periods and GetRate() scales using value from SetDistancePerPulse().
  *
  * @return Period in seconds of the most recent pulse.
  */
 double Encoder::GetPeriod()
 {
-	if (StatusIsFatal()) return 0.0;
-	double measuredPeriod;
-	if (m_counter)
+    if (StatusIsFatal()) return 0.0;
+    double measuredPeriod;
+    if (m_counter)
+    {
+	measuredPeriod = m_counter->GetPeriod();
+    }
+    else
+    {
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	tEncoder::tTimerOutput output = m_encoder->readTimerOutput(&localStatus);
+	double value;
+	if (output.Stalled)
 	{
-		measuredPeriod = m_counter->GetPeriod();
+	    // Return infinity
+	    double zero = 0.0;
+	    value = 1.0 / zero;
 	}
 	else
 	{
-		tRioStatusCode localStatus = NiFpga_Status_Success;
-		tEncoder::tTimerOutput output = m_encoder->readTimerOutput(&localStatus);
-		double value;
-		if (output.Stalled)
-		{
-			// Return infinity
-			double zero = 0.0;
-			value = 1.0 / zero;
-		}
-		else
-		{
-			// output.Period is a fixed point number that counts by 2 (24 bits, 25 integer bits)
-			value = (double)(output.Period << 1) / (double)output.Count;
-		}
-		wpi_setError(localStatus);
-		measuredPeriod = value * 1.0e-6;
+	    // output.Period is a fixed point number that counts by 2 (24 bits, 25 integer bits)
+	    value = (double)(output.Period << 1) / (double)output.Count;
 	}
-	return measuredPeriod / DecodingScaleFactor();
+	wpi_setError(localStatus);
+	measuredPeriod = value * 1.0e-6;
+    }
+    return measuredPeriod / DecodingScaleFactor();
 }
 
 /**
@@ -328,25 +328,25 @@ double Encoder::GetPeriod()
  * that the attached device is stopped. This timeout allows users to determine if the wheels or
  * other shaft has stopped rotating.
  * This method compensates for the decoding type.
- * 
+ *
  * @deprecated Use SetMinRate() in favor of this method.  This takes unscaled periods and SetMinRate() scales using value from SetDistancePerPulse().
- * 
+ *
  * @param maxPeriod The maximum time between rising and falling edges before the FPGA will
  * report the device stopped. This is expressed in seconds.
  */
 void Encoder::SetMaxPeriod(double maxPeriod)
 {
-	if (StatusIsFatal()) return;
-	if (m_counter)
-	{
-		m_counter->SetMaxPeriod(maxPeriod * DecodingScaleFactor());
-	}
-	else
-	{
-		tRioStatusCode localStatus = NiFpga_Status_Success;
-		m_encoder->writeTimerConfig_StallPeriod((UINT32)(maxPeriod * 1.0e6 * DecodingScaleFactor()), &localStatus);
-		wpi_setError(localStatus);
-	}
+    if (StatusIsFatal()) return;
+    if (m_counter)
+    {
+	m_counter->SetMaxPeriod(maxPeriod * DecodingScaleFactor());
+    }
+    else
+    {
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_encoder->writeTimerConfig_StallPeriod((UINT32)(maxPeriod * 1.0e6 * DecodingScaleFactor()), &localStatus);
+	wpi_setError(localStatus);
+    }
 }
 
 /**
@@ -358,18 +358,18 @@ void Encoder::SetMaxPeriod(double maxPeriod)
  */
 bool Encoder::GetStopped()
 {
-	if (StatusIsFatal()) return true;
-	if (m_counter)
-	{
-		return m_counter->GetStopped();
-	}
-	else
-	{
-		tRioStatusCode localStatus = NiFpga_Status_Success;
-		bool value = m_encoder->readTimerOutput_Stalled(&localStatus) != 0;
-		wpi_setError(localStatus);
-		return value;
-	}
+    if (StatusIsFatal()) return true;
+    if (m_counter)
+    {
+	return m_counter->GetStopped();
+    }
+    else
+    {
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	bool value = m_encoder->readTimerOutput_Stalled(&localStatus) != 0;
+	wpi_setError(localStatus);
+	return value;
+    }
 }
 
 /**
@@ -378,18 +378,18 @@ bool Encoder::GetStopped()
  */
 bool Encoder::GetDirection()
 {
-	if (StatusIsFatal()) return false;
-	if (m_counter)
-	{
-		return m_counter->GetDirection();
-	}
-	else
-	{
-		tRioStatusCode localStatus = NiFpga_Status_Success;
-		bool value = m_encoder->readOutput_Direction(&localStatus);
-		wpi_setError(localStatus);
-		return value;
-	}
+    if (StatusIsFatal()) return false;
+    if (m_counter)
+    {
+	return m_counter->GetDirection();
+    }
+    else
+    {
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	bool value = m_encoder->readOutput_Direction(&localStatus);
+	wpi_setError(localStatus);
+	return value;
+    }
 }
 
 /**
@@ -397,52 +397,52 @@ bool Encoder::GetDirection()
  */
 double Encoder::DecodingScaleFactor()
 {
-	if (StatusIsFatal()) return 0.0;
-	switch (m_encodingType)
-	{
-	case k1X:
-		return 1.0;
-	case k2X:
-		return 0.5;
-	case k4X:
-		return 0.25;
-	default:
-		return 0.0;
-	}	
+    if (StatusIsFatal()) return 0.0;
+    switch (m_encodingType)
+    {
+    case k1X:
+	return 1.0;
+    case k2X:
+	return 0.5;
+    case k4X:
+	return 0.25;
+    default:
+	return 0.0;
+    }
 }
 
 /**
  * Get the distance the robot has driven since the last reset.
- * 
+ *
  * @return The distance driven since the last reset as scaled by the value from SetDistancePerPulse().
  */
 double Encoder::GetDistance()
 {
-	if (StatusIsFatal()) return 0.0;
-	return GetRaw() * DecodingScaleFactor() * m_distancePerPulse;
+    if (StatusIsFatal()) return 0.0;
+    return GetRaw() * DecodingScaleFactor() * m_distancePerPulse;
 }
 
 /**
  * Get the current rate of the encoder.
  * Units are distance per second as scaled by the value from SetDistancePerPulse().
- * 
+ *
  * @return The current rate of the encoder.
  */
 double Encoder::GetRate()
 {
-	if (StatusIsFatal()) return 0.0;
-	return (m_distancePerPulse / GetPeriod());
+    if (StatusIsFatal()) return 0.0;
+    return (m_distancePerPulse / GetPeriod());
 }
 
 /**
  * Set the minimum rate of the device before the hardware reports it stopped.
- * 
+ *
  * @param minRate The minimum rate.  The units are in distance per second as scaled by the value from SetDistancePerPulse().
  */
 void Encoder::SetMinRate(double minRate)
 {
-	if (StatusIsFatal()) return;
-	SetMaxPeriod(m_distancePerPulse / minRate);
+    if (StatusIsFatal()) return;
+    SetMaxPeriod(m_distancePerPulse / minRate);
 }
 
 /**
@@ -453,13 +453,13 @@ void Encoder::SetMinRate(double minRate)
  * Set this value based on the encoder's rated Pulses per Revolution and
  * factor in gearing reductions following the encoder shaft.
  * This distance can be in any units you like, linear or angular.
- * 
+ *
  * @param distancePerPulse The scale factor that will be used to convert pulses to useful units.
  */
 void Encoder::SetDistancePerPulse(double distancePerPulse)
 {
-	if (StatusIsFatal()) return;
-	m_distancePerPulse = distancePerPulse;
+    if (StatusIsFatal()) return;
+    m_distancePerPulse = distancePerPulse;
 }
 
 /**
@@ -470,78 +470,78 @@ void Encoder::SetDistancePerPulse(double distancePerPulse)
  */
 void Encoder::SetReverseDirection(bool reverseDirection)
 {
-	if (StatusIsFatal()) return;
-	if (m_counter)
-	{
-		m_counter->SetReverseDirection(reverseDirection);
-	}
-	else
-	{
-		tRioStatusCode localStatus = NiFpga_Status_Success;
-		m_encoder->writeConfig_Reverse(reverseDirection, &localStatus);
-		wpi_setError(localStatus);
-	}
+    if (StatusIsFatal()) return;
+    if (m_counter)
+    {
+	m_counter->SetReverseDirection(reverseDirection);
+    }
+    else
+    {
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	m_encoder->writeConfig_Reverse(reverseDirection, &localStatus);
+	wpi_setError(localStatus);
+    }
 }
 
 /**
  * Set which parameter of the encoder you are using as a process control variable.
- * 
+ *
  * @param pidSource An enum to select the parameter.
  */
 void Encoder::SetPIDSourceParameter(PIDSourceParameter pidSource)
 {
-	if (StatusIsFatal()) return;
-	m_pidSource = pidSource;
+    if (StatusIsFatal()) return;
+    m_pidSource = pidSource;
 }
 
 /**
  * Implement the PIDSource interface.
- * 
+ *
  * @return The current value of the selected source parameter.
  */
 double Encoder::PIDGet()
 {
-	if (StatusIsFatal()) return 0.0;
-	switch (m_pidSource)
-	{
-	case kDistance:
-		return GetDistance();
-	case kRate:
-		return GetRate();
-	default:
-		return 0.0;
-	}
+    if (StatusIsFatal()) return 0.0;
+    switch (m_pidSource)
+    {
+    case kDistance:
+	return GetDistance();
+    case kRate:
+	return GetRate();
+    default:
+	return 0.0;
+    }
 }
 
 void Encoder::UpdateTable() {
-	if (m_table != NULL) {
+    if (m_table != NULL) {
         m_table->PutNumber("Speed", GetRate());
         m_table->PutNumber("Distance", GetDistance());
         m_table->PutNumber("Distance per Tick", m_distancePerPulse);
-	}
+    }
 }
 
 void Encoder::StartLiveWindowMode() {
-	
+
 }
 
 void Encoder::StopLiveWindowMode() {
-	
+
 }
 
 std::string Encoder::GetSmartDashboardType() {
-	if (m_encodingType == k4X)
-		return "Quadrature Encoder";
-	else
-		return "Encoder";
+    if (m_encodingType == k4X)
+	return "Quadrature Encoder";
+    else
+	return "Encoder";
 }
 
 void Encoder::InitTable(ITable *subTable) {
-	m_table = subTable;
-	UpdateTable();
+    m_table = subTable;
+    UpdateTable();
 }
 
 ITable * Encoder::GetTable() {
-	return m_table;
+    return m_table;
 }
 

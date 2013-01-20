@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -19,11 +19,11 @@ const float Servo::kMinServoAngle;
  */
 void Servo::InitServo()
 {
-	// TODO: compute the appropriate values based on digital loop timing
-	SetBounds(245, 0, 0, 0, 11);
-	SetPeriodMultiplier(kPeriodMultiplier_4X);
+    // TODO: compute the appropriate values based on digital loop timing
+    SetBounds(245, 0, 0, 0, 11);
+    SetPeriodMultiplier(kPeriodMultiplier_4X);
 
-	nUsageReporting::report(nUsageReporting::kResourceType_Servo, GetChannel(), GetModuleNumber() - 1);
+    nUsageReporting::report(nUsageReporting::kResourceType_Servo, GetChannel(), GetModuleNumber() - 1);
 }
 
 /**
@@ -33,7 +33,7 @@ void Servo::InitServo()
  */
 Servo::Servo(UINT32 channel) : SafePWM(channel)
 {
-	InitServo();
+    InitServo();
 }
 
 /**
@@ -44,7 +44,7 @@ Servo::Servo(UINT32 channel) : SafePWM(channel)
  */
 Servo::Servo(UINT8 moduleNumber, UINT32 channel) : SafePWM(moduleNumber, channel)
 {
-	InitServo();
+    InitServo();
 }
 
 Servo::~Servo()
@@ -60,16 +60,16 @@ Servo::~Servo()
  */
 void Servo::Set(float value)
 {
-	SetPosition(value);
+    SetPosition(value);
 }
 
 /**
  * Set the servo to offline.
- * 
+ *
  * Set the servo raw value to 0 (undriven)
  */
 void Servo::SetOffline() {
-	SetRaw(0);
+    SetRaw(0);
 }
 
 /**
@@ -81,7 +81,7 @@ void Servo::SetOffline() {
  */
 float Servo::Get()
 {
-	return GetPosition();
+    return GetPosition();
 }
 
 /**
@@ -97,16 +97,16 @@ float Servo::Get()
  */
 void Servo::SetAngle(float degrees)
 {
-	if (degrees < kMinServoAngle)
-	{
-		degrees = kMinServoAngle;
-	}
-	else if (degrees > kMaxServoAngle)
-	{
-		degrees = kMaxServoAngle;
-	}
+    if (degrees < kMinServoAngle)
+    {
+	degrees = kMinServoAngle;
+    }
+    else if (degrees > kMaxServoAngle)
+    {
+	degrees = kMaxServoAngle;
+    }
 
-	SetPosition(((float) (degrees - kMinServoAngle)) / GetServoAngleRange());
+    SetPosition(((float) (degrees - kMinServoAngle)) / GetServoAngleRange());
 }
 
 /**
@@ -117,38 +117,38 @@ void Servo::SetAngle(float degrees)
  */
 float Servo::GetAngle()
 {
-	return (float)GetPosition() * GetServoAngleRange() + kMinServoAngle;
+    return (float)GetPosition() * GetServoAngleRange() + kMinServoAngle;
 }
 
 void Servo::ValueChanged(ITable* source, const std::string& key, EntryValue value, bool isNew) {
-	Set(value.f);
+    Set(value.f);
 }
 
 void Servo::UpdateTable() {
-	if (m_table != NULL) {
-		m_table->PutNumber("Value", Get());
-	}
+    if (m_table != NULL) {
+	m_table->PutNumber("Value", Get());
+    }
 }
 
 void Servo::StartLiveWindowMode() {
-	m_table->AddTableListener("Value", this, true);
+    m_table->AddTableListener("Value", this, true);
 }
 
 void Servo::StopLiveWindowMode() {
-	m_table->RemoveTableListener(this);
+    m_table->RemoveTableListener(this);
 }
 
 std::string Servo::GetSmartDashboardType() {
-	return "Servo";
+    return "Servo";
 }
 
 void Servo::InitTable(ITable *subTable) {
-	m_table = subTable;
-	UpdateTable();
+    m_table = subTable;
+    UpdateTable();
 }
 
 ITable * Servo::GetTable() {
-	return m_table;
+    return m_table;
 }
 
 

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -16,14 +16,14 @@
  */
 Synchronized::Synchronized(SEM_ID semaphore)
 {
-	m_semaphore = semaphore;
-	semTake(m_semaphore, WAIT_FOREVER);
+    m_semaphore = semaphore;
+    semTake(m_semaphore, WAIT_FOREVER);
 }
 
 Synchronized::Synchronized(ReentrantSemaphore& semaphore)
 {
-	m_semaphore = semaphore.m_semaphore;
-	semTake(m_semaphore, WAIT_FOREVER);
+    m_semaphore = semaphore.m_semaphore;
+    semTake(m_semaphore, WAIT_FOREVER);
 }
 
 /**
@@ -31,5 +31,5 @@ Synchronized::Synchronized(ReentrantSemaphore& semaphore)
  */
 Synchronized::~Synchronized()
 {
-	semGive(m_semaphore);
+    semGive(m_semaphore);
 }

@@ -6,7 +6,7 @@
 
 #include "SmartDashboard/SendableGyro.h"
 
-#include "NetworkTables/NetworkTable.h"
+#include "networktables/NetworkTable.h"
 #include "WPIErrors.h"
 
 #include <taskLib.h>

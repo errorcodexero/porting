@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -13,55 +13,55 @@ const double GearTooth::kGearToothThreshold;
  */
 void GearTooth::EnableDirectionSensing(bool directionSensitive)
 {
-	if (directionSensitive)
-	{
-		SetPulseLengthMode(kGearToothThreshold);
-	}
+    if (directionSensitive)
+    {
+	SetPulseLengthMode(kGearToothThreshold);
+    }
 }
 
 /**
  * Construct a GearTooth sensor given a channel.
- * 
+ *
  * The default module is assumed.
- * 
+ *
  * @param channel The GPIO channel on the digital module that the sensor is connected to.
  * @param directionSensitive Enable the pulse length decoding in hardware to specify count direction.
  */
 GearTooth::GearTooth(UINT32 channel, bool directionSensitive)
-	: Counter(channel)
+    : Counter(channel)
 {
-	EnableDirectionSensing(directionSensitive);
+    EnableDirectionSensing(directionSensitive);
 }
 
 /**
  * Construct a GearTooth sensor given a channel and module.
- * 
+ *
  * @param moduleNumber The digital module (1 or 2).
  * @param channel The GPIO channel on the digital module that the sensor is connected to.
  * @param directionSensitive Enable the pulse length decoding in hardware to specify count direction.
  */
 GearTooth::GearTooth(UINT8 moduleNumber, UINT32 channel, bool directionSensitive)
-	: Counter(moduleNumber, channel)
+    : Counter(moduleNumber, channel)
 {
-	EnableDirectionSensing(directionSensitive);
+    EnableDirectionSensing(directionSensitive);
 }
 
 /**
  * Construct a GearTooth sensor given a digital input.
  * This should be used when sharing digial inputs.
- * 
+ *
  * @param source An object that fully descibes the input that the sensor is connected to.
  * @param directionSensitive Enable the pulse length decoding in hardware to specify count direction.
  */
 GearTooth::GearTooth(DigitalSource *source, bool directionSensitive)
-	: Counter(source)
+    : Counter(source)
 {
-	EnableDirectionSensing(directionSensitive);
+    EnableDirectionSensing(directionSensitive);
 }
 
 GearTooth::GearTooth(DigitalSource &source, bool directionSensitive): Counter(source)
 {
-	EnableDirectionSensing(directionSensitive);
+    EnableDirectionSensing(directionSensitive);
 }
 
 /**
@@ -73,6 +73,6 @@ GearTooth::~GearTooth()
 
 
 std::string GearTooth::GetSmartDashboardType() {
-	return "GearTooth";
+    return "GearTooth";
 }
 

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -27,23 +27,23 @@ double GetTime();
 class Timer
 {
 public:
-	Timer();
-	virtual ~Timer();
-	double Get();
-	void Reset();
-	void Start();
-	void Stop();
-	bool HasPeriodPassed(double period);
+    Timer();
+    virtual ~Timer();
+    double Get();
+    void Reset();
+    void Start();
+    void Stop();
+    bool HasPeriodPassed(double period);
 
-	static double GetFPGATimestamp();
-	static double GetPPCTimestamp();
+    static double GetFPGATimestamp();
+    static double GetPPCTimestamp();
 
 private:
-	double m_startTime;
-	double m_accumulatedTime;
-	bool m_running;
-	SEM_ID m_semaphore;
-	DISALLOW_COPY_AND_ASSIGN(Timer);
+    double m_startTime;
+    double m_accumulatedTime;
+    bool m_running;
+    SEM_ID m_semaphore;
+    DISALLOW_COPY_AND_ASSIGN(Timer);
 };
 
 #endif

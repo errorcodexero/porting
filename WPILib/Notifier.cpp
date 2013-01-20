@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -23,30 +23,30 @@ int Notifier::refcount = 0;
  */
 Notifier::Notifier(TimerEventHandler handler, void *param)
 {
-	if (handler == NULL)
-		wpi_setWPIErrorWithContext(NullParameter, "handler must not be NULL");
-	m_handler = handler;
-	m_param = param;
-	m_periodic = false;
-	m_expirationTime = 0;
-	m_period = 0;
-	m_nextEvent = NULL;
-	m_queued = false;
-	m_handlerSemaphore = semBCreate(SEM_Q_PRIORITY, SEM_FULL);
-	tRioStatusCode localStatus = NiFpga_Status_Success;
+    if (handler == NULL)
+	wpi_setWPIErrorWithContext(NullParameter, "handler must not be NULL");
+    m_handler = handler;
+    m_param = param;
+    m_periodic = false;
+    m_expirationTime = 0;
+    m_period = 0;
+    m_nextEvent = NULL;
+    m_queued = false;
+    m_handlerSemaphore = semBCreate(SEM_Q_PRIORITY, SEM_FULL);
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    {
+	Synchronized sync(queueSemaphore);
+	// do the first time intialization of static variables
+	if (refcount == 0)
 	{
-		Synchronized sync(queueSemaphore);
-		// do the first time intialization of static variables
-		if (refcount == 0)
-		{
-			manager = new tInterruptManager(1 << kTimerInterruptNumber, false, &localStatus);
-			manager->registerHandler(ProcessQueue, NULL, &localStatus);
-			manager->enable(&localStatus);
-			talarm = tAlarm::create(&localStatus);
-		}
-		refcount++;
+	    manager = new tInterruptManager(1 << kTimerInterruptNumber, false, &localStatus);
+	    manager->registerHandler(ProcessQueue, NULL, &localStatus);
+	    manager->enable(&localStatus);
+	    talarm = tAlarm::create(&localStatus);
 	}
-	wpi_setError(localStatus);
+	refcount++;
+    }
+    wpi_setError(localStatus);
 }
 
 /**
@@ -56,29 +56,29 @@ Notifier::Notifier(TimerEventHandler handler, void *param)
  */
 Notifier::~Notifier()
 {
-	tRioStatusCode localStatus = NiFpga_Status_Success;
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    {
+	Synchronized sync(queueSemaphore);
+	DeleteFromQueue();
+
+	// Delete the static variables when the last one is going away
+	if (!(--refcount))
 	{
-		Synchronized sync(queueSemaphore);
-		DeleteFromQueue();
-
-		// Delete the static variables when the last one is going away
-		if (!(--refcount))
-		{
-			talarm->writeEnable(false, &localStatus);
-			delete talarm;
-			talarm = NULL;
-			manager->disable(&localStatus);
-			delete manager;
-			manager = NULL;
-		}
+	    talarm->writeEnable(false, &localStatus);
+	    delete talarm;
+	    talarm = NULL;
+	    manager->disable(&localStatus);
+	    delete manager;
+	    manager = NULL;
 	}
-	wpi_setError(localStatus);
+    }
+    wpi_setError(localStatus);
 
-	// Acquire the semaphore; this makes certain that the handler is 
-	// not being executed by the interrupt manager.
-	semTake(m_handlerSemaphore, WAIT_FOREVER);
-	// Delete while holding the semaphore so there can be no race.
-	semDelete(m_handlerSemaphore);
+    // Acquire the semaphore; this makes certain that the handler is
+    // not being executed by the interrupt manager.
+    semTake(m_handlerSemaphore, WAIT_FOREVER);
+    // Delete while holding the semaphore so there can be no race.
+    semDelete(m_handlerSemaphore);
 }
 
 /**
@@ -90,60 +90,60 @@ Notifier::~Notifier()
  */
 void Notifier::UpdateAlarm()
 {
-	if (timerQueueHead != NULL)
-	{
-		tRioStatusCode localStatus = NiFpga_Status_Success;
-		// write the first item in the queue into the trigger time
-		talarm->writeTriggerTime((UINT32)(timerQueueHead->m_expirationTime * 1e6), &localStatus);
-		// Enable the alarm.  The hardware disables itself after each alarm.
-		talarm->writeEnable(true, &localStatus);
-		wpi_setStaticError(timerQueueHead, localStatus);
-	}
+    if (timerQueueHead != NULL)
+    {
+	tRioStatusCode localStatus = NiFpga_Status_Success;
+	// write the first item in the queue into the trigger time
+	talarm->writeTriggerTime((UINT32)(timerQueueHead->m_expirationTime * 1e6), &localStatus);
+	// Enable the alarm.  The hardware disables itself after each alarm.
+	talarm->writeEnable(true, &localStatus);
+	wpi_setStaticError(timerQueueHead, localStatus);
+    }
 }
 
 /**
  * ProcessQueue is called whenever there is a timer interrupt.
  * We need to wake up and process the current top item in the timer queue as long
- * as its scheduled time is after the current time. Then the item is removed or 
+ * as its scheduled time is after the current time. Then the item is removed or
  * rescheduled (repetitive events) in the queue.
  */
 void Notifier::ProcessQueue(uint32_t mask, void *params)
 {
-	Notifier *current;
-	while (true)				// keep processing past events until no more
+    Notifier *current;
+    while (true)		// keep processing past events until no more
+    {
 	{
-		{
-			Synchronized sync(queueSemaphore);
-			double currentTime = GetClock();
-			current = timerQueueHead;
-			if (current == NULL || current->m_expirationTime > currentTime)
-			{
-				break;		// no more timer events to process
-			}
-			// need to process this entry
-			timerQueueHead = current->m_nextEvent;
-			if (current->m_periodic)
-			{
-				// if periodic, requeue the event
-				// compute when to put into queue
-				current->InsertInQueue(true);
-			}
-			else
-			{
-				// not periodic; removed from queue
-				current->m_queued = false;
-			}
-			// Take handler semaphore while holding queue semaphore to make sure
-			//  the handler will execute to completion in case we are being deleted.
-			semTake(current->m_handlerSemaphore, WAIT_FOREVER);
-		}
-
-		current->m_handler(current->m_param);	// call the event handler
-		semGive(current->m_handlerSemaphore);
+	    Synchronized sync(queueSemaphore);
+	    double currentTime = GetClock();
+	    current = timerQueueHead;
+	    if (current == NULL || current->m_expirationTime > currentTime)
+	    {
+		break;	    // no more timer events to process
+	    }
+	    // need to process this entry
+	    timerQueueHead = current->m_nextEvent;
+	    if (current->m_periodic)
+	    {
+		// if periodic, requeue the event
+		// compute when to put into queue
+		current->InsertInQueue(true);
+	    }
+	    else
+	    {
+		// not periodic; removed from queue
+		current->m_queued = false;
+	    }
+	    // Take handler semaphore while holding queue semaphore to make sure
+	    //  the handler will execute to completion in case we are being deleted.
+	    semTake(current->m_handlerSemaphore, WAIT_FOREVER);
 	}
-	// reschedule the first item in the queue
-	Synchronized sync(queueSemaphore);
-	UpdateAlarm();
+
+	current->m_handler(current->m_param);	// call the event handler
+	semGive(current->m_handlerSemaphore);
+    }
+    // reschedule the first item in the queue
+    Synchronized sync(queueSemaphore);
+    UpdateAlarm();
 }
 
 /**
@@ -157,40 +157,40 @@ void Notifier::ProcessQueue(uint32_t mask, void *params)
  */
 void Notifier::InsertInQueue(bool reschedule)
 {
-	if (reschedule)
+    if (reschedule)
+    {
+	m_expirationTime += m_period;
+    }
+    else
+    {
+	m_expirationTime = GetClock() + m_period;
+    }
+    if (timerQueueHead == NULL || timerQueueHead->m_expirationTime >= this->m_expirationTime)
+    {
+	// the queue is empty or greater than the new entry
+	// the new entry becomes the first element
+	this->m_nextEvent = timerQueueHead;
+	timerQueueHead = this;
+	if (!reschedule)
 	{
-		m_expirationTime += m_period;
+	    // since the first element changed, update alarm, unless we already plan to
+	    UpdateAlarm();
 	}
-	else
+    }
+    else
+    {
+	for (Notifier **npp = &(timerQueueHead->m_nextEvent); ; npp = &(*npp)->m_nextEvent)
 	{
-		m_expirationTime = GetClock() + m_period;
+	    Notifier *n = *npp;
+	    if (n == NULL || n->m_expirationTime > this->m_expirationTime)
+	    {
+		*npp = this;
+		this->m_nextEvent = n;
+		break;
+	    }
 	}
-	if (timerQueueHead == NULL || timerQueueHead->m_expirationTime >= this->m_expirationTime)
-	{
-		// the queue is empty or greater than the new entry
-		// the new entry becomes the first element
-		this->m_nextEvent = timerQueueHead;
-		timerQueueHead = this;
-		if (!reschedule)
-		{
-			// since the first element changed, update alarm, unless we already plan to
-			UpdateAlarm();
-		}
-	}
-	else
-	{
-		for (Notifier **npp = &(timerQueueHead->m_nextEvent); ; npp = &(*npp)->m_nextEvent)
-		{
-			Notifier *n = *npp;
-			if (n == NULL || n->m_expirationTime > this->m_expirationTime)
-			{
-				*npp = this;
-				this->m_nextEvent = n;
-				break;
-			}
-		}
-	}
-	m_queued = true;
+    }
+    m_queued = true;
 }
 
 /**
@@ -202,28 +202,28 @@ void Notifier::InsertInQueue(bool reschedule)
  */
 void Notifier::DeleteFromQueue()
 {
-	if (m_queued)
+    if (m_queued)
+    {
+	m_queued = false;
+	wpi_assert(timerQueueHead != NULL);
+	if (timerQueueHead == this)
 	{
-		m_queued = false;
-		wpi_assert(timerQueueHead != NULL);
-		if (timerQueueHead == this)
-		{
-			// remove the first item in the list - update the alarm
-			timerQueueHead = this->m_nextEvent;
-			UpdateAlarm();
-		}
-		else
-		{
-			for (Notifier *n = timerQueueHead; n != NULL; n = n->m_nextEvent)
-			{
-				if (n->m_nextEvent == this)
-				{
-					// this element is the next element from *n from the queue
-					n->m_nextEvent = this->m_nextEvent;	// point around this one
-				}
-			}
-		}
+	    // remove the first item in the list - update the alarm
+	    timerQueueHead = this->m_nextEvent;
+	    UpdateAlarm();
 	}
+	else
+	{
+	    for (Notifier *n = timerQueueHead; n != NULL; n = n->m_nextEvent)
+	    {
+		if (n->m_nextEvent == this)
+		{
+		    // this element is the next element from *n from the queue
+		    n->m_nextEvent = this->m_nextEvent;	// point around this one
+		}
+	    }
+	}
+    }
 }
 
 /**
@@ -233,11 +233,11 @@ void Notifier::DeleteFromQueue()
  */
 void Notifier::StartSingle(double delay)
 {
-	Synchronized sync(queueSemaphore);
-	m_periodic = false;
-	m_period = delay;
-	DeleteFromQueue();
-	InsertInQueue(false);
+    Synchronized sync(queueSemaphore);
+    m_periodic = false;
+    m_period = delay;
+    DeleteFromQueue();
+    InsertInQueue(false);
 }
 
 /**
@@ -248,11 +248,11 @@ void Notifier::StartSingle(double delay)
  */
 void Notifier::StartPeriodic(double period)
 {
-	Synchronized sync(queueSemaphore);
-	m_periodic = true;
-	m_period = period;
-	DeleteFromQueue();
-	InsertInQueue(false);
+    Synchronized sync(queueSemaphore);
+    m_periodic = true;
+    m_period = period;
+    DeleteFromQueue();
+    InsertInQueue(false);
 }
 
 /**
@@ -264,10 +264,10 @@ void Notifier::StartPeriodic(double period)
  */
 void Notifier::Stop()
 {
-	{
-		Synchronized sync(queueSemaphore);
-		DeleteFromQueue();
-	}
-	// Wait for a currently executing handler to complete before returning from Stop()
-	Synchronized sync(m_handlerSemaphore);
+    {
+	Synchronized sync(queueSemaphore);
+	DeleteFromQueue();
+    }
+    // Wait for a currently executing handler to complete before returning from Stop()
+    Synchronized sync(m_handlerSemaphore);
 }

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -46,8 +46,8 @@ SensorBase::~SensorBase()
  */
 void SensorBase::AddToSingletonList()
 {
-	m_nextSingleton = m_singletonList;
-	m_singletonList = this;
+    m_nextSingleton = m_singletonList;
+    m_singletonList = this;
 }
 
 /**
@@ -57,136 +57,136 @@ void SensorBase::AddToSingletonList()
  */
 void SensorBase::DeleteSingletons()
 {
-	for (SensorBase *next = m_singletonList; next != NULL;)
-	{
-		SensorBase *tmp = next;
-		next = next->m_nextSingleton;
-		delete tmp;
-	}
-	m_singletonList = NULL;
+    for (SensorBase *next = m_singletonList; next != NULL;)
+    {
+	SensorBase *tmp = next;
+	next = next->m_nextSingleton;
+	delete tmp;
+    }
+    m_singletonList = NULL;
 }
 
 /**
  * Check that the analog module number is valid.
- * 
+ *
  * @return Analog module is valid and present
  */
 bool SensorBase::CheckAnalogModule(UINT8 moduleNumber)
 {
-	if (nLoadOut::getModulePresence(nLoadOut::kModuleType_Analog, moduleNumber - 1))
-		return true;
-	return false;
+    if (nLoadOut::getModulePresence(nLoadOut::kModuleType_Analog, moduleNumber - 1))
+	return true;
+    return false;
 }
 
 /**
  * Check that the digital module number is valid.
- * 
+ *
  * @return Digital module is valid and present
  */
 bool SensorBase::CheckDigitalModule(UINT8 moduleNumber)
 {
-	if (nLoadOut::getModulePresence(nLoadOut::kModuleType_Digital, moduleNumber - 1))
-		return true;
-	return false;
+    if (nLoadOut::getModulePresence(nLoadOut::kModuleType_Digital, moduleNumber - 1))
+	return true;
+    return false;
 }
 
 /**
  * Check that the digital module number is valid.
- * 
+ *
  * @return Digital module is valid and present
  */
 bool SensorBase::CheckPWMModule(UINT8 moduleNumber)
 {
-	return CheckDigitalModule(moduleNumber);
+    return CheckDigitalModule(moduleNumber);
 }
 
 /**
  * Check that the digital module number is valid.
- * 
+ *
  * @return Digital module is valid and present
  */
 bool SensorBase::CheckRelayModule(UINT8 moduleNumber)
 {
-	return CheckDigitalModule(moduleNumber);
+    return CheckDigitalModule(moduleNumber);
 }
 
 /**
  * Check that the solenoid module number is valid.
- * 
+ *
  * @return Solenoid module is valid and present
  */
 bool SensorBase::CheckSolenoidModule(UINT8 moduleNumber)
 {
-	if (nLoadOut::getModulePresence(nLoadOut::kModuleType_Solenoid, moduleNumber - 1))
-		return true;
-	return false;
+    if (nLoadOut::getModulePresence(nLoadOut::kModuleType_Solenoid, moduleNumber - 1))
+	return true;
+    return false;
 }
 
 /**
  * Check that the digital channel number is valid.
  * Verify that the channel number is one of the legal channel numbers. Channel numbers are
  * 1-based.
- * 
+ *
  * @return Digital channel is valid
  */
 bool SensorBase::CheckDigitalChannel(UINT32 channel)
 {
-	if (channel > 0 && channel <= kDigitalChannels)
-		return true;
-	return false;
+    if (channel > 0 && channel <= kDigitalChannels)
+	return true;
+    return false;
 }
 
 /**
  * Check that the digital channel number is valid.
  * Verify that the channel number is one of the legal channel numbers. Channel numbers are
  * 1-based.
- * 
+ *
  * @return Relay channel is valid
  */
 bool SensorBase::CheckRelayChannel(UINT32 channel)
 {
-	if (channel > 0 && channel <= kRelayChannels)
-		return true;
-	return false;
+    if (channel > 0 && channel <= kRelayChannels)
+	return true;
+    return false;
 }
 
 /**
  * Check that the digital channel number is valid.
  * Verify that the channel number is one of the legal channel numbers. Channel numbers are
  * 1-based.
- * 
+ *
  * @return PWM channel is valid
  */
 bool SensorBase::CheckPWMChannel(UINT32 channel)
 {
-	if (channel > 0 && channel <= kPwmChannels)
-		return true;
-	return false;
+    if (channel > 0 && channel <= kPwmChannels)
+	return true;
+    return false;
 }
 
 /**
  * Check that the analog channel number is value.
  * Verify that the analog channel number is one of the legal channel numbers. Channel numbers
  * are 1-based.
- * 
+ *
  * @return Analog channel is valid
  */
 bool SensorBase::CheckAnalogChannel(UINT32 channel)
 {
-	if (channel > 0 && channel <= kAnalogChannels)
-		return true;
-	return false;
+    if (channel > 0 && channel <= kAnalogChannels)
+	return true;
+    return false;
 }
 
 /**
  * Verify that the solenoid channel number is within limits.
- * 
+ *
  * @return Solenoid channel is valid
  */
 bool SensorBase::CheckSolenoidChannel(UINT32 channel)
 {
-	if (channel > 0 && channel <= kSolenoidChannels)
-		return true;
-	return false;
+    if (channel > 0 && channel <= kSolenoidChannels)
+	return true;
+    return false;
 }
 

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -19,12 +19,12 @@
 class DigitalSource: public InterruptableSensorBase
 {
 public:
-	virtual ~DigitalSource();
-	virtual UINT32 GetChannelForRouting() = 0;
-	virtual UINT32 GetModuleForRouting() = 0;
-	virtual bool GetAnalogTriggerForRouting() = 0;
-	virtual void RequestInterrupts(tInterruptHandler handler, void *param) = 0;
-	virtual void RequestInterrupts() = 0;
+    virtual ~DigitalSource();
+    virtual UINT32 GetChannelForRouting() = 0;
+    virtual UINT32 GetModuleForRouting() = 0;
+    virtual bool GetAnalogTriggerForRouting() = 0;
+    virtual void RequestInterrupts(tInterruptHandler handler, void *param) = 0;
+    virtual void RequestInterrupts() = 0;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -16,14 +16,14 @@
 class ImageBase : public ErrorBase
 {
 public:
-	ImageBase(ImageType type);
-	virtual ~ImageBase();
-	virtual void Write(const char *fileName);
-	int GetHeight();
-	int GetWidth();
-	Image *GetImaqImage();
+    ImageBase(ImageType type);
+    virtual ~ImageBase();
+    virtual void Write(const char *fileName);
+    int GetHeight();
+    int GetWidth();
+    Image *GetImaqImage();
 protected:
-	Image *m_imaqImage;
+    Image *m_imaqImage;
 };
 
 #endif

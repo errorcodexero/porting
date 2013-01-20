@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -31,34 +31,34 @@ class Synchronized;
 class ReentrantSemaphore
 {
 public:
-	explicit ReentrantSemaphore() {
-		m_semaphore = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE);
-	}
-	~ReentrantSemaphore() {
-		semDelete(m_semaphore);
-	}
+    explicit ReentrantSemaphore() {
+	m_semaphore = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE);
+    }
+    ~ReentrantSemaphore() {
+	semDelete(m_semaphore);
+    }
 
-	/**
-	 * Lock the semaphore, blocking until it's available.
-	 * @return 0 for success, -1 for error. If -1, the error will be in errno.
-	 */
-	int take() {
-		return semTake(m_semaphore, WAIT_FOREVER);
-	}
+    /**
+     * Lock the semaphore, blocking until it's available.
+     * @return 0 for success, -1 for error. If -1, the error will be in errno.
+     */
+    int take() {
+	return semTake(m_semaphore, WAIT_FOREVER);
+    }
 
-	/**
-	 * Unlock the semaphore.
-	 * @return 0 for success, -1 for error. If -1, the error will be in errno.
-	 */
-	int give() {
-		return semGive(m_semaphore);
-	}
+    /**
+     * Unlock the semaphore.
+     * @return 0 for success, -1 for error. If -1, the error will be in errno.
+     */
+    int give() {
+	return semGive(m_semaphore);
+    }
 
 private:
-	SEM_ID m_semaphore;
+    SEM_ID m_semaphore;
 
-	friend class Synchronized;
-	DISALLOW_COPY_AND_ASSIGN(ReentrantSemaphore);
+    friend class Synchronized;
+    DISALLOW_COPY_AND_ASSIGN(ReentrantSemaphore);
 };
 
 /**
@@ -82,13 +82,13 @@ private:
 class Synchronized
 {
 public:
-	explicit Synchronized(SEM_ID);
-	explicit Synchronized(ReentrantSemaphore&);
-	virtual ~Synchronized();
+    explicit Synchronized(SEM_ID);
+    explicit Synchronized(ReentrantSemaphore&);
+    virtual ~Synchronized();
 private:
-	SEM_ID m_semaphore;
+    SEM_ID m_semaphore;
 
-	DISALLOW_COPY_AND_ASSIGN(Synchronized);
+    DISALLOW_COPY_AND_ASSIGN(Synchronized);
 };
 
 #endif

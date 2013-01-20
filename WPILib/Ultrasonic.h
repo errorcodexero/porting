@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -29,61 +29,61 @@ class DigitalOutput;
 class Ultrasonic: public SensorBase, public PIDSource, public LiveWindowSendable
 {
 public:
-	typedef enum {
-		kInches = 0,
-		kMilliMeters = 1
-	} DistanceUnit;
-	
-	Ultrasonic(DigitalOutput *pingChannel, DigitalInput *echoChannel, DistanceUnit units = kInches);
-	Ultrasonic(DigitalOutput &pingChannel, DigitalInput &echoChannel, DistanceUnit units = kInches);
-	Ultrasonic(UINT32 pingChannel, UINT32 echoChannel, DistanceUnit units = kInches);
-	Ultrasonic(UINT8 pingModuleNumber, UINT32 pingChannel,
-							UINT8 echoModuleNumber, UINT32 echoChannel, DistanceUnit units = kInches);
-	virtual ~Ultrasonic();
+    typedef enum {
+	kInches = 0,
+	kMilliMeters = 1
+    } DistanceUnit;
 
-	void Ping();
-	bool IsRangeValid();
-	static void SetAutomaticMode(bool enabling);
-	double GetRangeInches();
-	double GetRangeMM();
-	bool IsEnabled() { return m_enabled; }
-	void SetEnabled(bool enable) { m_enabled = enable; }
-	
-	double PIDGet();
-	void SetDistanceUnits(DistanceUnit units);
-	DistanceUnit GetDistanceUnits();
+    Ultrasonic(DigitalOutput *pingChannel, DigitalInput *echoChannel, DistanceUnit units = kInches);
+    Ultrasonic(DigitalOutput &pingChannel, DigitalInput &echoChannel, DistanceUnit units = kInches);
+    Ultrasonic(UINT32 pingChannel, UINT32 echoChannel, DistanceUnit units = kInches);
+    Ultrasonic(UINT8 pingModuleNumber, UINT32 pingChannel,
+			    UINT8 echoModuleNumber, UINT32 echoChannel, DistanceUnit units = kInches);
+    virtual ~Ultrasonic();
 
-	void UpdateTable();
-	void StartLiveWindowMode();
-	void StopLiveWindowMode();
-	std::string GetSmartDashboardType();
-	void InitTable(ITable *subTable);
-	ITable * GetTable();
+    void Ping();
+    bool IsRangeValid();
+    static void SetAutomaticMode(bool enabling);
+    double GetRangeInches();
+    double GetRangeMM();
+    bool IsEnabled() { return m_enabled; }
+    void SetEnabled(bool enable) { m_enabled = enable; }
+
+    double PIDGet();
+    void SetDistanceUnits(DistanceUnit units);
+    DistanceUnit GetDistanceUnits();
+
+    void UpdateTable();
+    void StartLiveWindowMode();
+    void StopLiveWindowMode();
+    std::string GetSmartDashboardType();
+    void InitTable(ITable *subTable);
+    ITable * GetTable();
 
 private:
-	void Initialize();
+    void Initialize();
 
-	static void UltrasonicChecker();
+    static void UltrasonicChecker();
 
-	static const double kPingTime = 10 * 1e-6;	///< Time (sec) for the ping trigger pulse.
-	static const UINT32 kPriority = 90;	///< Priority that the ultrasonic round robin task runs.
-	static const double kMaxUltrasonicTime = 0.1;	///< Max time (ms) between readings.
-	static const double kSpeedOfSoundInchesPerSec = 1130.0 * 12.0;
+    static const double kPingTime = 10 * 1e-6;	///< Time (sec) for the ping trigger pulse.
+    static const UINT32 kPriority = 90;	///< Priority that the ultrasonic round robin task runs.
+    static const double kMaxUltrasonicTime = 0.1;   ///< Max time (ms) between readings.
+    static const double kSpeedOfSoundInchesPerSec = 1130.0 * 12.0;
 
-	static Task m_task; // task doing the round-robin automatic sensing
-	static Ultrasonic *m_firstSensor; // head of the ultrasonic sensor list
-	static bool m_automaticEnabled; // automatic round robin mode
-	static SEM_ID m_semaphore; // synchronize access to the list of sensors
+    static Task m_task; // task doing the round-robin automatic sensing
+    static Ultrasonic *m_firstSensor; // head of the ultrasonic sensor list
+    static bool m_automaticEnabled; // automatic round robin mode
+    static SEM_ID m_semaphore; // synchronize access to the list of sensors
 
-	DigitalInput *m_echoChannel;
-	DigitalOutput *m_pingChannel;
-	bool m_allocatedChannels;
-	bool m_enabled;
-	Counter *m_counter;
-	Ultrasonic *m_nextSensor;
-	DistanceUnit m_units;
-	
-	ITable *m_table;
+    DigitalInput *m_echoChannel;
+    DigitalOutput *m_pingChannel;
+    bool m_allocatedChannels;
+    bool m_enabled;
+    Counter *m_counter;
+    Ultrasonic *m_nextSensor;
+    DistanceUnit m_units;
+
+    ITable *m_table;
 };
 
 #endif

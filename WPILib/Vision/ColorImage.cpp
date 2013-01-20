@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -24,18 +24,18 @@ ColorImage::~ColorImage()
  * @returns a pointer to a binary image
  */
 BinaryImage *ColorImage::ComputeThreshold(ColorMode colorMode,
-		int low1, int high1,
-		int low2, int high2,
-		int low3, int high3)
+	int low1, int high1,
+	int low2, int high2,
+	int low3, int high3)
 {
-	BinaryImage *result = new BinaryImage();
-	Range range1 = {low1, high1},
-		range2 = {low2, high2},
-		range3 = {low3, high3};
-	
-	int success = imaqColorThreshold(result->GetImaqImage(), m_imaqImage, 1, colorMode, &range1, &range2, &range3);
-	wpi_setImaqErrorWithContext(success, "ImaqThreshold error");
-	return result;
+    BinaryImage *result = new BinaryImage();
+    Range range1 = {low1, high1},
+	range2 = {low2, high2},
+	range3 = {low3, high3};
+
+    int success = imaqColorThreshold(result->GetImaqImage(), m_imaqImage, 1, colorMode, &range1, &range2, &range3);
+    wpi_setImaqErrorWithContext(success, "ImaqThreshold error");
+    return result;
 }
 
 /**
@@ -50,7 +50,7 @@ BinaryImage *ColorImage::ComputeThreshold(ColorMode colorMode,
  */
 BinaryImage *ColorImage::ThresholdRGB(int redLow, int redHigh, int greenLow, int greenHigh, int blueLow, int blueHigh)
 {
-	return ComputeThreshold(IMAQ_RGB, redLow, redHigh, greenLow, greenHigh, blueLow, blueHigh);
+    return ComputeThreshold(IMAQ_RGB, redLow, redHigh, greenLow, greenHigh, blueLow, blueHigh);
 }
 
 /**
@@ -60,9 +60,9 @@ BinaryImage *ColorImage::ThresholdRGB(int redLow, int redHigh, int greenLow, int
  */
 BinaryImage *ColorImage::ThresholdRGB(Threshold &t)
 {
-	return ComputeThreshold(IMAQ_RGB, t.plane1Low, t.plane1High,
-								t.plane2Low, t.plane2High,
-								t.plane3Low, t.plane3High);
+    return ComputeThreshold(IMAQ_RGB, t.plane1Low, t.plane1High,
+				t.plane2Low, t.plane2High,
+				t.plane3Low, t.plane3High);
 }
 
 /**
@@ -77,7 +77,7 @@ BinaryImage *ColorImage::ThresholdRGB(Threshold &t)
  */
 BinaryImage *ColorImage::ThresholdHSL(int hueLow, int hueHigh, int saturationLow, int saturationHigh, int luminenceLow, int luminenceHigh)
 {
-	return ComputeThreshold(IMAQ_HSL, hueLow, hueHigh, saturationLow, saturationHigh, luminenceLow, luminenceHigh);
+    return ComputeThreshold(IMAQ_HSL, hueLow, hueHigh, saturationLow, saturationHigh, luminenceLow, luminenceHigh);
 }
 
 /**
@@ -87,9 +87,9 @@ BinaryImage *ColorImage::ThresholdHSL(int hueLow, int hueHigh, int saturationLow
  */
 BinaryImage *ColorImage::ThresholdHSL(Threshold &t)
 {
-	return ComputeThreshold(IMAQ_HSL, t.plane1Low, t.plane1High,
-								t.plane2Low, t.plane2High,
-								t.plane3Low, t.plane3High);
+    return ComputeThreshold(IMAQ_HSL, t.plane1Low, t.plane1High,
+				t.plane2Low, t.plane2High,
+				t.plane3Low, t.plane3High);
 }
 
 /**
@@ -104,7 +104,7 @@ BinaryImage *ColorImage::ThresholdHSL(Threshold &t)
  */
 BinaryImage *ColorImage::ThresholdHSV(int hueLow, int hueHigh, int saturationLow, int saturationHigh, int valueLow, int valueHigh)
 {
-	return ComputeThreshold(IMAQ_HSV, hueLow, hueHigh, saturationLow, saturationHigh, valueLow, valueHigh);
+    return ComputeThreshold(IMAQ_HSV, hueLow, hueHigh, saturationLow, saturationHigh, valueLow, valueHigh);
 }
 
 /**
@@ -114,9 +114,9 @@ BinaryImage *ColorImage::ThresholdHSV(int hueLow, int hueHigh, int saturationLow
  */
 BinaryImage *ColorImage::ThresholdHSV(Threshold &t)
 {
-	return ComputeThreshold(IMAQ_HSV, t.plane1Low, t.plane1High,
-								t.plane2Low, t.plane2High,
-								t.plane3Low, t.plane3High);
+    return ComputeThreshold(IMAQ_HSV, t.plane1Low, t.plane1High,
+				t.plane2Low, t.plane2High,
+				t.plane3Low, t.plane3High);
 }
 
 /**
@@ -131,7 +131,7 @@ BinaryImage *ColorImage::ThresholdHSV(Threshold &t)
  */
 BinaryImage *ColorImage::ThresholdHSI(int hueLow, int hueHigh, int saturationLow, int saturationHigh, int intensityLow, int intensityHigh)
 {
-	return ComputeThreshold(IMAQ_HSI, hueLow, hueHigh, saturationLow, saturationHigh, intensityLow, intensityHigh);
+    return ComputeThreshold(IMAQ_HSI, hueLow, hueHigh, saturationLow, saturationHigh, intensityLow, intensityHigh);
 }
 
 /**
@@ -141,9 +141,9 @@ BinaryImage *ColorImage::ThresholdHSI(int hueLow, int hueHigh, int saturationLow
  */
 BinaryImage *ColorImage::ThresholdHSI(Threshold &t)
 {
-	return ComputeThreshold(IMAQ_HSI, t.plane1Low, t.plane1High,
-								t.plane2Low, t.plane2High,
-								t.plane3Low, t.plane3High);
+    return ComputeThreshold(IMAQ_HSI, t.plane1Low, t.plane1High,
+				t.plane2Low, t.plane2High,
+				t.plane3Low, t.plane3High);
 }
 
 /**
@@ -154,16 +154,16 @@ BinaryImage *ColorImage::ThresholdHSI(Threshold &t)
  */
 MonoImage *ColorImage::ExtractColorPlane(ColorMode mode, int planeNumber)
 {
-	MonoImage *result = new MonoImage();
-	if (m_imaqImage == NULL)
-		wpi_setWPIError(NullParameter);
-	int success = imaqExtractColorPlanes(m_imaqImage, 
-										 mode, 
-										 (planeNumber == 1) ? result->GetImaqImage() : NULL, 
-										 (planeNumber == 2) ? result->GetImaqImage() : NULL, 
-										 (planeNumber == 3) ? result->GetImaqImage() : NULL);
-	wpi_setImaqErrorWithContext(success, "Imaq ExtractColorPlanes failed");
-	return result;
+    MonoImage *result = new MonoImage();
+    if (m_imaqImage == NULL)
+	wpi_setWPIError(NullParameter);
+    int success = imaqExtractColorPlanes(m_imaqImage,
+					 mode,
+					 (planeNumber == 1) ? result->GetImaqImage() : NULL,
+					 (planeNumber == 2) ? result->GetImaqImage() : NULL,
+					 (planeNumber == 3) ? result->GetImaqImage() : NULL);
+    wpi_setImaqErrorWithContext(success, "Imaq ExtractColorPlanes failed");
+    return result;
 }
 
 /*
@@ -173,7 +173,7 @@ MonoImage *ColorImage::ExtractColorPlane(ColorMode mode, int planeNumber)
  */
 MonoImage *ColorImage::ExtractFirstColorPlane(ColorMode mode)
 {
-	return ExtractColorPlane(mode, 1);
+    return ExtractColorPlane(mode, 1);
 }
 
 /*
@@ -183,7 +183,7 @@ MonoImage *ColorImage::ExtractFirstColorPlane(ColorMode mode)
  */
 MonoImage *ColorImage::ExtractSecondColorPlane(ColorMode mode)
 {
-	return ExtractColorPlane(mode, 2);
+    return ExtractColorPlane(mode, 2);
 }
 
 /*
@@ -193,7 +193,7 @@ MonoImage *ColorImage::ExtractSecondColorPlane(ColorMode mode)
  */
 MonoImage *ColorImage::ExtractThirdColorPlane(ColorMode mode)
 {
-	return ExtractColorPlane(mode, 3);
+    return ExtractColorPlane(mode, 3);
 }
 
 /*
@@ -202,7 +202,7 @@ MonoImage *ColorImage::ExtractThirdColorPlane(ColorMode mode)
  */
 MonoImage *ColorImage::GetRedPlane()
 {
-	return ExtractFirstColorPlane(IMAQ_RGB);
+    return ExtractFirstColorPlane(IMAQ_RGB);
 }
 
 /*
@@ -229,7 +229,7 @@ MonoImage *ColorImage::GetBluePlane()
  */
 MonoImage *ColorImage::GetHSLHuePlane()
 {
-	return ExtractFirstColorPlane(IMAQ_HSL);
+    return ExtractFirstColorPlane(IMAQ_HSL);
 }
 
 /*
@@ -238,7 +238,7 @@ MonoImage *ColorImage::GetHSLHuePlane()
  */
 MonoImage *ColorImage::GetHSVHuePlane()
 {
-	return ExtractFirstColorPlane(IMAQ_HSV);
+    return ExtractFirstColorPlane(IMAQ_HSV);
 }
 
 /*
@@ -247,7 +247,7 @@ MonoImage *ColorImage::GetHSVHuePlane()
  */
 MonoImage *ColorImage::GetHSIHuePlane()
 {
-	return ExtractFirstColorPlane(IMAQ_HSI);
+    return ExtractFirstColorPlane(IMAQ_HSI);
 }
 
 /*
@@ -256,7 +256,7 @@ MonoImage *ColorImage::GetHSIHuePlane()
  */
 MonoImage *ColorImage::GetLuminancePlane()
 {
-	return ExtractThirdColorPlane(IMAQ_HSL);
+    return ExtractThirdColorPlane(IMAQ_HSL);
 }
 
 /*
@@ -265,7 +265,7 @@ MonoImage *ColorImage::GetLuminancePlane()
  */
 MonoImage *ColorImage::GetValuePlane()
 {
-	return ExtractThirdColorPlane(IMAQ_HSV);
+    return ExtractThirdColorPlane(IMAQ_HSV);
 }
 
 /*
@@ -274,7 +274,7 @@ MonoImage *ColorImage::GetValuePlane()
  */
 MonoImage *ColorImage::GetIntensityPlane()
 {
-	return ExtractThirdColorPlane(IMAQ_HSI);
+    return ExtractThirdColorPlane(IMAQ_HSI);
 }
 
 /**
@@ -285,13 +285,13 @@ MonoImage *ColorImage::GetIntensityPlane()
  * @param planeNumber The plane number (1, 2, 3) to replace
  */
 void ColorImage::ReplacePlane(ColorMode mode, MonoImage *plane, int planeNumber) {
-	int success = imaqReplaceColorPlanes(m_imaqImage, 
-										 (const Image*) m_imaqImage, 
-									     mode, 
-									     (planeNumber == 1) ? plane->GetImaqImage() : NULL, 
-									     (planeNumber == 2) ? plane->GetImaqImage() : NULL, 
-									     (planeNumber == 3) ? plane->GetImaqImage() : NULL);
-	wpi_setImaqErrorWithContext(success, "Imaq ReplaceColorPlanes failed");
+    int success = imaqReplaceColorPlanes(m_imaqImage,
+					 (const Image*) m_imaqImage,
+					 mode,
+					 (planeNumber == 1) ? plane->GetImaqImage() : NULL,
+					 (planeNumber == 2) ? plane->GetImaqImage() : NULL,
+					 (planeNumber == 3) ? plane->GetImaqImage() : NULL);
+    wpi_setImaqErrorWithContext(success, "Imaq ReplaceColorPlanes failed");
 }
 
 /**
@@ -301,7 +301,7 @@ void ColorImage::ReplacePlane(ColorMode mode, MonoImage *plane, int planeNumber)
  */
 void ColorImage::ReplaceFirstColorPlane(ColorMode mode, MonoImage *plane)
 {
-	ReplacePlane(mode, plane, 1);
+    ReplacePlane(mode, plane, 1);
 }
 
 /**
@@ -311,7 +311,7 @@ void ColorImage::ReplaceFirstColorPlane(ColorMode mode, MonoImage *plane)
  */
 void ColorImage::ReplaceSecondColorPlane(ColorMode mode, MonoImage *plane)
 {
-	ReplacePlane(mode, plane, 2);
+    ReplacePlane(mode, plane, 2);
 }
 
 /**
@@ -320,8 +320,8 @@ void ColorImage::ReplaceSecondColorPlane(ColorMode mode, MonoImage *plane)
  * @param plane A pointer to a MonoImage that will replace the specified color plane.
  */
 void ColorImage::ReplaceThirdColorPlane(ColorMode mode, MonoImage *plane)
-{ 
-	ReplacePlane(mode, plane, 3);
+{
+    ReplacePlane(mode, plane, 3);
 }
 
 /**
@@ -331,7 +331,7 @@ void ColorImage::ReplaceThirdColorPlane(ColorMode mode, MonoImage *plane)
  */
 void ColorImage::ReplaceRedPlane(MonoImage *plane)
 {
-	ReplaceFirstColorPlane(IMAQ_RGB, plane);
+    ReplaceFirstColorPlane(IMAQ_RGB, plane);
 }
 
 /**
@@ -341,7 +341,7 @@ void ColorImage::ReplaceRedPlane(MonoImage *plane)
  */
 void ColorImage::ReplaceGreenPlane(MonoImage *plane)
 {
-	ReplaceSecondColorPlane(IMAQ_RGB, plane);
+    ReplaceSecondColorPlane(IMAQ_RGB, plane);
 }
 
 /**
@@ -351,7 +351,7 @@ void ColorImage::ReplaceGreenPlane(MonoImage *plane)
  */
 void ColorImage::ReplaceBluePlane(MonoImage *plane)
 {
-	ReplaceThirdColorPlane(IMAQ_RGB, plane);
+    ReplaceThirdColorPlane(IMAQ_RGB, plane);
 }
 
 
@@ -362,7 +362,7 @@ void ColorImage::ReplaceBluePlane(MonoImage *plane)
  */
 void ColorImage::ReplaceHSLHuePlane(MonoImage *plane)
 {
-	return ReplaceFirstColorPlane(IMAQ_HSL, plane);
+    return ReplaceFirstColorPlane(IMAQ_HSL, plane);
 }
 
 /**
@@ -372,7 +372,7 @@ void ColorImage::ReplaceHSLHuePlane(MonoImage *plane)
  */
 void ColorImage::ReplaceHSVHuePlane(MonoImage *plane)
 {
-	return ReplaceFirstColorPlane(IMAQ_HSV, plane);
+    return ReplaceFirstColorPlane(IMAQ_HSV, plane);
 }
 
 /**
@@ -382,7 +382,7 @@ void ColorImage::ReplaceHSVHuePlane(MonoImage *plane)
  */
 void ColorImage::ReplaceHSIHuePlane(MonoImage *plane)
 {
-	return ReplaceFirstColorPlane(IMAQ_HSI, plane);
+    return ReplaceFirstColorPlane(IMAQ_HSI, plane);
 }
 
 /**
@@ -392,7 +392,7 @@ void ColorImage::ReplaceHSIHuePlane(MonoImage *plane)
  */
 void ColorImage::ReplaceHSLSaturationPlane(MonoImage *plane)
 {
-	return ReplaceSecondColorPlane(IMAQ_HSL, plane);
+    return ReplaceSecondColorPlane(IMAQ_HSL, plane);
 }
 
 /**
@@ -402,7 +402,7 @@ void ColorImage::ReplaceHSLSaturationPlane(MonoImage *plane)
  */
 void ColorImage::ReplaceHSVSaturationPlane(MonoImage *plane)
 {
-	return ReplaceSecondColorPlane(IMAQ_HSV, plane);
+    return ReplaceSecondColorPlane(IMAQ_HSV, plane);
 }
 
 /**
@@ -412,7 +412,7 @@ void ColorImage::ReplaceHSVSaturationPlane(MonoImage *plane)
  */
 void ColorImage::ReplaceHSISaturationPlane(MonoImage *plane)
 {
-	return ReplaceSecondColorPlane(IMAQ_HSI, plane);
+    return ReplaceSecondColorPlane(IMAQ_HSI, plane);
 }
 
 /**
@@ -422,7 +422,7 @@ void ColorImage::ReplaceHSISaturationPlane(MonoImage *plane)
  */
 void ColorImage::ReplaceLuminancePlane(MonoImage *plane)
 {
-	return ReplaceThirdColorPlane(IMAQ_HSL, plane);
+    return ReplaceThirdColorPlane(IMAQ_HSL, plane);
 }
 
 /**
@@ -432,7 +432,7 @@ void ColorImage::ReplaceLuminancePlane(MonoImage *plane)
  */
 void ColorImage::ReplaceValuePlane(MonoImage *plane)
 {
-	return ReplaceThirdColorPlane(IMAQ_HSV, plane);
+    return ReplaceThirdColorPlane(IMAQ_HSV, plane);
 }
 
 /**
@@ -442,24 +442,24 @@ void ColorImage::ReplaceValuePlane(MonoImage *plane)
  */
 void ColorImage::ReplaceIntensityPlane(MonoImage *plane)
 {
-	return ReplaceThirdColorPlane(IMAQ_HSI, plane);
+    return ReplaceThirdColorPlane(IMAQ_HSI, plane);
 }
 
 //TODO: frcColorEqualize(Image* dest, const Image* source, int colorEqualization) needs to be modified
 //The colorEqualization parameter is discarded and is set to TRUE in the call to imaqColorEqualize.
 void ColorImage::Equalize(bool allPlanes)
 {
-	// Note that this call uses NI-defined TRUE and FALSE
-	int success = imaqColorEqualize(m_imaqImage, (const Image*) m_imaqImage, (allPlanes) ? TRUE : FALSE);
-	wpi_setImaqErrorWithContext(success, "Imaq ColorEqualize error");
+    // Note that this call uses NI-defined TRUE and FALSE
+    int success = imaqColorEqualize(m_imaqImage, (const Image*) m_imaqImage, (allPlanes) ? TRUE : FALSE);
+    wpi_setImaqErrorWithContext(success, "Imaq ColorEqualize error");
 }
 
 void ColorImage::ColorEqualize()
 {
-	Equalize(true);
+    Equalize(true);
 }
 
 void ColorImage::LuminanceEqualize()
 {
-	Equalize(false);
+    Equalize(false);
 }

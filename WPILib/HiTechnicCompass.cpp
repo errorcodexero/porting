@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -19,32 +19,32 @@ const UINT8 HiTechnicCompass::kHeadingRegister;
 
 /**
  * Constructor.
- * 
+ *
  * @param moduleNumber The digital module that the sensor is plugged into (1 or 2).
  */
 HiTechnicCompass::HiTechnicCompass(UINT8 moduleNumber)
-	: m_i2c (NULL)
+    : m_i2c (NULL)
 {
-	DigitalModule *module = DigitalModule::GetInstance(moduleNumber);
-	if (module)
-	{
-		m_i2c = module->GetI2C(kAddress);
-	
-		// Verify Sensor
-		const UINT8 kExpectedManufacturer[] = "HiTechnc";
-		const UINT8 kExpectedSensorType[] = "Compass ";
-		if ( ! m_i2c->VerifySensor(kManufacturerBaseRegister, kManufacturerSize, kExpectedManufacturer) )
-		{
-			wpi_setWPIError(CompassManufacturerError);
-			return;
-		}
-		if ( ! m_i2c->VerifySensor(kSensorTypeBaseRegister, kSensorTypeSize, kExpectedSensorType) )
-		{
-			wpi_setWPIError(CompassTypeError);
-		}
+    DigitalModule *module = DigitalModule::GetInstance(moduleNumber);
+    if (module)
+    {
+	m_i2c = module->GetI2C(kAddress);
 
-		nUsageReporting::report(nUsageReporting::kResourceType_HiTechnicCompass, moduleNumber - 1);
+	// Verify Sensor
+	const UINT8 kExpectedManufacturer[] = "HiTechnc";
+	const UINT8 kExpectedSensorType[] = "Compass ";
+	if ( ! m_i2c->VerifySensor(kManufacturerBaseRegister, kManufacturerSize, kExpectedManufacturer) )
+	{
+	    wpi_setWPIError(CompassManufacturerError);
+	    return;
 	}
+	if ( ! m_i2c->VerifySensor(kSensorTypeBaseRegister, kSensorTypeSize, kExpectedSensorType) )
+	{
+	    wpi_setWPIError(CompassTypeError);
+	}
+
+	nUsageReporting::report(nUsageReporting::kResourceType_HiTechnicCompass, moduleNumber - 1);
+    }
 }
 
 /**
@@ -52,54 +52,54 @@ HiTechnicCompass::HiTechnicCompass(UINT8 moduleNumber)
  */
 HiTechnicCompass::~HiTechnicCompass()
 {
-	delete m_i2c;
-	m_i2c = NULL;
+    delete m_i2c;
+    m_i2c = NULL;
 }
 
 /**
  * Get the compass angle in degrees.
- * 
+ *
  * The resolution of this reading is 1 degree.
- * 
+ *
  * @return Angle of the compass in degrees.
  */
 float HiTechnicCompass::GetAngle()
 {
-	UINT16 heading = 0;
-	if (m_i2c)
-	{
-		m_i2c->Read(kHeadingRegister, sizeof(heading), (UINT8 *)&heading);
+    UINT16 heading = 0;
+    if (m_i2c)
+    {
+	m_i2c->Read(kHeadingRegister, sizeof(heading), (UINT8 *)&heading);
 
-		// Sensor is little endian... swap bytes
-		heading = (heading >> 8) | (heading << 8);
-	}
-	return (float)heading;
+	// Sensor is little endian... swap bytes
+	heading = (heading >> 8) | (heading << 8);
+    }
+    return (float)heading;
 }
 
 void HiTechnicCompass::UpdateTable() {
-	if (m_table != NULL) {
-		m_table->PutNumber("Value", GetAngle());
-	}
+    if (m_table != NULL) {
+	m_table->PutNumber("Value", GetAngle());
+    }
 }
 
 void HiTechnicCompass::StartLiveWindowMode() {
-	
+
 }
 
 void HiTechnicCompass::StopLiveWindowMode() {
-	
+
 }
 
 std::string HiTechnicCompass::GetSmartDashboardType() {
-	return "HiTechnicCompass";
+    return "HiTechnicCompass";
 }
 
 void HiTechnicCompass::InitTable(ITable *subTable) {
-	m_table = subTable;
-	UpdateTable();
+    m_table = subTable;
+    UpdateTable();
 }
 
 ITable * HiTechnicCompass::GetTable() {
-	return m_table;
+    return m_table;
 }
 

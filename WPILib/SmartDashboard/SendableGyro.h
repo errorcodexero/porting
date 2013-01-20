@@ -8,7 +8,7 @@
 #define __SENDABLE_GYRO_H__
 
 #include "Gyro.h"
-#include "NetworkTables/NetworkTableChangeListener.h"
+#include "networktables/NetworkTableChangeListener.h"
 #include "SmartDashboard/SmartDashboardData.h"
 #include "Task.h"
 

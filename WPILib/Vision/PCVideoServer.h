@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -19,20 +19,20 @@
 class PCVideoServer : public ErrorBase {
 
 public:
-	PCVideoServer();
-	~PCVideoServer();
-	unsigned int Release();
-	void Start();
-	void Stop();
+    PCVideoServer();
+    ~PCVideoServer();
+    unsigned int Release();
+    void Start();
+    void Stop();
 
 private:
-	static int s_ServerTask(PCVideoServer *thisPtr);
-	int ServerTask();
-	int StartServerTask();
+    static int s_ServerTask(PCVideoServer *thisPtr);
+    int ServerTask();
+    int StartServerTask();
 
-	Task m_serverTask;
-	SEM_ID m_newImageSem;
-	bool m_stopServer;
+    Task m_serverTask;
+    SEM_ID m_newImageSem;
+    bool m_stopServer;
 };
 
 #endif

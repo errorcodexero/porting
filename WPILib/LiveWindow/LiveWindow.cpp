@@ -1,5 +1,5 @@
 #include "LiveWindow/LiveWindow.h"
-#include "NetworkTables/NetworkTable.h"
+#include "networktables/NetworkTable.h"
 
 LiveWindow* LiveWindow::m_instance = NULL;
 

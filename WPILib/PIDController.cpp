@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -31,11 +31,11 @@ static const char *kEnabled = "enabled";
  * integral and differental terms. The default is 50ms.
  */
 PIDController::PIDController(float Kp, float Ki, float Kd,
-								PIDSource *source, PIDOutput *output,
-								float period) :
-	m_semaphore (0)
+				PIDSource *source, PIDOutput *output,
+				float period) :
+    m_semaphore (0)
 {
-	Initialize(Kp, Ki, Kd, 0.0f, source, output, period);
+    Initialize(Kp, Ki, Kd, 0.0f, source, output, period);
 }
 
 /**
@@ -49,56 +49,56 @@ PIDController::PIDController(float Kp, float Ki, float Kd,
  * integral and differental terms. The default is 50ms.
  */
 PIDController::PIDController(float Kp, float Ki, float Kd, float Kf,
-								PIDSource *source, PIDOutput *output,
-								float period) :
-	m_semaphore (0)
+				PIDSource *source, PIDOutput *output,
+				float period) :
+    m_semaphore (0)
 {
-	Initialize(Kp, Ki, Kd, Kf, source, output, period);
+    Initialize(Kp, Ki, Kd, Kf, source, output, period);
 }
 
 
 void PIDController::Initialize(float Kp, float Ki, float Kd, float Kf,
-								PIDSource *source, PIDOutput *output,
-								float period)
+				PIDSource *source, PIDOutput *output,
+				float period)
 {
-	m_table = NULL;
-	
-	m_semaphore = semBCreate(SEM_Q_PRIORITY, SEM_FULL);
+    m_table = NULL;
 
-	m_controlLoop = new Notifier(PIDController::CallCalculate, this);
+    m_semaphore = semBCreate(SEM_Q_PRIORITY, SEM_FULL);
 
-	m_P = Kp;
-	m_I = Ki;
-	m_D = Kd;
-	m_F = Kf;
-	
-	m_maximumOutput = 1.0;
-	m_minimumOutput = -1.0;
+    m_controlLoop = new Notifier(PIDController::CallCalculate, this);
 
-	m_maximumInput = 0;
-	m_minimumInput = 0;
+    m_P = Kp;
+    m_I = Ki;
+    m_D = Kd;
+    m_F = Kf;
 
-	m_continuous = false;
-	m_enabled = false;
-	m_setpoint = 0;
+    m_maximumOutput = 1.0;
+    m_minimumOutput = -1.0;
 
-	m_prevError = 0;
-	m_totalError = 0;
-	m_tolerance = .05;
+    m_maximumInput = 0;
+    m_minimumInput = 0;
 
-	m_result = 0;
+    m_continuous = false;
+    m_enabled = false;
+    m_setpoint = 0;
 
-	m_pidInput = source;
-	m_pidOutput = output;
-	m_period = period;
+    m_prevError = 0;
+    m_totalError = 0;
+    m_tolerance = .05;
 
-	m_controlLoop->StartPeriodic(m_period);
+    m_result = 0;
 
-	static INT32 instances = 0;
-	instances++;
-	nUsageReporting::report(nUsageReporting::kResourceType_PIDController, instances);
-	
-	m_toleranceType = kNoTolerance;
+    m_pidInput = source;
+    m_pidOutput = output;
+    m_period = period;
+
+    m_controlLoop->StartPeriodic(m_period);
+
+    static INT32 instances = 0;
+    instances++;
+    nUsageReporting::report(nUsageReporting::kResourceType_PIDController, instances);
+
+    m_toleranceType = kNoTolerance;
 }
 
 /**
@@ -106,8 +106,8 @@ void PIDController::Initialize(float Kp, float Ki, float Kd, float Kf,
  */
 PIDController::~PIDController()
 {
-	semFlush(m_semaphore);
-	delete m_controlLoop;
+    semFlush(m_semaphore);
+    delete m_controlLoop;
 }
 
 /**
@@ -119,81 +119,81 @@ PIDController::~PIDController()
  */
 void PIDController::CallCalculate(void *controller)
 {
-	PIDController *control = (PIDController*) controller;
-	control->Calculate();
+    PIDController *control = (PIDController*) controller;
+    control->Calculate();
 }
 
  /**
   * Read the input, calculate the output accordingly, and write to the output.
   * This should only be called by the Notifier indirectly through CallCalculate
   * and is created during initialization.
-  */	
+  */
 void PIDController::Calculate()
 {
-	bool enabled;
-	PIDSource *pidInput;
+    bool enabled;
+    PIDSource *pidInput;
 
-	CRITICAL_REGION(m_semaphore)
+    CRITICAL_REGION(m_semaphore)
+    {
+	if (m_pidInput == 0) return;
+	if (m_pidOutput == 0) return;
+	enabled = m_enabled;
+	pidInput = m_pidInput;
+    }
+    END_REGION;
+
+    if (enabled)
+    {
+	float input = pidInput->PIDGet();
+	float result;
+	PIDOutput *pidOutput;
+
 	{
-		if (m_pidInput == 0) return;
-		if (m_pidOutput == 0) return;
-		enabled = m_enabled;
-		pidInput = m_pidInput;
-	}
-	END_REGION;
-
-	if (enabled)
-	{
-		float input = pidInput->PIDGet();
-		float result;
-		PIDOutput *pidOutput;
-
+	    Synchronized sync(m_semaphore);
+	    m_error = m_setpoint - input;
+	    if (m_continuous)
+	    {
+		if (fabs(m_error) > (m_maximumInput - m_minimumInput) / 2)
 		{
-			Synchronized sync(m_semaphore);
-			m_error = m_setpoint - input;
-			if (m_continuous)
-			{
-				if (fabs(m_error) > (m_maximumInput - m_minimumInput) / 2)
-				{
-					if (m_error > 0)
-					{
-						m_error = m_error - m_maximumInput + m_minimumInput;
-					}
-					else
-					{
-						m_error = m_error + m_maximumInput - m_minimumInput;
-					}
-				}
-			}
-			
-			if(m_I != 0)
-			{
-				double potentialIGain = (m_totalError + m_error) * m_I;
-				if (potentialIGain < m_maximumOutput)
-				{
-					if (potentialIGain > m_minimumOutput)
-						m_totalError += m_error;
-					else
-						m_totalError = m_minimumOutput / m_I;
-				}
-				else
-				{
-					m_totalError = m_maximumOutput / m_I;
-				}
-			}
-
-			m_result = m_P * m_error + m_I * m_totalError + m_D * (m_error - m_prevError) + m_setpoint * m_F;
-			m_prevError = m_error;
-
-			if (m_result > m_maximumOutput) m_result = m_maximumOutput;
-			else if (m_result < m_minimumOutput) m_result = m_minimumOutput;
-
-			pidOutput = m_pidOutput;
-			result = m_result;
+		    if (m_error > 0)
+		    {
+			m_error = m_error - m_maximumInput + m_minimumInput;
+		    }
+		    else
+		    {
+			m_error = m_error + m_maximumInput - m_minimumInput;
+		    }
 		}
+	    }
 
-		pidOutput->PIDWrite(result);
+	    if(m_I != 0)
+	    {
+		double potentialIGain = (m_totalError + m_error) * m_I;
+		if (potentialIGain < m_maximumOutput)
+		{
+		    if (potentialIGain > m_minimumOutput)
+			m_totalError += m_error;
+		    else
+			m_totalError = m_minimumOutput / m_I;
+		}
+		else
+		{
+		    m_totalError = m_maximumOutput / m_I;
+		}
+	    }
+
+	    m_result = m_P * m_error + m_I * m_totalError + m_D * (m_error - m_prevError) + m_setpoint * m_F;
+	    m_prevError = m_error;
+
+	    if (m_result > m_maximumOutput) m_result = m_maximumOutput;
+	    else if (m_result < m_minimumOutput) m_result = m_minimumOutput;
+
+	    pidOutput = m_pidOutput;
+	    result = m_result;
 	}
+
+	pidOutput->PIDWrite(result);
+    }
 }
 
 /**
@@ -205,19 +205,19 @@ void PIDController::Calculate()
  */
 void PIDController::SetPID(float p, float i, float d)
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		m_P = p;
-		m_I = i;
-		m_D = d;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_P = p;
+	m_I = i;
+	m_D = d;
+    }
+    END_REGION;
 
-	if (m_table != NULL) {
-		m_table->PutNumber("p", m_P);
-		m_table->PutNumber("i", m_I);
-		m_table->PutNumber("d", m_D);
-	}
+    if (m_table != NULL) {
+	m_table->PutNumber("p", m_P);
+	m_table->PutNumber("i", m_I);
+	m_table->PutNumber("d", m_D);
+    }
 }
 
 /**
@@ -230,21 +230,21 @@ void PIDController::SetPID(float p, float i, float d)
  */
 void PIDController::SetPID(float p, float i, float d, float f)
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		m_P = p;
-		m_I = i;
-		m_D = d;
-		m_F = f;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_P = p;
+	m_I = i;
+	m_D = d;
+	m_F = f;
+    }
+    END_REGION;
 
-	if (m_table != NULL) {
-		m_table->PutNumber("p", m_P);
-		m_table->PutNumber("i", m_I);
-		m_table->PutNumber("d", m_D);
-		m_table->PutNumber("f", m_F);
-	}
+    if (m_table != NULL) {
+	m_table->PutNumber("p", m_P);
+	m_table->PutNumber("i", m_I);
+	m_table->PutNumber("d", m_D);
+	m_table->PutNumber("f", m_F);
+    }
 }
 
 /**
@@ -253,11 +253,11 @@ void PIDController::SetPID(float p, float i, float d, float f)
  */
 float PIDController::GetP()
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		return m_P;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	return m_P;
+    }
+    END_REGION;
 }
 
 /**
@@ -266,11 +266,11 @@ float PIDController::GetP()
  */
 float PIDController::GetI()
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		return m_I;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	return m_I;
+    }
+    END_REGION;
 }
 
 /**
@@ -279,11 +279,11 @@ float PIDController::GetI()
  */
 float PIDController::GetD()
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		return m_D;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	return m_D;
+    }
+    END_REGION;
 }
 
 /**
@@ -292,11 +292,11 @@ float PIDController::GetD()
  */
 float PIDController::GetF()
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		return m_F;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	return m_F;
+    }
+    END_REGION;
 }
 
 /**
@@ -306,13 +306,13 @@ float PIDController::GetF()
  */
 float PIDController::Get()
 {
-	float result;
-	CRITICAL_REGION(m_semaphore)
-	{
-		result = m_result;
-	}
-	END_REGION;
-	return result;
+    float result;
+    CRITICAL_REGION(m_semaphore)
+    {
+	result = m_result;
+    }
+    END_REGION;
+    return result;
 }
 
 /**
@@ -324,46 +324,46 @@ float PIDController::Get()
  */
 void PIDController::SetContinuous(bool continuous)
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		m_continuous = continuous;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_continuous = continuous;
+    }
+    END_REGION;
 
 }
 
 /**
  * Sets the maximum and minimum values expected from the input.
- * 
+ *
  * @param minimumInput the minimum value expected from the input
  * @param maximumInput the maximum value expected from the output
  */
 void PIDController::SetInputRange(float minimumInput, float maximumInput)
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		m_minimumInput = minimumInput;
-		m_maximumInput = maximumInput;	
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_minimumInput = minimumInput;
+	m_maximumInput = maximumInput;
+    }
+    END_REGION;
 
-	SetSetpoint(m_setpoint);
+    SetSetpoint(m_setpoint);
 }
 
 /**
  * Sets the minimum and maximum values to write.
- * 
+ *
  * @param minimumOutput the minimum value to write to the output
  * @param maximumOutput the maximum value to write to the output
  */
 void PIDController::SetOutputRange(float minimumOutput, float maximumOutput)
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		m_minimumOutput = minimumOutput;
-		m_maximumOutput = maximumOutput;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_minimumOutput = minimumOutput;
+	m_maximumOutput = maximumOutput;
+    }
+    END_REGION;
 }
 
 /**
@@ -372,27 +372,27 @@ void PIDController::SetOutputRange(float minimumOutput, float maximumOutput)
  */
 void PIDController::SetSetpoint(float setpoint)
 {
-	CRITICAL_REGION(m_semaphore)
+    CRITICAL_REGION(m_semaphore)
+    {
+	if (m_maximumInput > m_minimumInput)
 	{
-		if (m_maximumInput > m_minimumInput)
-		{
-			if (setpoint > m_maximumInput)
-				m_setpoint = m_maximumInput;
-			else if (setpoint < m_minimumInput)
-				m_setpoint = m_minimumInput;
-			else
-				m_setpoint = setpoint;
-		}
-		else
-		{
-			m_setpoint = setpoint;
-		}
+	    if (setpoint > m_maximumInput)
+		m_setpoint = m_maximumInput;
+	    else if (setpoint < m_minimumInput)
+		m_setpoint = m_minimumInput;
+	    else
+		m_setpoint = setpoint;
 	}
-	END_REGION;	
-	
-	if (m_table != NULL) {
-		m_table->PutNumber("setpoint", m_setpoint);
+	else
+	{
+	    m_setpoint = setpoint;
 	}
+    }
+    END_REGION;
+
+    if (m_table != NULL) {
+	m_table->PutNumber("setpoint", m_setpoint);
+    }
 }
 
 /**
@@ -401,13 +401,13 @@ void PIDController::SetSetpoint(float setpoint)
  */
 float PIDController::GetSetpoint()
 {
-	float setpoint;
-	CRITICAL_REGION(m_semaphore)
-	{
-		setpoint = m_setpoint;
-	}
-	END_REGION;
-	return setpoint;
+    float setpoint;
+    CRITICAL_REGION(m_semaphore)
+    {
+	setpoint = m_setpoint;
+    }
+    END_REGION;
+    return setpoint;
 }
 
 /**
@@ -416,13 +416,13 @@ float PIDController::GetSetpoint()
  */
 float PIDController::GetError()
 {
-	float error;
-	CRITICAL_REGION(m_semaphore)
-	{
-		error = GetSetpoint() - m_pidInput->PIDGet();
-	}
-	END_REGION;
-	return error;
+    float error;
+    CRITICAL_REGION(m_semaphore)
+    {
+	error = GetSetpoint() - m_pidInput->PIDGet();
+    }
+    END_REGION;
+    return error;
 }
 
 /*
@@ -432,12 +432,12 @@ float PIDController::GetError()
  */
 void PIDController::SetTolerance(float percent)
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		m_toleranceType = kPercentTolerance;
-		m_tolerance = percent;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_toleranceType = kPercentTolerance;
+	m_tolerance = percent;
+    }
+    END_REGION;
 }
 
 /*
@@ -447,12 +447,12 @@ void PIDController::SetTolerance(float percent)
  */
 void PIDController::SetPercentTolerance(float percent)
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		m_toleranceType = kPercentTolerance;
-		m_tolerance = percent;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_toleranceType = kPercentTolerance;
+	m_tolerance = percent;
+    }
+    END_REGION;
 }
 
 /*
@@ -462,12 +462,12 @@ void PIDController::SetPercentTolerance(float percent)
  */
 void PIDController::SetAbsoluteTolerance(float absTolerance)
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		m_toleranceType = kAbsoluteTolerance;
-		m_tolerance = absTolerance;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_toleranceType = kAbsoluteTolerance;
+	m_tolerance = absTolerance;
+    }
+    END_REGION;
 }
 
 /*
@@ -479,23 +479,23 @@ void PIDController::SetAbsoluteTolerance(float absTolerance)
  */
 bool PIDController::OnTarget()
 {
-	bool temp;
-	CRITICAL_REGION(m_semaphore)
-	{
-		switch (m_toleranceType) {
-		case kPercentTolerance:
-			temp = fabs(GetError()) < (m_tolerance / 100 * (m_maximumInput - m_minimumInput));
-			break;
-		case kAbsoluteTolerance:
-			temp = fabs(GetError()) < m_tolerance;
-			break;
-		//TODO: this case needs an error
-		case kNoTolerance:
-			temp = false;
-		}
+    bool temp;
+    CRITICAL_REGION(m_semaphore)
+    {
+	switch (m_toleranceType) {
+	case kPercentTolerance:
+	    temp = fabs(GetError()) < (m_tolerance / 100 * (m_maximumInput - m_minimumInput));
+	    break;
+	case kAbsoluteTolerance:
+	    temp = fabs(GetError()) < m_tolerance;
+	    break;
+	//TODO: this case needs an error
+	case kNoTolerance:
+	    temp = false;
 	}
-	END_REGION;
-	return temp;
+    }
+    END_REGION;
+    return temp;
 }
 
 /**
@@ -503,15 +503,15 @@ bool PIDController::OnTarget()
  */
 void PIDController::Enable()
 {
-	CRITICAL_REGION(m_semaphore)
-	{			
-		m_enabled = true;
-	}
-	END_REGION;	
-	
-	if (m_table != NULL) {
-		m_table->PutBoolean("enabled", true);
-	}
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_enabled = true;
+    }
+    END_REGION;
+
+    if (m_table != NULL) {
+	m_table->PutBoolean("enabled", true);
+    }
 }
 
 /**
@@ -519,16 +519,16 @@ void PIDController::Enable()
  */
 void PIDController::Disable()
 {
-	CRITICAL_REGION(m_semaphore)
-	{
-		m_pidOutput->PIDWrite(0);
-		m_enabled = false;
-	}
-	END_REGION;
-	
-	if (m_table != NULL) {
-		m_table->PutBoolean("enabled", false);
-	}
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_pidOutput->PIDWrite(0);
+	m_enabled = false;
+    }
+    END_REGION;
+
+    if (m_table != NULL) {
+	m_table->PutBoolean("enabled", false);
+    }
 }
 
 /**
@@ -536,13 +536,13 @@ void PIDController::Disable()
  */
 bool PIDController::IsEnabled()
 {
-	bool enabled;
-	CRITICAL_REGION(m_semaphore)
-	{
-		enabled = m_enabled;
-	}
-	END_REGION;
-	return enabled;
+    bool enabled;
+    CRITICAL_REGION(m_semaphore)
+    {
+	enabled = m_enabled;
+    }
+    END_REGION;
+    return enabled;
 }
 
 /**
@@ -550,64 +550,64 @@ bool PIDController::IsEnabled()
  */
 void PIDController::Reset()
 {
-	Disable();
+    Disable();
 
-	CRITICAL_REGION(m_semaphore)
-	{
-		m_prevError = 0;
-		m_totalError = 0;
-		m_result = 0;
-	}
-	END_REGION;
+    CRITICAL_REGION(m_semaphore)
+    {
+	m_prevError = 0;
+	m_totalError = 0;
+	m_result = 0;
+    }
+    END_REGION;
 }
 
 std::string PIDController::GetSmartDashboardType(){
-	return "PIDController";
+    return "PIDController";
 }
 
 void PIDController::InitTable(ITable* table){
-	if(m_table!=NULL)
-		m_table->RemoveTableListener(this);
-	m_table = table;
-	if(m_table!=NULL){
-		m_table->PutNumber(kP, GetP());
-		m_table->PutNumber(kI, GetI());
-		m_table->PutNumber(kD, GetD());
-		m_table->PutNumber(kF, GetF());
-		m_table->PutNumber(kSetpoint, GetSetpoint());
-		m_table->PutBoolean(kEnabled, IsEnabled());
-		m_table->AddTableListener(this, false);
-	}
+    if(m_table!=NULL)
+	m_table->RemoveTableListener(this);
+    m_table = table;
+    if(m_table!=NULL){
+	m_table->PutNumber(kP, GetP());
+	m_table->PutNumber(kI, GetI());
+	m_table->PutNumber(kD, GetD());
+	m_table->PutNumber(kF, GetF());
+	m_table->PutNumber(kSetpoint, GetSetpoint());
+	m_table->PutBoolean(kEnabled, IsEnabled());
+	m_table->AddTableListener(this, false);
+    }
 }
 
 ITable* PIDController::GetTable(){
-	return m_table;
+    return m_table;
 }
 
 void PIDController::ValueChanged(ITable* source, const std::string& key, EntryValue value, bool isNew){
-	if (key==kP || key==kI || key==kD || key==kF) {
-		if (m_P != m_table->GetNumber(kP) || m_I != m_table->GetNumber(kI) || m_D != m_table->GetNumber(kD) || m_F != m_table->GetNumber(kF)  ) {
-			SetPID(m_table->GetNumber(kP, 0.0), m_table->GetNumber(kI, 0.0), m_table->GetNumber(kD, 0.0), m_table->GetNumber(kF, 0.0));
-		}
-	} else if (key==kSetpoint && m_setpoint != value.f) {
-		SetSetpoint(value.f);
-	} else if (key==kEnabled && m_enabled != value.b) {
-		if (value.b) {
-			Enable();
-		} else {
-			Disable();
-		}
+    if (key==kP || key==kI || key==kD || key==kF) {
+	if (m_P != m_table->GetNumber(kP) || m_I != m_table->GetNumber(kI) || m_D != m_table->GetNumber(kD) || m_F != m_table->GetNumber(kF)  ) {
+	    SetPID(m_table->GetNumber(kP, 0.0), m_table->GetNumber(kI, 0.0), m_table->GetNumber(kD, 0.0), m_table->GetNumber(kF, 0.0));
 	}
+    } else if (key==kSetpoint && m_setpoint != value.f) {
+	SetSetpoint(value.f);
+    } else if (key==kEnabled && m_enabled != value.b) {
+	if (value.b) {
+	    Enable();
+	} else {
+	    Disable();
+	}
+    }
 }
 
 void PIDController::UpdateTable() {
-	
+
 }
 
 void PIDController::StartLiveWindowMode() {
-	Disable();
+    Disable();
 }
 
 void PIDController::StopLiveWindowMode() {
-	
+
 }

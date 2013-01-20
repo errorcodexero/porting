@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -13,8 +13,8 @@
  */
 void SafePWM::InitSafePWM()
 {
-	m_safetyHelper = new MotorSafetyHelper(this);
-	m_safetyHelper->SetSafetyEnabled(false);
+    m_safetyHelper = new MotorSafetyHelper(this);
+    m_safetyHelper->SetSafetyEnabled(false);
 }
 
 /**
@@ -23,7 +23,7 @@ void SafePWM::InitSafePWM()
  */
 SafePWM::SafePWM(UINT32 channel): PWM(channel)
 {
-	InitSafePWM();
+    InitSafePWM();
 }
 
 /**
@@ -33,12 +33,12 @@ SafePWM::SafePWM(UINT32 channel): PWM(channel)
  */
 SafePWM::SafePWM(UINT8 moduleNumber, UINT32 channel): PWM(moduleNumber, channel)
 {
-	InitSafePWM();
+    InitSafePWM();
 }
 
 SafePWM::~SafePWM()
 {
-	delete m_safetyHelper;
+    delete m_safetyHelper;
 }
 
 /*
@@ -47,7 +47,7 @@ SafePWM::~SafePWM()
  */
 void SafePWM::SetExpiration(float timeout)
 {
-	m_safetyHelper->SetExpiration(timeout);
+    m_safetyHelper->SetExpiration(timeout);
 }
 
 /**
@@ -56,7 +56,7 @@ void SafePWM::SetExpiration(float timeout)
  */
 float SafePWM::GetExpiration()
 {
-	return m_safetyHelper->GetExpiration();
+    return m_safetyHelper->GetExpiration();
 }
 
 /**
@@ -66,7 +66,7 @@ float SafePWM::GetExpiration()
  */
 bool SafePWM::IsAlive()
 {
-	return m_safetyHelper->IsAlive();
+    return m_safetyHelper->IsAlive();
 }
 
 /**
@@ -76,7 +76,7 @@ bool SafePWM::IsAlive()
  */
 void SafePWM::StopMotor()
 {
-	SetRaw(kPwmDisabled);
+    SetRaw(kPwmDisabled);
 }
 
 /**
@@ -86,7 +86,7 @@ void SafePWM::StopMotor()
  */
 void SafePWM::SetSafetyEnabled(bool enabled)
 {
-	m_safetyHelper->SetSafetyEnabled(enabled);
+    m_safetyHelper->SetSafetyEnabled(enabled);
 }
 
 /**
@@ -95,12 +95,12 @@ void SafePWM::SetSafetyEnabled(bool enabled)
  */
 bool SafePWM::IsSafetyEnabled()
 {
-	return m_safetyHelper->IsSafetyEnabled();
+    return m_safetyHelper->IsSafetyEnabled();
 }
 
 void SafePWM::GetDescription(char *desc)
 {
-	sprintf(desc, "PWM %lu on module %lu", GetChannel(), GetModuleNumber());
+    sprintf(desc, "PWM %lu on module %lu", GetChannel(), GetModuleNumber());
 }
 
 /**
@@ -111,7 +111,7 @@ void SafePWM::GetDescription(char *desc)
  */
 void SafePWM::SetSpeed(float speed)
 {
-	PWM::SetSpeed(speed);
-	m_safetyHelper->Feed();
+    PWM::SetSpeed(speed);
+    m_safetyHelper->Feed();
 }
 

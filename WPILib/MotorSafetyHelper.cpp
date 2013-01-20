@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -27,33 +27,33 @@ ReentrantSemaphore MotorSafetyHelper::m_listMutex;
  */
 MotorSafetyHelper::MotorSafetyHelper(MotorSafety *safeObject)
 {
-	m_safeObject = safeObject;
-	m_enabled = false;
-	m_expiration = DEFAULT_SAFETY_EXPIRATION;
-	m_stopTime = Timer::GetFPGATimestamp();
+    m_safeObject = safeObject;
+    m_enabled = false;
+    m_expiration = DEFAULT_SAFETY_EXPIRATION;
+    m_stopTime = Timer::GetFPGATimestamp();
 
-	Synchronized sync(m_listMutex);
-	m_nextHelper = m_headHelper;
-	m_headHelper = this;
+    Synchronized sync(m_listMutex);
+    m_nextHelper = m_headHelper;
+    m_headHelper = this;
 }
 
 
 MotorSafetyHelper::~MotorSafetyHelper()
 {
-	Synchronized sync(m_listMutex);
-	if (m_headHelper == this)
-	{
-		m_headHelper = m_nextHelper;
-	}
-	else
-	{
-		MotorSafetyHelper *prev = NULL;
-		MotorSafetyHelper *cur = m_headHelper;
-		while (cur != this && cur != NULL)
-			prev = cur, cur = cur->m_nextHelper;
-		if (cur == this)
-			prev->m_nextHelper = cur->m_nextHelper;
-	}
+    Synchronized sync(m_listMutex);
+    if (m_headHelper == this)
+    {
+	m_headHelper = m_nextHelper;
+    }
+    else
+    {
+	MotorSafetyHelper *prev = NULL;
+	MotorSafetyHelper *cur = m_headHelper;
+	while (cur != this && cur != NULL)
+	    prev = cur, cur = cur->m_nextHelper;
+	if (cur == this)
+	    prev->m_nextHelper = cur->m_nextHelper;
+    }
 }
 
 /*
@@ -62,8 +62,8 @@ MotorSafetyHelper::~MotorSafetyHelper()
  */
 void MotorSafetyHelper::Feed()
 {
-	Synchronized sync(m_syncMutex);
-	m_stopTime = Timer::GetFPGATimestamp() + m_expiration;
+    Synchronized sync(m_syncMutex);
+    m_stopTime = Timer::GetFPGATimestamp() + m_expiration;
 }
 
 /*
@@ -72,8 +72,8 @@ void MotorSafetyHelper::Feed()
  */
 void MotorSafetyHelper::SetExpiration(float expirationTime)
 {
-	Synchronized sync(m_syncMutex);
-	m_expiration = expirationTime;
+    Synchronized sync(m_syncMutex);
+    m_expiration = expirationTime;
 }
 
 /**
@@ -82,8 +82,8 @@ void MotorSafetyHelper::SetExpiration(float expirationTime)
  */
 float MotorSafetyHelper::GetExpiration()
 {
-	Synchronized sync(m_syncMutex);
-	return m_expiration;
+    Synchronized sync(m_syncMutex);
+    return m_expiration;
 }
 
 /**
@@ -92,8 +92,8 @@ float MotorSafetyHelper::GetExpiration()
  */
 bool MotorSafetyHelper::IsAlive()
 {
-	Synchronized sync(m_syncMutex);
-	return !m_enabled || m_stopTime > Timer::GetFPGATimestamp();
+    Synchronized sync(m_syncMutex);
+    return !m_enabled || m_stopTime > Timer::GetFPGATimestamp();
 }
 
 /**
@@ -104,19 +104,19 @@ bool MotorSafetyHelper::IsAlive()
  */
 void MotorSafetyHelper::Check()
 {
-	if (!m_enabled) return;
-	if (DriverStation::GetInstance()->IsDisabled()) return;
+    if (!m_enabled) return;
+    if (DriverStation::GetInstance()->IsDisabled()) return;
 
-	Synchronized sync(m_syncMutex);
-	if (m_stopTime < Timer::GetFPGATimestamp())
-	{
-		char buf[128];
-		char desc[64];
-		m_safeObject->GetDescription(desc);
-		snprintf(buf, 128, "%s... Output not updated often enough.", desc);
-		wpi_setWPIErrorWithContext(Timeout, buf);
-		m_safeObject->StopMotor();
-	}
+    Synchronized sync(m_syncMutex);
+    if (m_stopTime < Timer::GetFPGATimestamp())
+    {
+	char buf[128];
+	char desc[64];
+	m_safeObject->GetDescription(desc);
+	snprintf(buf, 128, "%s... Output not updated often enough.", desc);
+	wpi_setWPIErrorWithContext(Timeout, buf);
+	m_safeObject->StopMotor();
+    }
 }
 
 /**
@@ -126,8 +126,8 @@ void MotorSafetyHelper::Check()
  */
 void MotorSafetyHelper::SetSafetyEnabled(bool enabled)
 {
-	Synchronized sync(m_syncMutex);
-	m_enabled = enabled;
+    Synchronized sync(m_syncMutex);
+    m_enabled = enabled;
 }
 
 /**
@@ -137,8 +137,8 @@ void MotorSafetyHelper::SetSafetyEnabled(bool enabled)
  */
 bool MotorSafetyHelper::IsSafetyEnabled()
 {
-	Synchronized sync(m_syncMutex);
-	return m_enabled;
+    Synchronized sync(m_syncMutex);
+    return m_enabled;
 }
 
 /**
@@ -148,9 +148,9 @@ bool MotorSafetyHelper::IsSafetyEnabled()
  */
 void MotorSafetyHelper::CheckMotors()
 {
-	Synchronized sync(m_listMutex);
-	for (MotorSafetyHelper *msh = m_headHelper; msh != NULL; msh = msh->m_nextHelper)
-	{
-		msh->Check();
-	}
+    Synchronized sync(m_listMutex);
+    for (MotorSafetyHelper *msh = m_headHelper; msh != NULL; msh = msh->m_nextHelper)
+    {
+	msh->Check();
+    }
 }

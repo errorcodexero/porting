@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -16,15 +16,15 @@ class AnalogTrigger;
  * This class is used to get the current output value and also as a DigitalSource
  * to provide routing of an output to digital subsystems on the FPGA such as
  * Counter, Encoder, and Interrupt.
- * 
+ *
  * The TriggerState output indicates the primary output value of the trigger.  If the analog
  * signal is less than the lower limit, the output is false.  If the analog value is greater
  * than the upper limit, then the output is true.  If the analog value is in between, then
  * the trigger output state maintains its most recent value.
- * 
+ *
  * The InWindow output indicates whether or not the analog signal is inside the range defined
  * by the limits.
- * 
+ *
  * The RisingPulse and FallingPulse outputs detect an instantaneous transition from above the
  * upper limit to below the lower limit, and vise versa.  These pulses represent a rollover
  * condition of a sensor and can be routed to an up / down couter or to interrupts.  Because
@@ -40,25 +40,25 @@ class AnalogTrigger;
  */
 class AnalogTriggerOutput: public DigitalSource
 {
-	friend class AnalogTrigger;
+    friend class AnalogTrigger;
 public:
-	typedef enum {kInWindow=0, kState=1, kRisingPulse=2, kFallingPulse=3} Type;
-	
-	virtual ~AnalogTriggerOutput();
-	bool Get();
+    typedef enum {kInWindow=0, kState=1, kRisingPulse=2, kFallingPulse=3} Type;
 
-	// DigitalSource interface
-	virtual UINT32 GetChannelForRouting();
-	virtual UINT32 GetModuleForRouting();
-	virtual bool GetAnalogTriggerForRouting();
-	virtual void RequestInterrupts(tInterruptHandler handler, void *param=NULL); ///< Asynchronus handler version.
-	virtual void RequestInterrupts();		///< Synchronus Wait version.
+    virtual ~AnalogTriggerOutput();
+    bool Get();
+
+    // DigitalSource interface
+    virtual UINT32 GetChannelForRouting();
+    virtual UINT32 GetModuleForRouting();
+    virtual bool GetAnalogTriggerForRouting();
+    virtual void RequestInterrupts(tInterruptHandler handler, void *param=NULL); ///< Asynchronus handler version.
+    virtual void RequestInterrupts();	    ///< Synchronus Wait version.
 protected:
-	AnalogTriggerOutput(AnalogTrigger *trigger, Type outputType);
+    AnalogTriggerOutput(AnalogTrigger *trigger, Type outputType);
 
 private:
-	AnalogTrigger *m_trigger;
-	Type m_outputType;
+    AnalogTrigger *m_trigger;
+    Type m_outputType;
 };
 
 

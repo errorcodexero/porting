@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -18,16 +18,16 @@
 class GearTooth : public Counter
 {
 public:
-	/// 55 uSec for threshold
-	static const double kGearToothThreshold = 55e-6;
-	GearTooth(UINT32 channel, bool directionSensitive = false);
-	GearTooth(UINT8 moduleNumber, UINT32 channel, bool directionSensitive = false);
-	GearTooth(DigitalSource *source, bool directionSensitive = false);
-	GearTooth(DigitalSource &source, bool directionSensitive = false);
-	virtual ~GearTooth();
-	void EnableDirectionSensing(bool directionSensitive);
-	
-	virtual std::string GetSmartDashboardType();
+    /// 55 uSec for threshold
+    static const double kGearToothThreshold = 55e-6;
+    GearTooth(UINT32 channel, bool directionSensitive = false);
+    GearTooth(UINT8 moduleNumber, UINT32 channel, bool directionSensitive = false);
+    GearTooth(DigitalSource *source, bool directionSensitive = false);
+    GearTooth(DigitalSource &source, bool directionSensitive = false);
+    virtual ~GearTooth();
+    void EnableDirectionSensing(bool directionSensitive);
+
+    virtual std::string GetSmartDashboardType();
 };
 
 

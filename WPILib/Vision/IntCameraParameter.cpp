@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2008. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -16,11 +16,11 @@
  */
 IntCameraParameter::IntCameraParameter(const char *setString, const char *getString, bool requiresRestart)
 {
-	m_changed = false;
-	m_value = 0;
-	m_setString = setString;
-	m_getString = getString;
-	m_requiresRestart = requiresRestart;
+    m_changed = false;
+    m_value = 0;
+    m_setString = setString;
+    m_getString = getString;
+    m_requiresRestart = requiresRestart;
 }
 
 /**
@@ -29,7 +29,7 @@ IntCameraParameter::IntCameraParameter(const char *setString, const char *getStr
  */
 int IntCameraParameter::GetValue()
 {
-	return m_value;
+    return m_value;
 }
 
 /**
@@ -39,8 +39,8 @@ int IntCameraParameter::GetValue()
  */
 void IntCameraParameter::SetValue(int value)
 {
-	m_value = value;
-	m_changed = true;
+    m_value = value;
+    m_changed = true;
 }
 
 /**
@@ -51,14 +51,14 @@ void IntCameraParameter::SetValue(int value)
  */
 bool IntCameraParameter::CheckChanged(bool &changed, char *param)
 {
-	changed = m_changed;
-	if (m_changed)
-	{
-		sprintf(param, m_setString, m_value);
-		m_changed = false;
-		return m_requiresRestart;
-	}
-	return false;
+    changed = m_changed;
+    if (m_changed)
+    {
+	sprintf(param, m_setString, m_value);
+	m_changed = false;
+	return m_requiresRestart;
+    }
+    return false;
 }
 
 /**
@@ -69,11 +69,11 @@ bool IntCameraParameter::CheckChanged(bool &changed, char *param)
  */
 void IntCameraParameter::GetParamFromString(const char *string, int stringLength)
 {
-	char resultString[150];
-	if (SearchForParam(m_getString, string, stringLength, resultString) >= 0)
-	{	
-		if (!m_changed) m_value = atoi(resultString);
-	}
+    char resultString[150];
+    if (SearchForParam(m_getString, string, stringLength, resultString) >= 0)
+    {
+	if (!m_changed) m_value = atoi(resultString);
+    }
 }
 
 /**
@@ -84,28 +84,28 @@ void IntCameraParameter::GetParamFromString(const char *string, int stringLength
  */
 int IntCameraParameter::SearchForParam(const char *pattern, const char *searchString, int searchStringLen, char *result)
 {
-	int vectorLen = 10;
-	int resultVector[vectorLen];
-	const char *error;
-	int erroffset;
-	pcre *compiledPattern = pcre_compile(
-			pattern, //"root.Image.I0.Appearance.Resolution=(.*)", 
-			PCRE_CASELESS, 
-			&error, // for error message 
-			&erroffset, // for error offset 
-			NULL); // use default character tables 
-	int rc;
-	rc = pcre_exec(compiledPattern, 
-					NULL, 
-					searchString, 
-					searchStringLen, 
-					0, 
-					0, 
-					resultVector,		//locations of submatches 
-					vectorLen);			//size of ovector
-	int length = resultVector[3] - resultVector[2];
-	memcpy(result, &searchString[resultVector[2]], length);
-	result[length] = '\0';
-	return rc;
+    int vectorLen = 10;
+    int resultVector[vectorLen];
+    const char *error;
+    int erroffset;
+    pcre *compiledPattern = pcre_compile(
+	    pattern, //"root.Image.I0.Appearance.Resolution=(.*)",
+	    PCRE_CASELESS,
+	    &error, // for error message
+	    &erroffset, // for error offset
+	    NULL); // use default character tables
+    int rc;
+    rc = pcre_exec(compiledPattern,
+		    NULL,
+		    searchString,
+		    searchStringLen,
+		    0,
+		    0,
+		    resultVector,	//locations of submatches
+		    vectorLen);		//size of ovector
+    int length = resultVector[3] - resultVector[2];
+    memcpy(result, &searchString[resultVector[2]], length);
+    result[length] = '\0';
+    return rc;
 }
 
