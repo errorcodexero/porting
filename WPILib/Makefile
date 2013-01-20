@@ -90,13 +90,13 @@ SOURCES := \
     Commands/WaitUntilCommand.cpp \
     LiveWindow/LiveWindow.cpp \
     LiveWindow/LiveWindowStatusListener.cpp \
-    NetworkTables/NetworkTable.cpp \
-    NetworkTables/NetworkTableConnectionListenerAdapter.cpp \
-    NetworkTables/NetworkTableKeyListenerAdapter.cpp \
-    NetworkTables/NetworkTableListenerAdapter.cpp \
-    NetworkTables/NetworkTableMode.cpp \
-    NetworkTables/NetworkTableProvider.cpp \
-    NetworkTables/NetworkTableSubListenerAdapter.cpp \
+    networktables/NetworkTable.cpp \
+    networktables/NetworkTableConnectionListenerAdapter.cpp \
+    networktables/NetworkTableKeyListenerAdapter.cpp \
+    networktables/NetworkTableListenerAdapter.cpp \
+    networktables/NetworkTableMode.cpp \
+    networktables/NetworkTableProvider.cpp \
+    networktables/NetworkTableSubListenerAdapter.cpp \
     networktables2/AbstractNetworkTableEntryStore.cpp \
     networktables2/client/ClientConnectionAdapter.cpp \
     networktables2/client/ClientConnectionState.cpp \
