@@ -18,6 +18,14 @@ MyRobot::MyRobot()
     m_pSol4 = new Solenoid(4);
 }
 
+void MyRobot::RobotInit()
+{
+    m_pSol1->Set(false);
+    m_pSol2->Set(false);
+    m_pSol3->Set(false);
+    m_pSol4->Set(false);
+}
+
 void MyRobot::DisabledInit()
 {
     printf("MyRobot: starting in disabled mode");

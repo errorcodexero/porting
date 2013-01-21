@@ -9,7 +9,7 @@ bool nLoadOut::getModulePresence(
 	UINT8 moduleNumber
     )
 {
-    bool present = ((UINT8) moduleType == moduleNumber + 1);
+    bool present = (moduleNumber == 0);
 #ifdef DEBUG
     printf("%s: module %u is%s type %u\n",
     	   __FUNCTION__, moduleNumber, present ? "" : " not",
