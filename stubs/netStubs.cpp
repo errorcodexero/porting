@@ -199,6 +199,81 @@ private:
     SEM_ID m_dataAvailable;
     SEM_ID m_dataMutex;
 
+public:
+#pragma pack(push,1)
+    // BEGIN: Definitions from DriverStationEnhancedIO
+    // BEGIN: Definitions from the Cypress firmware
+    typedef struct
+    {
+	UINT16 digital;
+	UINT16 digital_oe;
+	UINT16 digital_pe;
+	UINT16 pwm_compare[4];
+	UINT16 pwm_period[2];
+	UINT8 dac[2];
+	UINT8 leds;
+	union
+	{
+	    struct
+	    {
+// This uses __BYTE_ORDER as a stand-in for "__BITFIELD_PACKING_ORDER"
+// (which is not defined).  It gives the intended result for gcc/g++ on
+// PPC and x86 architectures but may not be correct for other compilers
+// or even gcc with other processors.
+
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+		UINT8 quad_index_enable : 2;
+		UINT8 comparator_enable : 2;
+		UINT8 pwm_enable : 4;
+#else // __BYTE_ORDER == __BIG_ENDIAN
+		// Bits are inverted from cypress fw because of big-endian!
+		UINT8 pwm_enable : 4;
+		UINT8 comparator_enable : 2;
+		UINT8 quad_index_enable : 2;
+#endif // __BYTE_ORDER
+	    };
+	    UINT8 enables;
+	};
+	UINT8 fixed_digital_out;
+    } output_t;  //data to IO (23 bytes)
+
+    static void SwapDSEIOOutput( output_t *pOutput );
+
+    typedef struct
+    {
+	UINT8 api_version;
+	UINT8 fw_version;
+	INT16 analog[8];
+	UINT16 digital;
+	INT16 accel[3];
+	INT16 quad[2];
+	UINT8 buttons;
+	UINT8 capsense_slider;
+	UINT8 capsense_proximity;
+    } input_t;	//data from IO (33 bytes)
+    // END: Definitions from the Cypress firmware
+
+    static void SwapDSEIOInput( input_t *pInput );
+
+    // Dynamic block definitions
+    typedef struct
+    {
+	UINT8 size; // Must be 25 (size remaining in the block not counting the size variable)
+	UINT8 id; // Must be 18
+	output_t data;
+	UINT8 flags;
+    } status_block_t;
+
+    typedef struct
+    {
+	UINT8 size; // Must be 34
+	UINT8 id; // Must be 17
+	input_t data;
+    } control_block_t;
+#pragma pack(pop)
+
+    // END: Definitions from DriverStationEnhancedIO
+
 private:
     STATUS Recv();
 
@@ -212,6 +287,7 @@ private:
 	uint32_t crc;			// 32-bit CRC
     } m_recvPkt;
 #pragma pack(pop)
+
     sockaddr_in m_fromAddr;		// sending driver station's address
     FRCCommonControlData m_recvData;	// control data in host byte order
     UINT8 m_extData[FRCEXTDSIZE];	// dynamic data in unknown byte order
@@ -284,6 +360,12 @@ private:
     struct FRCStatusPkt {
 /*000*/	union {
 		UINT8 control;
+
+// This uses __BYTE_ORDER as a stand-in for "__BITFIELD_PACKING_ORDER"
+// (which is not defined).  It gives the intended result for gcc/g++ on
+// PPC and x86 architectures but may not be correct for other compilers
+// or even gcc with other processors.
+
 #if (__BYTE_ORDER == __LITTLE_ENDIAN)
 		struct {
 			UINT8 checkVersions : 1;
@@ -308,6 +390,7 @@ private:
 		};
 #endif
 	};
+
 /*001*/	uint8_t battery[2];		// 2 bytes, scaled integer
 /*003*/	uint8_t dsDigitalOut;		// DS digital outputs
 /*004*/	uint8_t unknown1[4];
@@ -332,6 +415,7 @@ private:
 /*400*/	uint8_t lcdData[USER_DS_LCD_DATA_SIZE];	// optional
     } m_sendPkt;
 #pragma pack(pop)
+
     sockaddr_in m_toAddr;
     uint32_t m_sendPktLength;
 
@@ -666,6 +750,37 @@ int getDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength,
     return netCommObj->GetDynamicControlData( type, dynamicData, maxLength );
 }
 
+// byte-swap 16-bit fields from network to host order
+void FNC::SwapDSEIOInput( input_t *pInput )
+{
+    int i;
+    for (i = 0; i < 7; i++) {
+	pInput->analog[i] = ntohs(pInput->analog[i]);
+    }
+    for (i = 0; i < 3; i++) {
+	pInput->accel[i] = ntohs(pInput->accel[i]);
+    }
+    for (i = 0; i < 2; i++) {
+	pInput->quad[i] = ntohs(pInput->quad[i]);
+    }
+}
+
+// byte-swap 16-bit fields from network to host order (or vice versa)
+void FNC::SwapDSEIOOutput( output_t *pOutput )
+{
+    int i;
+    pOutput->digital = ntohs(pOutput->digital);
+    pOutput->digital_oe = ntohs(pOutput->digital_oe);
+    pOutput->digital_pe = ntohs(pOutput->digital_pe);
+    for (i = 0; i < 4; i++) {
+	pOutput->pwm_compare[i] = ntohs(pOutput->pwm_compare[i]);
+    }
+    for (i = 0; i < 2; i++) {
+	pOutput->pwm_period[i] = ntohs(pOutput->pwm_period[i]);
+    }
+    // "enables" bitfield order set by #defines in struct definition
+}
+
 int FNC::GetDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength )
 {
     Synchronized sync(m_dataMutex);
@@ -687,6 +802,17 @@ int FNC::GetDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength )
 		return ERROR;
 	    }
 	    memcpy(dynamicData, pData, 1+len);
+	    switch (tag) {
+		case kFRC_NetworkCommunication_DynamicType_DSEnhancedIO_Input:
+		    SwapDSEIOInput((input_t *)(dynamicData + 2));
+		    break;
+		case kFRC_NetworkCommunication_DynamicType_DSEnhancedIO_Output:
+		    SwapDSEIOOutput((output_t *)(dynamicData + 2));
+		    break;
+		default:
+		    // ignore Kinect data for now
+		    break;
+	    }
 	    return OK;
 	}
 	pData += 1 + len;
@@ -1085,6 +1211,10 @@ int FNC::Send()
     // DS Enhanced I/O configuration
     if (m_eioConfig) {
 	memcpy(m_sendPkt.eioConfig, m_eioConfig, m_eioConfigLength);
+	if (m_eioConfigLength >= 26 && m_sendPkt.eioConfig[1] ==
+	  kFRC_NetworkCommunication_DynamicType_DSEnhancedIO_Output) {
+	    SwapDSEIOOutput((output_t *)&m_sendPkt.eioConfig[2]);
+	}
 	FreeEIOConfig();
     }
 

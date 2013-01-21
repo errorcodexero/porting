@@ -46,10 +46,22 @@ class DriverStationEnhancedIO : public ErrorBase
 	{
 	    struct
 	    {
+
+// This uses __BYTE_ORDER as a stand-in for "__BITFIELD_PACKING_ORDER"
+// (which is not defined).  It gives the intended result for gcc/g++ on
+// PPC and x86 architectures but may not be correct for other compilers
+// or even gcc with other processors.
+
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+		UINT8 quad_index_enable : 2;
+		UINT8 comparator_enable : 2;
+		UINT8 pwm_enable : 4;
+#else // __BYTE_ORDER == __BIG_ENDIAN
 		// Bits are inverted from cypress fw because of big-endian!
 		UINT8 pwm_enable : 4;
 		UINT8 comparator_enable : 2;
 		UINT8 quad_index_enable : 2;
+#endif // __BYTE_ORDER
 	    };
 	    UINT8 enables;
 	};

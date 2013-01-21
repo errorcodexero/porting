@@ -34,6 +34,12 @@ struct FRCCommonControlData{
 	UINT16 packetIndex;
 	union {
 		UINT8 control;
+
+// This uses __BYTE_ORDER as a stand-in for "__BITFIELD_PACKING_ORDER"
+// (which is not defined).  It gives the intended result for gcc/g++ on
+// PPC and x86 architectures but may not be correct for other compilers
+// or even gcc with other processors.
+
 #if (__BYTE_ORDER == __LITTLE_ENDIAN)
 		struct {
 			UINT8 checkVersions : 1;
