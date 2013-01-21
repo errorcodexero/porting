@@ -6,11 +6,6 @@
 
 MyRobot::MyRobot()
 {
-    RobotInit();
-}
-
-void MyRobot::RobotInit()
-{
     m_pDS = DriverStation::GetInstance();
     m_pJoy = new Joystick(1);
     m_pEIO = &m_pDS->GetEnhancedIO();
