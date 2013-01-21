@@ -34,12 +34,6 @@ void MyRobot::DisabledPeriodic()
     m_pLCD->UpdateLCD();
 }
 
-void MyRobot::DisabledContinuous()
-{
-    ++disabled_continuous;
-    taskDelay(1);
-}
-
 void MyRobot::AutonomousInit()
 {
     printf("MyRobot: starting autonomous");
@@ -53,12 +47,6 @@ void MyRobot::AutonomousPeriodic()
     ++autonomous_periodic;
     m_pLCD->Printf(DriverStationLCD::kUser_Line2, 1, "auto %d", autonomous_periodic);
     m_pLCD->UpdateLCD();
-}
-
-void MyRobot::AutonomousContinuous()
-{
-    ++autonomous_continuous;
-    taskDelay(1);
 }
 
 void MyRobot::TeleopInit()
@@ -102,12 +90,6 @@ void MyRobot::TeleopPeriodic()
     m_pSol4->Set(sol4);
 }
 
-void MyRobot::TeleopContinuous()
-{
-    ++teleop_continuous;
-    taskDelay(1);
-}
-
 void MyRobot::TestInit()
 {
     printf("MyRobot: starting test");
@@ -121,12 +103,6 @@ void MyRobot::TestPeriodic()
     ++test_periodic;
     m_pLCD->Printf(DriverStationLCD::kUser_Line2, 1, "test %d", test_periodic);
     m_pLCD->UpdateLCD();
-}
-
-void MyRobot::TestContinuous()
-{
-    ++test_continuous;
-    taskDelay(1);
 }
 
 START_ROBOT_CLASS(MyRobot);
