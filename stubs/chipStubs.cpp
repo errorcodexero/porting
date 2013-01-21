@@ -1088,9 +1088,6 @@ public:
 	    *status = NiFpga_Status_InvalidParameter;
 	    return 0;
 	}
-#ifdef DEBUG
-	printf("FPGA solenoid %u write DO7_0 %x\n", m_index, value);
-#endif
 	*status = 0;
 	return m_value[m_index];
     }

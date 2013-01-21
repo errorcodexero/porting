@@ -2,8 +2,9 @@
 CC := gcc
 CXX := g++
 CINCLUDES := -I./ -I./WPILib/ -I./stubs/
-CFLAGS := -Wall -Werror -g -Oo $(CINCLUDES)
-CXXFLAGS := -Wall -Wno-deprecated -Wno-ctor-dtor-privacy -Werror -g $(CINCLUDES)
+CDEBUG :=
+CFLAGS := -Wall -Werror -g -Oo $(CINCLUDES) $(CDEBUG)
+CXXFLAGS := -Wall -Wno-deprecated -Wno-ctor-dtor-privacy -Werror -g $(CINCLUDES) $(CDEBUG)
 
 SOURCES := \
 	MyRobot.cpp \

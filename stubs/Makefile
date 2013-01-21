@@ -1,8 +1,9 @@
 CC := gcc
 CXX := g++
 CINCLUDES := -I./ -I../WPILib/ -I../stubs/ -I../v2lin/lib/
-CFLAGS := -Wall -Werror -g -O0 $(CINCLUDES)
-CXXFLAGS := -Wall -Wno-deprecated -Werror -g -O0 $(CINCLUDES)
+CDEBUG :=
+CFLAGS := -Wall -Werror -g -O0 $(CINCLUDES) $(CDEBUG)
+CXXFLAGS := -Wall -Wno-deprecated -Werror -g -O0 $(CINCLUDES) $(CDEBUG)
 LDLIBS = -lpthread -ldl -lrt -lm
 
 SOURCES := chipStubs.cpp netStubs.cpp vxStubs.cpp visionStubs.cpp vxSem.c
