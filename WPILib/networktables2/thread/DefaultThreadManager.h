@@ -35,7 +35,7 @@ public:
 	PeriodicNTThread(PeriodicRunnable* r, const char* name);
 	virtual ~PeriodicNTThread();
 	virtual void stop();
-#ifdef __VXWOWRKS__
+#ifdef _VXWORKS_
 	virtual bool isRunning();
 #endif
 };

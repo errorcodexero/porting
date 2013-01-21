@@ -28,7 +28,7 @@ public:
 	/**
 	 * @return true if the thread is running
 	 */
-#ifdef __VXWORKS__
+#ifdef _VXWORKS_
 	virtual bool isRunning() = 0;
 #endif
 };

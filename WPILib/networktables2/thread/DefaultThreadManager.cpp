@@ -41,7 +41,7 @@ void PeriodicNTThread::stop() {
 	run = false;
 	//TODO thread->Stop();
 }
-#ifdef __VXWORKS__
+#ifdef _VXWORKS_
 bool PeriodicNTThread::isRunning() {
 	return thread->IsReady();
 }

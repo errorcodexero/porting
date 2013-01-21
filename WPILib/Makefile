@@ -13,7 +13,30 @@ SOURCES := \
     AnalogModule.cpp \
     AnalogTrigger.cpp \
     AnalogTriggerOutput.cpp \
+    Buttons/AnalogIOButton.cpp \
+    Buttons/Button.cpp \
+    Buttons/ButtonScheduler.cpp \
+    Buttons/DigitalIOButton.cpp \
+    Buttons/HeldButtonScheduler.cpp \
+    Buttons/InternalButton.cpp \
+    Buttons/JoystickButton.cpp \
+    Buttons/NetworkButton.cpp \
+    Buttons/PressedButtonScheduler.cpp \
+    Buttons/ReleasedButtonScheduler.cpp \
+    Buttons/Trigger.cpp \
     CANJaguar.cpp \
+    Commands/Command.cpp \
+    Commands/CommandGroup.cpp \
+    Commands/CommandGroupEntry.cpp \
+    Commands/PIDCommand.cpp \
+    Commands/PIDSubsystem.cpp \
+    Commands/PrintCommand.cpp \
+    Commands/Scheduler.cpp \
+    Commands/StartCommand.cpp \
+    Commands/Subsystem.cpp \
+    Commands/WaitCommand.cpp \
+    Commands/WaitForChildren.cpp \
+    Commands/WaitUntilCommand.cpp \
     Compressor.cpp \
     Counter.cpp \
     Dashboard.cpp \
@@ -39,57 +62,10 @@ SOURCES := \
     Joystick.cpp \
     Kinect.cpp \
     KinectStick.cpp \
-    Module.cpp \
-    MotorSafetyHelper.cpp \
-    Notifier.cpp \
-    PIDController.cpp \
-    Preferences.cpp \
-    PWM.cpp \
-    Relay.cpp \
-    Resource.cpp \
-    RobotBase.cpp \
-    RobotDrive.cpp \
-    SafePWM.cpp \
-    SensorBase.cpp \
-    SerialPort.cpp \
-    Servo.cpp \
-    SimpleRobot.cpp \
-    Solenoid.cpp \
-    SolenoidBase.cpp \
-    SPI.cpp \
-    Synchronized.cpp \
-    Talon.cpp \
-    Task.cpp \
-    Timer.cpp \
-    Ultrasonic.cpp \
-    Utility.cpp \
-    Victor.cpp \
-    Watchdog.cpp \
-    Buttons/AnalogIOButton.cpp \
-    Buttons/Button.cpp \
-    Buttons/ButtonScheduler.cpp \
-    Buttons/DigitalIOButton.cpp \
-    Buttons/HeldButtonScheduler.cpp \
-    Buttons/InternalButton.cpp \
-    Buttons/JoystickButton.cpp \
-    Buttons/NetworkButton.cpp \
-    Buttons/PressedButtonScheduler.cpp \
-    Buttons/ReleasedButtonScheduler.cpp \
-    Buttons/Trigger.cpp \
-    Commands/Command.cpp \
-    Commands/CommandGroup.cpp \
-    Commands/CommandGroupEntry.cpp \
-    Commands/PIDCommand.cpp \
-    Commands/PIDSubsystem.cpp \
-    Commands/PrintCommand.cpp \
-    Commands/Scheduler.cpp \
-    Commands/StartCommand.cpp \
-    Commands/Subsystem.cpp \
-    Commands/WaitCommand.cpp \
-    Commands/WaitForChildren.cpp \
-    Commands/WaitUntilCommand.cpp \
     LiveWindow/LiveWindow.cpp \
     LiveWindow/LiveWindowStatusListener.cpp \
+    Module.cpp \
+    MotorSafetyHelper.cpp \
     networktables/NetworkTable.cpp \
     networktables/NetworkTableConnectionListenerAdapter.cpp \
     networktables/NetworkTableKeyListenerAdapter.cpp \
@@ -138,9 +114,32 @@ SOURCES := \
     networktables2/util/StringCache.cpp \
     networktables2/util/System.cpp \
     networktables2/WriteManager.cpp \
+    Notifier.cpp \
+    PIDController.cpp \
+    Preferences.cpp \
+    PWM.cpp \
+    Relay.cpp \
+    Resource.cpp \
+    RobotBase.cpp \
+    RobotDrive.cpp \
+    SafePWM.cpp \
+    SensorBase.cpp \
+    SerialPort.cpp \
+    Servo.cpp \
+    SimpleRobot.cpp \
     SmartDashboard/SendableChooser.cpp \
     SmartDashboard/SmartDashboard.cpp \
+    Solenoid.cpp \
+    SolenoidBase.cpp \
+    SPI.cpp \
+    Synchronized.cpp \
     tables/TableKeyNotDefinedException.cpp \
+    Talon.cpp \
+    Task.cpp \
+    Timer.cpp \
+    Ultrasonic.cpp \
+    Utility.cpp \
+    Victor.cpp \
     Vision/AxisCamera.cpp \
     Vision/AxisCameraParams.cpp \
     Vision/BinaryImage.cpp \
@@ -157,7 +156,8 @@ SOURCES := \
     Vision2009/BaeUtilities.cpp \
     Vision2009/FrcError.cpp \
     Vision2009/TrackAPI.cpp \
-    Vision2009/VisionAPI.cpp
+    Vision2009/VisionAPI.cpp \
+    Watchdog.cpp
 
 OBJECTS := $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
 
