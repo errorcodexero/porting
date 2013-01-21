@@ -31,8 +31,6 @@ private:
 public:
     MyRobot();
 
-    virtual void RobotInit();
-
     virtual void DisabledInit();
     virtual void AutonomousInit();
     virtual void TeleopInit();
