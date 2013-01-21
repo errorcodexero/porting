@@ -185,6 +185,10 @@ public:
 #ifdef DEBUG
 	printf("FPGA accumulator %u center %d\n", m_index, value);
 #endif
+	if (m_center != value) {
+	    printf("FPGA accumulator %u center was %d changed to %d\n",
+		m_index, m_center, value);
+	}
 	m_center = value;
 	*status = 0;
     }
@@ -193,15 +197,19 @@ public:
 	return m_center;
     }
     virtual void strobeReset(tRioStatusCode *status) {
-#ifdef DEBUG
+// #ifdef DEBUG
 	printf("FPGA accumulator %u strobe reset\n", m_index);
-#endif
+// #endif
 	*status = 0;
     }
     virtual void writeDeadband(signed int value, tRioStatusCode *status) {
 #ifdef DEBUG
 	printf("FPGA accumulator %u deadband %d\n", m_index, value);
 #endif
+	if (m_deadband != value) {
+	    printf("FPGA accumulator %u deadband was %d changed to %d\n",
+		m_index, m_deadband, value);
+	}
 	m_deadband = value;
 	*status = 0;
     }
@@ -272,26 +280,50 @@ public:
     }
     virtual void writeConfig(tAI::tConfig value, tRioStatusCode *status) {
 #ifdef DEBUG
-	printf("FPGA analog in %u config %u (ScanSize %u ConvertRate %u)\n",
+	printf("FPGA analog in %u config 0x%02x (ScanSize %u ConvertRate %u)\n",
 	  m_index, value.value, value.ScanSize, value.ConvertRate);
 #endif
+	if (m_config.value != value.value) {
+	    printf("FPGA analog in %u config was 0x%02x changed to 0x%02x"
+	    	   " (ScanSize %u ConvertRate %u)\n",
+		m_index, m_config.value, value.value,
+		value.ScanSize, value.ConvertRate);
+	}
 	m_config = value;
 	*status = 0;
     }
     virtual void writeConfig_ScanSize( unsigned char value, tRioStatusCode *status) {
-	m_config.ScanSize = value;
+	tAI::tConfig new_config = m_config;
+	new_config.ScanSize = value;
 #ifdef DEBUG
-	printf("FPGA analog in %u config %u (ScanSize %u ConvertRate %u)\n",
-	  m_index, m_config.value, m_config.ScanSize, m_config.ConvertRate);
+	printf("FPGA analog in %u config 0x%02x (ScanSize %u ConvertRate %u)\n",
+	  m_index, new_config.value,
+	  new_config.ScanSize, new_config.ConvertRate);
 #endif
+	if (m_config.value != new_config.value) {
+	    printf("FPGA analog in %u config was 0x%02x changed to 0x%02x"
+	    	   " (ScanSize %u ConvertRate %u)\n",
+		m_index, m_config.value, new_config.value,
+		new_config.ScanSize, new_config.ConvertRate);
+	}
+	m_config = new_config;
 	*status = 0;
     }
     virtual void writeConfig_ConvertRate(unsigned int value, tRioStatusCode *status) {
-	m_config.ConvertRate = value;
+	tAI::tConfig new_config = m_config;
+	new_config.ConvertRate = value;
 #ifdef DEBUG
-	printf("FPGA analog in %u config %u (ScanSize %u ConvertRate %u)\n",
-	  m_index, m_config.value, m_config.ScanSize, m_config.ConvertRate);
+	printf("FPGA analog in %u config 0x%02x (ScanSize %u ConvertRate %u)\n",
+	  m_index, new_config.value, new_config.ScanSize,
+	  new_config.ConvertRate);
 #endif
+	if (m_config.value != new_config.value) {
+	    printf("FPGA analog in %u config was 0x%02x changed to 0x%02x"
+	    	   " (ScanSize %u ConvertRate %u)\n",
+		m_index, m_config.value, new_config.value,
+		new_config.ScanSize, new_config.ConvertRate);
+	}
+	m_config = new_config;
 	*status = 0;
     }
     virtual tAI::tConfig readConfig(tRioStatusCode *status) {
@@ -307,16 +339,21 @@ public:
 	return m_config.ConvertRate;
     }
     virtual void writeScanList(unsigned char bitfield_index, unsigned char value, tRioStatusCode *status) {
-	if (bitfield_index >= tAI::kNumScanListElements) {
-	    *status = NiFpga_Status_InvalidParameter;
-	    return;
-	}
-	*status = 0;
-	m_scanList[bitfield_index] = value;
 #ifdef DEBUG
 	printf("FPGA analog in %u channel %u scan list 0x%02x\n",
 	  m_index, bitfield_index, value);
 #endif
+	if (bitfield_index >= tAI::kNumScanListElements) {
+	    *status = NiFpga_Status_InvalidParameter;
+	    return;
+	}
+	if (m_scanList[bitfield_index] != value) {
+	    printf("FPGA analog in %u channel %u scan list was 0x%02x"
+	    	   " changed to 0x%02x\n",
+		m_index, bitfield_index, m_scanList[bitfield_index], value);
+	}
+	m_scanList[bitfield_index] = value;
+	*status = 0;
     }
     virtual unsigned char readScanList(unsigned char bitfield_index, tRioStatusCode *status) {
 	if (bitfield_index >= tAI::kNumScanListElements) {
@@ -338,6 +375,11 @@ public:
 	printf("FPGA analog in %u channel %u average bits %u\n",
 	  m_index, bitfield_index, value);
 #endif
+	if (m_averageBits[bitfield_index] != value) {
+	    printf("FPGA analog in %u channel %u average bits was %u"
+	    	   " changed to %u\n",
+		m_index, bitfield_index, m_averageBits[bitfield_index], value);
+	}
 	m_averageBits[bitfield_index] = value;
 	*status = 0;
     }
@@ -358,6 +400,12 @@ public:
 	printf("FPGA analog in %u channel %u oversample bits %u\n",
 	  m_index, bitfield_index, value);
 #endif
+	if (m_oversampleBits[bitfield_index] != value) {
+	    printf("FPGA analog in %u channel %u oversample bits was %u"
+	    	   " changed to %u\n",
+		m_index, bitfield_index, m_oversampleBits[bitfield_index],
+		value);
+	}
 	m_oversampleBits[bitfield_index] = value;
 	*status = 0;
     }
@@ -370,39 +418,76 @@ public:
 	return m_oversampleBits[bitfield_index];
     }
     virtual void writeReadSelect(tAI::tReadSelect value, tRioStatusCode *status) {
-	m_readSelect = value;
 #ifdef DEBUG
-	printf("FPGA analog in %u readSelect %u (Module %u Channel %u Averaged %c)\n",
+	printf("FPGA analog in %u readSelect 0x%02x"
+	       " (Module %u Channel %u Averaged %c)\n",
 	  m_index, m_readSelect.value, m_readSelect.Module,
 	  m_readSelect.Channel, m_readSelect.Averaged ? 't' : 'f');
 #endif
+	if (m_readSelect.value != value.value) {
+	    printf("FPGA analog in %u readSelect was 0x%02x changed to 0x%02x"
+	    	   " (Module %u Channel %u Averaged %c)\n",
+	      m_index, m_readSelect.value, value.value,
+	      value.Module, value.Channel, value.Averaged ? 't' : 'f');
+	}
+	m_readSelect = value;
 	*status = 0;
     }
     virtual void writeReadSelect_Module(unsigned char value, tRioStatusCode *status) {
-	m_readSelect.Module = value;
+	tAI::tReadSelect new_readSelect = m_readSelect;
+	new_readSelect.Module = value;
 #ifdef DEBUG
-	printf("FPGA analog in %u readSelect %u (Module %u Channel %u Averaged %c)\n",
-	  m_index, m_readSelect.value, m_readSelect.Module,
-	  m_readSelect.Channel, m_readSelect.Averaged ? 't' : 'f');
+	printf("FPGA analog in %u readSelect 0x%02x"
+	       " (Module %u Channel %u Averaged %c)\n",
+	  m_index, new_readSelect.value, new_readSelect.Module,
+	  new_readSelect.Channel, new_readSelect.Averaged ? 't' : 'f');
 #endif
+	if (m_readSelect.value != new_readSelect.value) {
+	    printf("FPGA analog in %u readSelect was 0x%02x changed to 0x%02x"
+	    	   " (Module %u Channel %u Averaged %c)\n",
+	  m_index, m_readSelect.value, new_readSelect.value,
+	  new_readSelect.Module, new_readSelect.Channel,
+	  new_readSelect.Averaged ? 't' : 'f');
+	}
+	m_readSelect = new_readSelect;
 	*status = 0;
     }
     virtual void writeReadSelect_Channel(unsigned char value, tRioStatusCode *status) {
-	m_readSelect.Channel = value;
+	tAI::tReadSelect new_readSelect = m_readSelect;
+	new_readSelect.Channel = value;
 #ifdef DEBUG
-	printf("FPGA analog in %u readSelect %u (Module %u Channel %u Averaged %c)\n",
-	  m_index, m_readSelect.value, m_readSelect.Module,
-	  m_readSelect.Channel, m_readSelect.Averaged ? 't' : 'f');
+	printf("FPGA analog in %u readSelect 0x%02x"
+	       " (Module %u Channel %u Averaged %c)\n",
+	  m_index, new_readSelect.value, new_readSelect.Module,
+	  new_readSelect.Channel, new_readSelect.Averaged ? 't' : 'f');
 #endif
+	if (m_readSelect.value != new_readSelect.value) {
+	    printf("FPGA analog in %u readSelect was 0x%02x changed to 0x%02x"
+	    	   " (Module %u Channel %u Averaged %c)\n",
+	  m_index, m_readSelect.value, new_readSelect.value,
+	  new_readSelect.Module, new_readSelect.Channel,
+	  new_readSelect.Averaged ? 't' : 'f');
+	}
+	m_readSelect = new_readSelect;
 	*status = 0;
     }
     virtual void writeReadSelect_Averaged(bool value, tRioStatusCode *status) {
-	m_readSelect.Averaged = value;
+	tAI::tReadSelect new_readSelect = m_readSelect;
+	new_readSelect.Averaged = value;
 #ifdef DEBUG
-	printf("FPGA analog in %u readSelect %u (Module %u Channel %u Averaged %c)\n",
-	  m_index, m_readSelect.value, m_readSelect.Module,
-	  m_readSelect.Channel, m_readSelect.Averaged ? 't' : 'f');
+	printf("FPGA analog in %u readSelect 0x%02x"
+	       " (Module %u Channel %u Averaged %c)\n",
+	  m_index, new_readSelect.value, new_readSelect.Module,
+	  new_readSelect.Channel, new_readSelect.Averaged ? 't' : 'f');
 #endif
+	if (m_readSelect.value != new_readSelect.value) {
+	    printf("FPGA analog in %u readSelect was 0x%02x changed to 0x%02x"
+	    	   " (Module %u Channel %u Averaged %c)\n",
+	  m_index, m_readSelect.value, new_readSelect.value,
+	  new_readSelect.Module, new_readSelect.Channel,
+	  new_readSelect.Averaged ? 't' : 'f');
+	}
+	m_readSelect = new_readSelect;
 	*status = 0;
     }
     virtual tAI::tReadSelect readReadSelect(tRioStatusCode *status) {
@@ -430,9 +515,7 @@ public:
 	return 0;
     }
     virtual void strobeLatchOutput(tRioStatusCode *status) {
-#ifdef DEBUG
 	printf("FPGA analog in %u strobe latch output\n", m_index);
-#endif
 	*status = 0;
     }
 
@@ -1079,6 +1162,10 @@ public:
 #ifdef DEBUG
 	printf("FPGA solenoid %u write DO7_0 %x\n", m_index, value);
 #endif
+	if (m_value[m_index] != value) {
+	    printf("FPGA solenoid %u DO7_0 was %x changed to %x\n",
+		m_index, m_value[m_index], value);
+	}
 	m_value[m_index] = value;
 	*status = 0;
     }
