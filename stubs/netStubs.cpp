@@ -1572,7 +1572,9 @@ UINT32 report(
         snprintf(f, sizeof f, " feature %s", feature);
     }
 
+#ifdef DEBUG
     printf("usageReporting:%s%s%s%s\n", r, i, c, f);
+#endif
 
     return OK;
 }
