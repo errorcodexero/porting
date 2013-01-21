@@ -1042,6 +1042,79 @@ tDIO* tDIO::create(
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// ChipObject tSolenoid
+//
+///////////////////////////////////////////////////////////////////////////////
+
+namespace nFPGA {
+namespace nFRC_2012_1_6_4 {
+
+class stubSolenoid : public tSolenoid
+{
+private:
+    unsigned char m_index;
+    tSystemInterface *m_systemInterface;
+    unsigned char m_value[tSolenoid::kNumDO7_0Elements];
+
+public:
+    stubSolenoid( unsigned char sys_index, const uint32_t guid[] ) : tSolenoid() {
+	m_index = sys_index;
+	m_systemInterface = new stubSystemInterface(guid);
+    }
+    virtual ~stubSolenoid() {
+	delete m_systemInterface;
+    }
+    virtual tSystemInterface* getSystemInterface() {
+	return m_systemInterface;
+    }
+    virtual unsigned char getSystemIndex() {
+	return m_index;
+    }
+
+    virtual void writeDO7_0(unsigned char bitfield_index, unsigned char value, tRioStatusCode *status) {
+	if (bitfield_index >= tSolenoid::kNumDO7_0Elements) {
+	    *status = NiFpga_Status_InvalidParameter;
+	    return;
+	}
+#ifdef DEBUG
+	printf("FPGA solenoid %u write DO7_0 %x\n", m_index, value);
+#endif
+	m_value[m_index] = value;
+	*status = 0;
+    }
+
+    virtual unsigned char readDO7_0(unsigned char bitfield_index, tRioStatusCode *status) {
+	if (bitfield_index >= tSolenoid::kNumDO7_0Elements) {
+	    *status = NiFpga_Status_InvalidParameter;
+	    return 0;
+	}
+#ifdef DEBUG
+	printf("FPGA solenoid %u write DO7_0 %x\n", m_index, value);
+#endif
+	*status = 0;
+	return m_value[m_index];
+    }
+
+private:
+    DISALLOW_COPY_AND_ASSIGN(stubSolenoid);
+};
+
+tSolenoid* tSolenoid::create(
+	tRioStatusCode *status
+    )
+{
+    uint32_t guid[4];
+    unsigned char sys_index = 0;
+    snprintf((char *)guid, sizeof guid, "sol %u", sys_index);
+    *status = 0;
+    return new stubSolenoid(sys_index, guid);
+}
+
+}; // namespace nFRC_2012_1_6_4
+}; // namespace nFPGA
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // ChipObject tWatchdog
 //
 ///////////////////////////////////////////////////////////////////////////////

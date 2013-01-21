@@ -17,10 +17,10 @@ void MyRobot::RobotInit()
     m_pLCD = DriverStationLCD::GetInstance();
     // m_compressor = new Compressor( COMPRESSOR_SWITCH, COMPRESSOR_RELAY );
     // m_compressor->Start();
-//  m_pSol1 = new Solenoid(1);
-//  m_pSol2 = new Solenoid(2);
-//  m_pSol3 = new Solenoid(3);
-//  m_pSol4 = new Solenoid(4);
+    m_pSol1 = new Solenoid(1);
+    m_pSol2 = new Solenoid(2);
+    m_pSol3 = new Solenoid(3);
+    m_pSol4 = new Solenoid(4);
 }
 
 void MyRobot::DisabledInit()
@@ -101,10 +101,10 @@ void MyRobot::TeleopPeriodic()
     m_pEIO->SetLED(3, sol3);
     m_pEIO->SetLED(4, sol4);
 
-//  m_pSol1->Set(sol1);
-//  m_pSol2->Set(sol2);
-//  m_pSol3->Set(sol3);
-//  m_pSol4->Set(sol4);
+    m_pSol1->Set(sol1);
+    m_pSol2->Set(sol2);
+    m_pSol3->Set(sol3);
+    m_pSol4->Set(sol4);
 }
 
 void MyRobot::TeleopContinuous()
