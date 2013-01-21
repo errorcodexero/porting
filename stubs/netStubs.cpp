@@ -757,6 +757,7 @@ void FNC::SwapDSEIOInput( input_t *pInput )
     for (i = 0; i < 7; i++) {
 	pInput->analog[i] = ntohs(pInput->analog[i]);
     }
+    pInput->digital = ntohs(pInput->digital);
     for (i = 0; i < 3; i++) {
 	pInput->accel[i] = ntohs(pInput->accel[i]);
     }
