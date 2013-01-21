@@ -515,7 +515,9 @@ public:
 	return 0;
     }
     virtual void strobeLatchOutput(tRioStatusCode *status) {
+#ifdef DEBUG
 	printf("FPGA analog in %u strobe latch output\n", m_index);
+#endif
 	*status = 0;
     }
 
