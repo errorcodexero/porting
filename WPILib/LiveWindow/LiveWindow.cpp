@@ -26,6 +26,7 @@ LiveWindow * LiveWindow::GetInstance()
 LiveWindow::LiveWindow()
 {
 	m_enabled = false;
+	m_firstTime = true;
 	m_liveWindowTable = NetworkTable::GetTable("LiveWindow");
 	m_statusTable = m_liveWindowTable->GetSubTable("~STATUS~");
 	m_scheduler = Scheduler::GetInstance();

@@ -70,7 +70,7 @@ void CANJaguar::InitCANJaguar()
 	m_safetyHelper = new MotorSafetyHelper(this);
 
 	nUsageReporting::report(nUsageReporting::kResourceType_CANJaguar, m_deviceNumber, m_controlMode);
-	LiveWindow::GetInstance()->AddActuator("CANJaguar", m_deviceNumber, 0, this);
+	LiveWindow::GetInstance()->AddActuator("CANJaguar", 0, m_deviceNumber, this);
 }
 
 /**
