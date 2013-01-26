@@ -52,7 +52,7 @@ Task::~Task()
 bool Task::Start(UINT32 arg0, UINT32 arg1, UINT32 arg2, UINT32 arg3, UINT32 arg4, 
 	UINT32 arg5, UINT32 arg6, UINT32 arg7, UINT32 arg8, UINT32 arg9)
 {
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
     m_taskID = taskSpawn(m_taskName,
 			m_priority,
 			VX_FP_TASK,			    // options
@@ -86,7 +86,7 @@ bool Task::Start(UINT32 arg0, UINT32 arg1, UINT32 arg2, UINT32 arg3, UINT32 arg4
 #endif
 }
 
-#ifndef __VXWORKS__
+#ifndef _WRS_KERNEL
 int Task::Main( Task *self )
 {
     typedef int (*task_main_t)(UINT32, UINT32, UINT32, UINT32, UINT32,
@@ -105,7 +105,7 @@ int Task::Main( Task *self )
  * If the task isn't started, it starts it.
  * @return false if the task is running and we are unable to kill the previous instance
  */
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
 bool Task::Restart()
 {
     return HandleError(taskRestart(m_taskID));
@@ -131,7 +131,7 @@ bool Task::Stop()
  * Returns true if the task is ready to execute (i.e. not suspended, delayed, or blocked).
  * @return true if ready, false if not ready.
  */
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
 bool Task::IsReady()
 {
     return taskIsReady(m_taskID);
@@ -142,7 +142,7 @@ bool Task::IsReady()
  * Returns true if the task was explicitly suspended by calling Suspend()
  * @return true if suspended, false if not suspended.
  */
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
 bool Task::IsSuspended()
 {
     return taskIsSuspended(m_taskID);
@@ -153,7 +153,7 @@ bool Task::IsSuspended()
  * Pauses a running task.
  * Returns true on success, false if unable to pause or the task isn't running.
  */
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
 bool Task::Suspend()
 {
     return HandleError(taskSuspend(m_taskID));
@@ -164,7 +164,7 @@ bool Task::Suspend()
  * Resumes a paused task.
  * Returns true on success, false if unable to resume or if the task isn't running/paused.
  */
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
 bool Task::Resume()
 {
     return HandleError(taskResume(m_taskID));
@@ -184,7 +184,7 @@ bool Task::Verify()
  * Gets the priority of a task.
  * @returns task priority or 0 if an error occured
  */
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
 INT32 Task::GetPriority()
 {
     if (HandleError(taskPriorityGet(m_taskID, &m_priority)))
@@ -201,7 +201,7 @@ INT32 Task::GetPriority()
  * @param priority The priority the task should run at.
  * @returns true on success.
  */
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
 bool Task::SetPriority(INT32 priority)
 {
     m_priority = priority;

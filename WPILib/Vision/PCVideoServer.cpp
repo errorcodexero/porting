@@ -124,7 +124,7 @@ int PCVideoServer::StartServerTask()
     }
     int id = 0;
     m_stopServer = false;
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
     // Check for prior copy of running task
     int oldId = taskNameToId((char*)m_serverTask.GetName());
     if(oldId != ERROR)

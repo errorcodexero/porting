@@ -966,7 +966,7 @@ int StartCameraTask(int frames, int compression, ImageResolution resolution, Ima
 	char funcName[]="startCameraTask";
 	DPRINTF(LOG_DEBUG, "starting camera");
 
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
 	int cameraTaskID = 0;
 #else
 	static int cameraTaskID = 0;
@@ -979,7 +979,7 @@ int StartCameraTask(int frames, int compression, ImageResolution resolution, Ima
 	else if (compression > 100) compression = 100;
 
 	// stop any prior copy of running task
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
 	StopCameraTask(); 
 #else
 	if(cameraTaskID != 0) {
@@ -1005,7 +1005,7 @@ int StartCameraTask(int frames, int compression, ImageResolution resolution, Ima
  * @brief Stops the camera task
  * @return TaskID of camera task killed, or -1 if none was running.
  */
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
 int StopCameraTask()
 {
     std::string taskName("FRC_Camera");    

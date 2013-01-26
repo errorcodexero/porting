@@ -163,7 +163,7 @@ void RobotBase::startRobotTask(FUNCPTR factory)
     printf("WPILib was compiled without -D'SVN_REV=nnnn'\n");
 #endif
 
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
     // Check for startup code already running
     INT32 oldId = taskNameToId("FRC_RobotTask");
     if (oldId != ERROR)
