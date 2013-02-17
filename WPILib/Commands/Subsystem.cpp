@@ -22,6 +22,7 @@ Subsystem::Subsystem(const char *name) :
 	m_name = name;
 	Scheduler::GetInstance()->RegisterSubsystem(this);
 	m_table = NULL;
+	m_currentCommandChanged = true;
 }
 /**
  * Initialize the default command for this subsystem
@@ -106,6 +107,7 @@ Command *Subsystem::GetDefaultCommand()
 void Subsystem::SetCurrentCommand(Command *command)
 {
 	m_currentCommand = command;
+	m_currentCommandChanged = true;
 }
 
 /**
@@ -124,6 +126,7 @@ Command *Subsystem::GetCurrentCommand()
  */
 void Subsystem::ConfirmCommand()
 {
+	if (m_currentCommandChanged) {
 	if (m_table != NULL)
 	{
 		if (m_currentCommand != NULL)
@@ -135,6 +138,8 @@ void Subsystem::ConfirmCommand()
 		{
 			m_table->PutBoolean("hasCommand", false);
 		}
+	}
+		m_currentCommandChanged = false;
 	}
 }
 

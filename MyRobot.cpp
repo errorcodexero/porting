@@ -12,10 +12,19 @@ MyRobot::MyRobot()
     m_pLCD = DriverStationLCD::GetInstance();
     // m_compressor = new Compressor( COMPRESSOR_SWITCH, COMPRESSOR_RELAY );
     // m_compressor->Start();
+    LiveWindow *lw = LiveWindow::GetInstance();
     m_pSol1 = new Solenoid(1);
+    lw->AddActuator("Solenoid", "Sol1", m_pSol1);
     m_pSol2 = new Solenoid(2);
+    lw->AddActuator("Solenoid", "Sol2", m_pSol2);
     m_pSol3 = new Solenoid(3);
+    lw->AddActuator("Solenoid", "Sol3", m_pSol3);
     m_pSol4 = new Solenoid(4);
+    lw->AddActuator("Solenoid", "Sol4", m_pSol4);
+    m_pSol5 = new DoubleSolenoid(5,6);
+    lw->AddActuator("DoubleSolenoid", "Sol5", m_pSol5);
+    m_pSol6 = new DoubleSolenoid(7,8);
+    lw->AddActuator("DoubleSolenoid", "Sol6", m_pSol6);
 }
 
 void MyRobot::RobotInit()
@@ -24,6 +33,7 @@ void MyRobot::RobotInit()
     m_pSol2->Set(false);
     m_pSol3->Set(false);
     m_pSol4->Set(false);
+    m_pSol5->Set(DoubleSolenoid::kOff);
 }
 
 void MyRobot::DisabledInit()
@@ -111,6 +121,8 @@ void MyRobot::TestPeriodic()
     ++test_periodic;
     m_pLCD->Printf(DriverStationLCD::kUser_Line2, 1, "test %d", test_periodic);
     m_pLCD->UpdateLCD();
+
+    LiveWindow::GetInstance()->Run();
 }
 
 START_ROBOT_CLASS(MyRobot);
