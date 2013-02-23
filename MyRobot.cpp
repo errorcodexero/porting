@@ -25,15 +25,26 @@ MyRobot::MyRobot()
     lw->AddActuator("DoubleSolenoid", "Sol5", m_pSol5);
     m_pSol6 = new DoubleSolenoid(7,8);
     lw->AddActuator("DoubleSolenoid", "Sol6", m_pSol6);
+    m_pRelay = new Relay(2);
+    lw->AddActuator("Relay", "Relay2", m_pRelay);
 }
 
 void MyRobot::RobotInit()
 {
     m_pSol1->Set(false);
+    SmartDashboard::PutData("Sol1", m_pSol1);
     m_pSol2->Set(false);
+    SmartDashboard::PutData("Sol2", m_pSol2);
     m_pSol3->Set(false);
+    SmartDashboard::PutData("Sol3", m_pSol3);
     m_pSol4->Set(false);
+    SmartDashboard::PutData("Sol4", m_pSol4);
     m_pSol5->Set(DoubleSolenoid::kOff);
+    SmartDashboard::PutData("Sol5", m_pSol5);
+    m_pSol6->Set(DoubleSolenoid::kOff);
+    SmartDashboard::PutData("Sol6", m_pSol6);
+    m_pRelay->Set(Relay::kOff);
+    SmartDashboard::PutData("Relay", m_pRelay);
 }
 
 void MyRobot::DisabledInit()
@@ -55,6 +66,8 @@ void MyRobot::DisabledPeriodic()
 void MyRobot::AutonomousInit()
 {
     printf("MyRobot: starting autonomous");
+    m_pSol5->Set(DoubleSolenoid::kForward);
+    m_pSol6->Set(DoubleSolenoid::kForward);
     m_pLCD->Clear();
     m_pLCD->Printf(DriverStationLCD::kUser_Line1, 1, "autonomous");
     m_pLCD->UpdateLCD();
@@ -70,6 +83,8 @@ void MyRobot::AutonomousPeriodic()
 void MyRobot::TeleopInit()
 {
     printf("MyRobot: starting teleop");
+    m_pSol5->Set(DoubleSolenoid::kReverse);
+    m_pSol6->Set(DoubleSolenoid::kReverse);
     m_pLCD->Clear();
     m_pLCD->Printf(DriverStationLCD::kUser_Line1, 1, "teleop");
     m_pLCD->UpdateLCD();

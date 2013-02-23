@@ -14,12 +14,16 @@ private:
     DriverStationEnhancedIO *m_pEIO;
     DriverStationLCD *m_pLCD;
     // Compressor *m_compressor;
+
     Solenoid *m_pSol1;
     Solenoid *m_pSol2;
     Solenoid *m_pSol3;
     Solenoid *m_pSol4;
+
     DoubleSolenoid *m_pSol5;
     DoubleSolenoid *m_pSol6;
+
+    Relay *m_pRelay;
 
     uint32_t disabled_periodic;
     uint32_t autonomous_periodic;
