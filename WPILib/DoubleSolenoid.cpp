@@ -53,7 +53,8 @@ void DoubleSolenoid::InitSolenoid()
 
     nUsageReporting::report(nUsageReporting::kResourceType_Solenoid, m_forwardChannel, m_moduleNumber - 1);
     nUsageReporting::report(nUsageReporting::kResourceType_Solenoid, m_reverseChannel, m_moduleNumber - 1);
-    LiveWindow::GetInstance()->AddSensor("DoubleSolenoid", m_moduleNumber, m_forwardChannel, this);
+
+    LiveWindow::GetInstance()->AddActuator("DoubleSolenoid", m_moduleNumber, m_forwardChannel, this);
 }
 
 /**
@@ -105,8 +106,10 @@ DoubleSolenoid::~DoubleSolenoid()
 void DoubleSolenoid::Set(Value value)
 {
     if (StatusIsFatal()) return;
-    UINT8 rawValue = 0x00;
 
+    Value oldValue = Get();
+
+    UINT8 rawValue = 0x00;
     switch(value)
     {
     case kOff:
@@ -120,7 +123,9 @@ void DoubleSolenoid::Set(Value value)
 	break;
     }
 
-    SolenoidBase::Set(rawValue, m_forwardMask | m_reverseMask);
+    if (value != oldValue) {
+ 	SolenoidBase::Set(rawValue, m_forwardMask | m_reverseMask);
+    }
 }
 
 /**
@@ -130,33 +135,41 @@ void DoubleSolenoid::Set(Value value)
  */
 DoubleSolenoid::Value DoubleSolenoid::Get()
 {
-    if (StatusIsFatal()) return kOff;
-    UINT8 value = GetAll();
+    if (StatusIsFatal()) {
+	printf("DoubleSolenoid[%d][%d-%d]::Get"
+		" status is FATAL, returning kOff\n",
+		(int)m_moduleNumber, (int)m_forwardChannel,
+		(int)m_reverseChannel);
+	return kOff;
+    }
 
+    UINT8 value = GetAll();
     if (value & m_forwardMask) return kForward;
     if (value & m_reverseMask) return kReverse;
     return kOff;
 }
 
-
-
-
-void DoubleSolenoid::ValueChanged(ITable* source, const std::string& key, EntryValue value, bool isNew) {
-    Value lvalue = kOff;
-    if (strcmp((char*)value.ptr, "Forward") == 0)
-	lvalue = kForward;
-    else if (strcmp((char*)value.ptr, "Reverse") == 0)
-	lvalue = kReverse;
-    Set(lvalue);
+void DoubleSolenoid::ValueChanged(ITable* source, const std::string& key, EntryValue value, bool isNew)
+{
+    std::string *val = (std::string *) value.ptr;
+    if (*val == "Off") Set(DoubleSolenoid::kOff);
+    else if (*val == "Forward") Set(DoubleSolenoid::kForward);
+    else if (*val == "Reverse") Set(DoubleSolenoid::kReverse);
+    else printf("DoubleSolenoid[%d][%d-%d]::ValueChanged"
+    		" value [%s] not valid\n", (int)m_moduleNumber,
+		(int)m_forwardChannel, (int)m_reverseChannel, val->c_str());
 }
 
-void DoubleSolenoid::UpdateTable() {
+void DoubleSolenoid::UpdateTable()
+{
     if (m_table != NULL) {
-	m_table->PutString("Value", (Get() == kForward ? "Forward" : (Get() == kReverse ? "Reverse" : "Off")));
+	Value lvalue = Get();
+	m_table->PutString("Value", (lvalue == kForward ? "Forward" : (lvalue == kReverse ? "Reverse" : "Off")));
     }
 }
 
-void DoubleSolenoid::StartLiveWindowMode() {
+void DoubleSolenoid::StartLiveWindowMode()
+{
     Set(kOff);
     m_table->AddTableListener("Value", this, true);
 }

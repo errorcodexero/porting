@@ -137,12 +137,12 @@ void Timer::Start()
  */
 void Timer::Stop()
 {
-    double temp = Get();
+    double currentTime = GetFPGATimestamp();
 
     Synchronized sync(m_semaphore);
     if (m_running)
     {
-	m_accumulatedTime += temp;
+	m_accumulatedTime += (currentTime - m_startTime);
 	m_running = false;
     }
 }

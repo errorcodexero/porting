@@ -32,7 +32,7 @@ Notifier::Notifier(TimerEventHandler handler, void *param)
     m_period = 0;
     m_nextEvent = NULL;
     m_queued = false;
-    m_handlerSemaphore = semBCreate(SEM_Q_PRIORITY, SEM_FULL);
+    m_handlerSemaphore = semMCreate(SEM_Q_PRIORITY | SEM_INVERSION_SAFE | SEM_DELETE_SAFE);
     tRioStatusCode localStatus = NiFpga_Status_Success;
     {
 	Synchronized sync(queueSemaphore);
