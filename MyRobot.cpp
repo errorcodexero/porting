@@ -4,9 +4,6 @@
 #include <WPILib.h>
 #include "MyRobot.h"
 
-#define	COMPRESSOR_SWITCH   8
-#define	COMPRESSOR_RELAY    8
-
 void MyRobot::RobotInit()
 {
     ///////////////////////////////////////////////////////
@@ -14,14 +11,14 @@ void MyRobot::RobotInit()
     ///////////////////////////////////////////////////////
 
 #if 0
-    // m_compressor = new Compressor( COMPRESSOR_SWITCH, COMPRESSOR_RELAY );
-    // m_compressor->Start();
+    m_compressor = new Compressor( 1, 1 );
+    m_compressor->Start();
+#endif
     m_pSol1 = new Solenoid(1);
     m_pSol2 = new Solenoid(2);
     m_pSol3 = new DoubleSolenoid(3,4);
-    m_pRelay = new Relay(1);
+    m_pRelay = new Relay(2, Relay::kBothDirections);
     m_pSw = new DigitalInput(6);
-#endif
 
     ///////////////////////////////////////////////////////
     // OI
@@ -29,10 +26,8 @@ void MyRobot::RobotInit()
 
     // m_pOI = new OI();
     m_pDS = DriverStation::GetInstance();
-#if 0
     m_pJoy = new Joystick(1);
     m_pEIO = &m_pDS->GetEnhancedIO();
-#endif
     m_pLCD = DriverStationLCD::GetInstance();
 
     ///////////////////////////////////////////////////////
@@ -57,10 +52,8 @@ void MyRobot::DisabledPeriodic()
     ++disabled_periodic;
     m_pLCD->Clear();
     m_pLCD->Printf(DriverStationLCD::kUser_Line2, 1, "dsbl %d", disabled_periodic);
-#if 0
     m_pLCD->Printf(DriverStationLCD::kUser_Line3, 1, "sw %s",
 	m_pSw->Get() ? "true " : "false");
-#endif
     m_pLCD->UpdateLCD();
 }
 
@@ -78,10 +71,8 @@ void MyRobot::AutonomousPeriodic()
 {
     ++autonomous_periodic;
     m_pLCD->Printf(DriverStationLCD::kUser_Line2, 1, "auto %d", autonomous_periodic);
-#if 0
     m_pLCD->Printf(DriverStationLCD::kUser_Line3, 1, "sw %s",
 	m_pSw->Get() ? "true " : "false");
-#endif
     m_pLCD->UpdateLCD();
 
     Scheduler::GetInstance()->Run();
@@ -101,7 +92,6 @@ void MyRobot::TeleopPeriodic()
 {
     ++teleop_periodic;
     m_pLCD->Printf(DriverStationLCD::kUser_Line2, 1, "tele %d", teleop_periodic);
-#if 0
     m_pLCD->Printf(DriverStationLCD::kUser_Line3, 1, "sw %s",
 	m_pSw->Get() ? "true " : "false");
     m_pLCD->Printf(DriverStationLCD::kUser_Line4, 1,
@@ -132,13 +122,12 @@ void MyRobot::TeleopPeriodic()
 
     m_pSol1->Set(din1);
     m_pSol2->Set(din2);
-    m_pSol3->Set(din3 ? MyDoubleSolenoid::kForward :
-		 din4 ? MyDoubleSolenoid::kReverse :
-		 MyDoubleSolenoid::kOff);
-    m_pRelay->Set(din5 ? MyRelay::kForward :
-		  din6 ? MyRelay::kReverse :
-		  MyRelay::kOff);
-#endif
+    m_pSol3->Set(din3 ? DoubleSolenoid::kForward :
+		 din4 ? DoubleSolenoid::kReverse :
+		 DoubleSolenoid::kOff);
+    m_pRelay->Set(din5 ? Relay::kForward :
+		  din6 ? Relay::kReverse :
+		  Relay::kOff);
     m_pLCD->UpdateLCD();
 
     Scheduler::GetInstance()->Run();

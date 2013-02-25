@@ -10,20 +10,18 @@ class MyRobot : public IterativeRobot
 {
 private:
 #if 0
-    // Compressor *m_compressor;
+    Compressor *m_compressor;
+#endif
     Solenoid *m_pSol1;
     Solenoid *m_pSol2;
     DoubleSolenoid *m_pSol3;
     Relay *m_pRelay;
     DigitalInput *m_pSw;
-#endif
 
     // OI *m_pOI; // customized OI class
     DriverStation *m_pDS;
-#if 0
     Joystick *m_pJoy;
     DriverStationEnhancedIO *m_pEIO;
-#endif
     DriverStationLCD *m_pLCD;
 
     uint32_t disabled_periodic;
