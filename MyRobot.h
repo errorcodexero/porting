@@ -9,21 +9,22 @@
 class MyRobot : public IterativeRobot
 {
 private:
-    DriverStation *m_pDS;
-    Joystick *m_pJoy;
-    DriverStationEnhancedIO *m_pEIO;
-    DriverStationLCD *m_pLCD;
+#if 0
     // Compressor *m_compressor;
-
     Solenoid *m_pSol1;
     Solenoid *m_pSol2;
-    Solenoid *m_pSol3;
-    Solenoid *m_pSol4;
-
-    DoubleSolenoid *m_pSol5;
-    DoubleSolenoid *m_pSol6;
-
+    DoubleSolenoid *m_pSol3;
     Relay *m_pRelay;
+    DigitalInput *m_pSw;
+#endif
+
+    // OI *m_pOI; // customized OI class
+    DriverStation *m_pDS;
+#if 0
+    Joystick *m_pJoy;
+    DriverStationEnhancedIO *m_pEIO;
+#endif
+    DriverStationLCD *m_pLCD;
 
     uint32_t disabled_periodic;
     uint32_t autonomous_periodic;
@@ -31,22 +32,19 @@ private:
     uint32_t test_periodic;
 
 public:
-    MyRobot();
-
     virtual void RobotInit();
 
     virtual void DisabledInit();
-    virtual void AutonomousInit();
-    virtual void TeleopInit();
-    virtual void TestInit();
-
     virtual void DisabledPeriodic();
+
+    virtual void AutonomousInit();
     virtual void AutonomousPeriodic();
+
+    virtual void TeleopInit();
     virtual void TeleopPeriodic();
+
+    virtual void TestInit();
     virtual void TestPeriodic();
 };
-
-#define	COMPRESSOR_SWITCH	1
-#define	COMPRESSOR_RELAY	1
 
 #endif // _MYROBOT_H_

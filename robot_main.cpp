@@ -26,11 +26,13 @@
 
 char **_argv;
 
+extern "C" void FRC_NetworkCommunicationInitialize();
 extern "C" int FRC_UserProgram_StartupLibraryInit();
 
 int main(int argc, char **argv)
 {
 	_argv = argv;
+	FRC_NetworkCommunicationInitialize();
 	FRC_UserProgram_StartupLibraryInit();
 	sleep(300); // should wait for robot task to die?
 	return 0;

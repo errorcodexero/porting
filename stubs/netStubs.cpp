@@ -172,13 +172,16 @@ pcap::~pcap()
 #define	ROBOT_SEND_PORT	1025
 #define	DS_REPLY_PORT	1150
 
+extern "C" void FRC_NetworkCommunicationInitialize();
+
 class FNC // FRC_NetworkCommunication
 {
 private:
+    friend void FRC_NetworkCommunicationInitialize();
     friend void setNewDataSem( SEM_ID );
     friend STATUS waitForDS();
 
-    FNC( SEM_ID );
+    FNC();
     void SetNewDataSem( SEM_ID );
 
 public:
@@ -426,25 +429,14 @@ private:
 
 static FNC *netCommObj = NULL;
 
-void setNewDataSem( SEM_ID dataAvailable )
+extern "C" void FRC_NetworkCommunicationInitialize()
 {
-    if (dataAvailable) {
-	if (!netCommObj) {
-	    netCommObj = new FNC( dataAvailable );
-	}
-	// This probably isn't necessary. setNewDataSem is only supposed
-	// to be called with a non-NULL SEM_ID when the DriverStation
-	// singleton object is created and with a NULL SEM_ID when that
-	// object is destroyed.  But just in case, we also allow a new
-	// semaphore to replace the old semaphore.
-	netCommObj->SetNewDataSem( dataAvailable );
-    } else {
-	delete netCommObj;
-	netCommObj = NULL;
+    if (!netCommObj) {
+	netCommObj = new FNC();
     }
 }
 
-FNC::FNC( SEM_ID dataAvailable )
+FNC::FNC()
 {
     m_pcap = new pcap("robot.pcap");
 
@@ -482,7 +474,7 @@ FNC::FNC( SEM_ID dataAvailable )
 
     m_battery = 37.372;	// must round to 0x3737 when converted to BCD
 
-    m_dataAvailable = dataAvailable;
+    m_dataAvailable = NULL;
     m_dataMutex = semMCreate(SEM_Q_PRIORITY|SEM_DELETE_SAFE|SEM_INVERSION_SAFE);
     m_commTask = new Task( "FRC_NetRecv", (FUNCPTR) FNC::FRCCommTask );
     m_commTask->Start((uint32_t)this);
@@ -497,6 +489,16 @@ FNC::~FNC()
     close(m_recvSocket);
     delete m_pcap;
     semDelete(m_dataMutex);
+}
+
+void setNewDataSem( SEM_ID dataAvailable )
+{
+    if (!netCommObj) {
+	fprintf(stderr, "%s: network communications task not initialized\n",
+		__FUNCTION__);
+	abort();
+    }
+    netCommObj->SetNewDataSem( dataAvailable );
 }
 
 void FNC::SetNewDataSem( SEM_ID sem )
@@ -705,7 +707,7 @@ STATUS FNC::Recv()
 	memcpy(&m_fromAddr, &fromAddr, sizeof m_fromAddr);
 
 	// tell DriverStation object that new data is available
-	semFlush(m_dataAvailable);
+	if (m_dataAvailable) semFlush(m_dataAvailable);
 
 	// end critical section
     }
@@ -831,8 +833,7 @@ void FRC_NetworkCommunication_observeUserProgramStarting()
     if (!netCommObj) {
 	fprintf(stderr, "%s: network communications task not initialized\n",
 		__FUNCTION__);
-	// abort();
-	return;
+	abort();
     }
 
     netCommObj->ObserveUserProgramStarting();
@@ -850,8 +851,7 @@ void FRC_NetworkCommunication_observeUserProgramDisabled()
     if (!netCommObj) {
 	fprintf(stderr, "%s: network communications task not initialized\n",
 		__FUNCTION__);
-	// abort();
-	return;
+	abort();
     }
 
     netCommObj->ObserveUserProgramDisabled();
@@ -871,8 +871,7 @@ void FRC_NetworkCommunication_observeUserProgramAutonomous()
     if (!netCommObj) {
 	fprintf(stderr, "%s: network communications task not initialized\n",
 		__FUNCTION__);
-	// abort();
-	return;
+	abort();
     }
 
     netCommObj->ObserveUserProgramAutonomous();
@@ -892,8 +891,7 @@ void FRC_NetworkCommunication_observeUserProgramTeleop()
     if (!netCommObj) {
 	fprintf(stderr, "%s: network communications task not initialized\n",
 		__FUNCTION__);
-	// abort();
-	return;
+	abort();
     }
 
     netCommObj->ObserveUserProgramTeleop();
@@ -913,8 +911,7 @@ void FRC_NetworkCommunication_observeUserProgramTest()
     if (!netCommObj) {
 	fprintf(stderr, "%s: network communications task not initialized\n",
 		__FUNCTION__);
-	// abort();
-	return;
+	abort();
     }
 
     netCommObj->ObserveUserProgramTest();
@@ -1097,6 +1094,7 @@ int FNC::SetLCDData( const char *lcdData, int lcdDataLength, int wait_ms )
 	    // copy new data to local storage until we can send it to DS
 	    m_lcdData = new char[lcdDataLength];
 	    memcpy(m_lcdData, lcdData, lcdDataLength);
+	    *(UINT16 *)m_lcdData = htons(*(UINT16 *)lcdData);
 	    m_lcdDataLength = lcdDataLength;
 	} else {
 	    fprintf(stderr, "%s: wrong length (%d), expected (%d)\n",
