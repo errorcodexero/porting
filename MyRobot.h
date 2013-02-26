@@ -6,10 +6,11 @@
 
 #include <WPILib.h>
 
-#define INCLUDE_SOLENOID	// OK
-#define INCLUDE_DOUBLE_SOLENOID	// OK
-#define INCLUDE_RELAY		// OK
-#define INCLUDE_SWITCH		// deadlock
+#define INCLUDE_SOLENOID
+#define INCLUDE_DOUBLE_SOLENOID
+#define INCLUDE_RELAY
+#define INCLUDE_SWITCH
+#define INCLUDE_COMPRESSOR
 
 class MyRobot : public IterativeRobot
 {
