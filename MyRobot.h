@@ -18,7 +18,7 @@ private:
     Relay *m_pRelay;
     DigitalInput *m_pSw;
 
-    // OI *m_pOI; // customized OI class
+    // OI *m_pOI; // command-based OI
     DriverStation *m_pDS;
     Joystick *m_pJoy;
     DriverStationEnhancedIO *m_pEIO;

@@ -3,6 +3,7 @@
 #include "ChipObject.h"
 #include "NetworkCommunication/LoadOut.h"
 #include "Synchronized.h"
+#include <string.h>
 
 bool nLoadOut::getModulePresence(
 	nLoadOut::tModuleType moduleType,
@@ -98,8 +99,10 @@ public:
 	return 1;
     }
     virtual void writeFPGA_LED(bool value, tRioStatusCode *status) {
-	printf("%s: cRIO FPGA LED is now %s\n",
-	  __FUNCTION__, m_led ? "ON" : "OFF");
+	if (m_led != value) {
+	    printf("cRIO FPGA LED was %s changed to %s\n",
+		m_led ? "ON" : "OFF", value ? "ON" : "OFF");
+	}
 	m_led = value;
 	*status = 0;
     }
@@ -182,9 +185,6 @@ public:
 	return count;
     }
     virtual void writeCenter(signed int value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA accumulator %u center %d\n", m_index, value);
-#endif
 	if (m_center != value) {
 	    printf("FPGA accumulator %u center was %d changed to %d\n",
 		m_index, m_center, value);
@@ -197,15 +197,10 @@ public:
 	return m_center;
     }
     virtual void strobeReset(tRioStatusCode *status) {
-// #ifdef DEBUG
 	printf("FPGA accumulator %u strobe reset\n", m_index);
-// #endif
 	*status = 0;
     }
     virtual void writeDeadband(signed int value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA accumulator %u deadband %d\n", m_index, value);
-#endif
 	if (m_deadband != value) {
 	    printf("FPGA accumulator %u deadband was %d changed to %d\n",
 		m_index, m_deadband, value);
@@ -279,10 +274,6 @@ public:
 	return m_index;
     }
     virtual void writeConfig(tAI::tConfig value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA analog in %u config 0x%02x (ScanSize %u ConvertRate %u)\n",
-	  m_index, value.value, value.ScanSize, value.ConvertRate);
-#endif
 	if (m_config.value != value.value) {
 	    printf("FPGA analog in %u config was 0x%02x changed to 0x%02x"
 	    	   " (ScanSize %u ConvertRate %u)\n",
@@ -295,36 +286,12 @@ public:
     virtual void writeConfig_ScanSize( unsigned char value, tRioStatusCode *status) {
 	tAI::tConfig new_config = m_config;
 	new_config.ScanSize = value;
-#ifdef DEBUG
-	printf("FPGA analog in %u config 0x%02x (ScanSize %u ConvertRate %u)\n",
-	  m_index, new_config.value,
-	  new_config.ScanSize, new_config.ConvertRate);
-#endif
-	if (m_config.value != new_config.value) {
-	    printf("FPGA analog in %u config was 0x%02x changed to 0x%02x"
-	    	   " (ScanSize %u ConvertRate %u)\n",
-		m_index, m_config.value, new_config.value,
-		new_config.ScanSize, new_config.ConvertRate);
-	}
-	m_config = new_config;
-	*status = 0;
+	writeConfig(new_config, status);
     }
     virtual void writeConfig_ConvertRate(unsigned int value, tRioStatusCode *status) {
 	tAI::tConfig new_config = m_config;
 	new_config.ConvertRate = value;
-#ifdef DEBUG
-	printf("FPGA analog in %u config 0x%02x (ScanSize %u ConvertRate %u)\n",
-	  m_index, new_config.value, new_config.ScanSize,
-	  new_config.ConvertRate);
-#endif
-	if (m_config.value != new_config.value) {
-	    printf("FPGA analog in %u config was 0x%02x changed to 0x%02x"
-	    	   " (ScanSize %u ConvertRate %u)\n",
-		m_index, m_config.value, new_config.value,
-		new_config.ScanSize, new_config.ConvertRate);
-	}
-	m_config = new_config;
-	*status = 0;
+	writeConfig(new_config, status);
     }
     virtual tAI::tConfig readConfig(tRioStatusCode *status) {
 	*status = 0;
@@ -339,10 +306,6 @@ public:
 	return m_config.ConvertRate;
     }
     virtual void writeScanList(unsigned char bitfield_index, unsigned char value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA analog in %u channel %u scan list 0x%02x\n",
-	  m_index, bitfield_index, value);
-#endif
 	if (bitfield_index >= tAI::kNumScanListElements) {
 	    *status = NiFpga_Status_InvalidParameter;
 	    return;
@@ -371,10 +334,6 @@ public:
 	    *status = NiFpga_Status_InvalidParameter;
 	    return;
 	}
-#ifdef DEBUG
-	printf("FPGA analog in %u channel %u average bits %u\n",
-	  m_index, bitfield_index, value);
-#endif
 	if (m_averageBits[bitfield_index] != value) {
 	    printf("FPGA analog in %u channel %u average bits was %u"
 	    	   " changed to %u\n",
@@ -396,10 +355,6 @@ public:
 	    *status = NiFpga_Status_InvalidParameter;
 	    return;
 	}
-#ifdef DEBUG
-	printf("FPGA analog in %u channel %u oversample bits %u\n",
-	  m_index, bitfield_index, value);
-#endif
 	if (m_oversampleBits[bitfield_index] != value) {
 	    printf("FPGA analog in %u channel %u oversample bits was %u"
 	    	   " changed to %u\n",
@@ -418,12 +373,6 @@ public:
 	return m_oversampleBits[bitfield_index];
     }
     virtual void writeReadSelect(tAI::tReadSelect value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA analog in %u readSelect 0x%02x"
-	       " (Module %u Channel %u Averaged %c)\n",
-	  m_index, m_readSelect.value, m_readSelect.Module,
-	  m_readSelect.Channel, m_readSelect.Averaged ? 't' : 'f');
-#endif
 	if (m_readSelect.value != value.value) {
 	    printf("FPGA analog in %u readSelect was 0x%02x changed to 0x%02x"
 	    	   " (Module %u Channel %u Averaged %c)\n",
@@ -436,59 +385,17 @@ public:
     virtual void writeReadSelect_Module(unsigned char value, tRioStatusCode *status) {
 	tAI::tReadSelect new_readSelect = m_readSelect;
 	new_readSelect.Module = value;
-#ifdef DEBUG
-	printf("FPGA analog in %u readSelect 0x%02x"
-	       " (Module %u Channel %u Averaged %c)\n",
-	  m_index, new_readSelect.value, new_readSelect.Module,
-	  new_readSelect.Channel, new_readSelect.Averaged ? 't' : 'f');
-#endif
-	if (m_readSelect.value != new_readSelect.value) {
-	    printf("FPGA analog in %u readSelect was 0x%02x changed to 0x%02x"
-	    	   " (Module %u Channel %u Averaged %c)\n",
-	  m_index, m_readSelect.value, new_readSelect.value,
-	  new_readSelect.Module, new_readSelect.Channel,
-	  new_readSelect.Averaged ? 't' : 'f');
-	}
-	m_readSelect = new_readSelect;
-	*status = 0;
+	writeReadSelect(new_readSelect, status);
     }
     virtual void writeReadSelect_Channel(unsigned char value, tRioStatusCode *status) {
 	tAI::tReadSelect new_readSelect = m_readSelect;
 	new_readSelect.Channel = value;
-#ifdef DEBUG
-	printf("FPGA analog in %u readSelect 0x%02x"
-	       " (Module %u Channel %u Averaged %c)\n",
-	  m_index, new_readSelect.value, new_readSelect.Module,
-	  new_readSelect.Channel, new_readSelect.Averaged ? 't' : 'f');
-#endif
-	if (m_readSelect.value != new_readSelect.value) {
-	    printf("FPGA analog in %u readSelect was 0x%02x changed to 0x%02x"
-	    	   " (Module %u Channel %u Averaged %c)\n",
-	  m_index, m_readSelect.value, new_readSelect.value,
-	  new_readSelect.Module, new_readSelect.Channel,
-	  new_readSelect.Averaged ? 't' : 'f');
-	}
-	m_readSelect = new_readSelect;
-	*status = 0;
+	writeReadSelect(new_readSelect, status);
     }
     virtual void writeReadSelect_Averaged(bool value, tRioStatusCode *status) {
 	tAI::tReadSelect new_readSelect = m_readSelect;
 	new_readSelect.Averaged = value;
-#ifdef DEBUG
-	printf("FPGA analog in %u readSelect 0x%02x"
-	       " (Module %u Channel %u Averaged %c)\n",
-	  m_index, new_readSelect.value, new_readSelect.Module,
-	  new_readSelect.Channel, new_readSelect.Averaged ? 't' : 'f');
-#endif
-	if (m_readSelect.value != new_readSelect.value) {
-	    printf("FPGA analog in %u readSelect was 0x%02x changed to 0x%02x"
-	    	   " (Module %u Channel %u Averaged %c)\n",
-	  m_index, m_readSelect.value, new_readSelect.value,
-	  new_readSelect.Module, new_readSelect.Channel,
-	  new_readSelect.Averaged ? 't' : 'f');
-	}
-	m_readSelect = new_readSelect;
-	*status = 0;
+	writeReadSelect(new_readSelect, status);
     }
     virtual tAI::tReadSelect readReadSelect(tRioStatusCode *status) {
 	*status = 0;
@@ -515,9 +422,7 @@ public:
 	return 0;
     }
     virtual void strobeLatchOutput(tRioStatusCode *status) {
-#ifdef DEBUG
 	printf("FPGA analog in %u strobe latch output\n", m_index);
-#endif
 	*status = 0;
     }
 
@@ -603,9 +508,10 @@ public:
     }
 
     virtual void writeI2CDataToSend(unsigned int value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA digital I/O %u write i2c data %04x\n", m_index, value);
-#endif
+	if (m_i2cDataToSend != value) {
+	    printf("FPGA digital I/O %u write i2c data was %04x"
+	    	   " changed to %04x\n", m_index, m_i2cDataToSend, value);
+	}
 	m_i2cDataToSend = value;
 	*status = 0;
     }
@@ -615,9 +521,10 @@ public:
     }
 
     virtual void writeDO(unsigned short value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA digital I/O %u digital out %04x\n", m_index, value);
-#endif
+	if (m_DO != value) {
+	    printf("FPGA digital I/O %u digital out was 0x%04x"
+	    	   " changed to 0x%04x\n", m_index, m_DO, value);
+	}
 	m_DO = value;
 	*status = 0;
     }
@@ -631,10 +538,11 @@ public:
 	    *status = NiFpga_Status_InvalidParameter;
 	    return;
 	}
-#ifdef DEBUG
-	printf("FPGA digital I/O %u channel %u filter select 0x%02x\n",
-	  m_index, bitfield_index, value);
-#endif
+	if (m_filterSelect[bitfield_index] != value) {
+	    printf("FPGA digital I/O %u channel %u filter select was 0x%02x"
+		   " changed to 0x%02x\n",
+	      m_index, bitfield_index, m_filterSelect[bitfield_index], value);
+	}
 	m_filterSelect[bitfield_index] = value;
 	*status = 0;
     }
@@ -652,10 +560,11 @@ public:
 	    *status = NiFpga_Status_InvalidParameter;
 	    return;
 	}
-#ifdef DEBUG
-	printf("FPGA digital I/O %u channel %u filter period 0x%02x\n",
-	  m_index, bitfield_index, value);
-#endif
+	if (m_filterPeriod[bitfield_index] != value) {
+	    printf("FPGA digital I/O %u channel %u filter period was 0x%02x"
+		   " changed to 0x%02x\n",
+	      m_index, bitfield_index, m_filterPeriod[bitfield_index], value);
+	}
 	m_filterPeriod[bitfield_index] = value;
 	*status = 0;
     }
@@ -669,9 +578,11 @@ public:
     }
 
     virtual void writeOutputEnable(unsigned short value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA digital I/O %u output enable %04x\n", m_index, value);
-#endif
+	if (m_outputEnable != value) {
+	    printf("FPGA digital I/O %u output enable was %04x"
+	    	   " changed to 0x%04x\n",
+		m_index, m_outputEnable, value);
+	}
 	m_outputEnable = value;
 	*status = 0;
     }
@@ -681,40 +592,29 @@ public:
     }
 
     virtual void writeSlowValue(tDIO::tSlowValue value, tRioStatusCode *status) {
+	if (m_slowValue.value != value.value) {
+	    printf("FPGA digital I/O %u slowValue was %u changed to %u"
+	    	   " (RelayFwd 0x%02x RelayRev 0x%02x I2CHeader 0x%x)\n",
+		m_index, m_slowValue.value, value.value,
+		value.RelayFwd, value.RelayRev, value.I2CHeader);
+	}
 	m_slowValue = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u slowValue %u (RelayFwd 0x%02x RelayRev 0x%02x I2CHeader 0x%x)\n",
-	  m_index, m_slowValue.value, m_slowValue.RelayFwd,
-	  m_slowValue.RelayRev, m_slowValue.I2CHeader);
-#endif
 	*status = 0;
     }
     virtual void writeSlowValue_RelayFwd(unsigned char value, tRioStatusCode *status) {
-	m_slowValue.RelayFwd = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u slowValue %u (RelayFwd 0x%02x RelayRev 0x%02x I2CHeader 0x%x)\n",
-	  m_index, m_slowValue.value, m_slowValue.RelayFwd,
-	  m_slowValue.RelayRev, m_slowValue.I2CHeader);
-#endif
-	*status = 0;
+	tDIO::tSlowValue new_value = m_slowValue;
+	new_value.RelayFwd = value;
+	writeSlowValue(new_value, status);
     }
     virtual void writeSlowValue_RelayRev(unsigned char value, tRioStatusCode *status) {
-	m_slowValue.RelayRev = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u slowValue %u (RelayFwd 0x%02x RelayRev 0x%02x I2CHeader 0x%x)\n",
-	  m_index, m_slowValue.value, m_slowValue.RelayFwd,
-	  m_slowValue.RelayRev, m_slowValue.I2CHeader);
-#endif
-	*status = 0;
+	tDIO::tSlowValue new_value = m_slowValue;
+	new_value.RelayRev = value;
+	writeSlowValue(new_value, status);
     }
     virtual void writeSlowValue_I2CHeader(unsigned char value, tRioStatusCode *status) {
-	m_slowValue.I2CHeader = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u slowValue %u (RelayFwd 0x%02x RelayRev 0x%02x I2CHeader 0x%x)\n",
-	  m_index, m_slowValue.value, m_slowValue.RelayFwd,
-	  m_slowValue.RelayRev, m_slowValue.I2CHeader);
-#endif
-	*status = 0;
+	tDIO::tSlowValue new_value = m_slowValue;
+	new_value.I2CHeader = value;
+	writeSlowValue(new_value, status);
     }
     virtual tDIO::tSlowValue readSlowValue(tRioStatusCode *status) {
 	*status = 0;
@@ -770,9 +670,10 @@ public:
     }
 
     virtual void writePulse(unsigned short value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA digital I/O %u pulse %04x\n", m_index, value);
-#endif
+	if (m_pulse != value) {
+	    printf("FPGA digital I/O %u pulse was %04x changed to %04x\n",
+		m_index, m_pulse, value);
+	}
 	m_pulse = value;
 	*status = 0;
     }
@@ -786,10 +687,12 @@ public:
 	    *status = NiFpga_Status_InvalidParameter;
 	    return;
 	}
-#ifdef DEBUG
-	printf("FPGA digital I/O %u PWM %u period scale %u\n",
-	  m_index, bitfield_index, value);
-#endif
+	if (m_pwmPeriodScale[bitfield_index] != value) {
+	    printf("FPGA digital I/O %u PWM %u period scale was %u"
+	    	   " changed to %u\n",
+		m_index, bitfield_index,
+		m_pwmPeriodScale[bitfield_index], value);
+	}
 	m_pwmPeriodScale[bitfield_index] = value;
 	*status = 0;
     }
@@ -807,10 +710,11 @@ public:
 	    *status = NiFpga_Status_InvalidParameter;
 	    return;
 	}
-#ifdef DEBUG
-	printf("FPGA digital I/O %u PWM %u duty cycle %u\n",
-	  m_index, bitfield_index, value);
-#endif
+	if (m_pwmDutyCycle[bitfield_index] != value) {
+	    printf("FPGA digital I/O %u PWM %u duty cycle was %u"
+	    	   " changed to %u\n",
+	      m_index, bitfield_index, m_pwmDutyCycle[bitfield_index], value);
+	}
 	m_pwmDutyCycle[bitfield_index] = value;
 	*status = 0;
     }
@@ -824,10 +728,10 @@ public:
     }
 
     virtual void writeBFL(bool value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA %u digital I/O BFL %c\n",
-	    m_index, value ? 't' : 'f');
-#endif
+	if (m_bfl != value) {
+	    printf("FPGA %u digital I/O BFL was %c changed to %c\n",
+		m_index, m_bfl ? 't' : 'f', value ? 't' : 'f');
+	}
 	m_bfl = value;
 	*status = 0;
     }
@@ -844,70 +748,40 @@ public:
     }
 
     virtual void writeDO_PWMConfig(tDIO::tDO_PWMConfig value, tRioStatusCode *status) {
+	if (m_doPWMConfig.value != value.value) {
+	    printf("FPGA digital I/O %u DO_PWM config was %u changed to %u\n"
+		   " (PeriodPower 0x%x OutputSelect 0x%x 0x%x 0x%x 0x%x)\n",
+	      m_index, m_doPWMConfig.value, value.value, value.PeriodPower,
+	      value.OutputSelect_0, value.OutputSelect_1,
+	      value.OutputSelect_2, value.OutputSelect_3);
+	}
 	m_doPWMConfig = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u DO_PWM config %u\n"
-	       "(PeriodPower 0x%x OutputSelect 0x%x 0x%x 0x%x 0x%x)\n",
-	  m_index, m_doPWMConfig.value, m_doPWMConfig.PeriodPower,
-	  m_doPWMConfig.OutputSelect_0, m_doPWMConfig.OutputSelect_1,
-	  m_doPWMConfig.OutputSelect_2, m_doPWMConfig.OutputSelect_3);
-#endif
 	*status = 0;
     }
     virtual void writeDO_PWMConfig_PeriodPower(unsigned char value, tRioStatusCode *status) {
-	m_doPWMConfig.PeriodPower = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u DO_PWM config %u\n"
-	       "(PeriodPower 0x%x OutputSelect 0x%x 0x%x 0x%x 0x%x)\n",
-	  m_index, m_doPWMConfig.value, m_doPWMConfig.PeriodPower,
-	  m_doPWMConfig.OutputSelect_0, m_doPWMConfig.OutputSelect_1,
-	  m_doPWMConfig.OutputSelect_2, m_doPWMConfig.OutputSelect_3);
-#endif
-	*status = 0;
+	tDIO::tDO_PWMConfig new_value = m_doPWMConfig;
+	new_value.PeriodPower = value;
+	writeDO_PWMConfig(new_value, status);
     }
     virtual void writeDO_PWMConfig_OutputSelect_0(unsigned char value, tRioStatusCode *status) {
-	m_doPWMConfig.OutputSelect_0 = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u DO_PWM config %u\n"
-	       "(PeriodPower 0x%x OutputSelect 0x%x 0x%x 0x%x 0x%x)\n",
-	  m_index, m_doPWMConfig.value, m_doPWMConfig.PeriodPower,
-	  m_doPWMConfig.OutputSelect_0, m_doPWMConfig.OutputSelect_1,
-	  m_doPWMConfig.OutputSelect_2, m_doPWMConfig.OutputSelect_3);
-#endif
-	*status = 0;
+	tDIO::tDO_PWMConfig new_value = m_doPWMConfig;
+	new_value.OutputSelect_0 = value;
+	writeDO_PWMConfig(new_value, status);
     }
     virtual void writeDO_PWMConfig_OutputSelect_1(unsigned char value, tRioStatusCode *status) {
-	m_doPWMConfig.OutputSelect_1 = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u DO_PWM config %u\n"
-	       "(PeriodPower 0x%x OutputSelect 0x%x 0x%x 0x%x 0x%x)\n",
-	  m_index, m_doPWMConfig.value, m_doPWMConfig.PeriodPower,
-	  m_doPWMConfig.OutputSelect_0, m_doPWMConfig.OutputSelect_1,
-	  m_doPWMConfig.OutputSelect_2, m_doPWMConfig.OutputSelect_3);
-#endif
-	*status = 0;
+	tDIO::tDO_PWMConfig new_value = m_doPWMConfig;
+	new_value.OutputSelect_1 = value;
+	writeDO_PWMConfig(new_value, status);
     }
     virtual void writeDO_PWMConfig_OutputSelect_2(unsigned char value, tRioStatusCode *status) {
-	m_doPWMConfig.OutputSelect_2 = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u DO_PWM config %u\n"
-	       "(PeriodPower 0x%x OutputSelect 0x%x 0x%x 0x%x 0x%x)\n",
-	  m_index, m_doPWMConfig.value, m_doPWMConfig.PeriodPower,
-	  m_doPWMConfig.OutputSelect_0, m_doPWMConfig.OutputSelect_1,
-	  m_doPWMConfig.OutputSelect_2, m_doPWMConfig.OutputSelect_3);
-#endif
-	*status = 0;
+	tDIO::tDO_PWMConfig new_value = m_doPWMConfig;
+	new_value.OutputSelect_2 = value;
+	writeDO_PWMConfig(new_value, status);
     }
     virtual void writeDO_PWMConfig_OutputSelect_3(unsigned char value, tRioStatusCode *status) {
-	m_doPWMConfig.OutputSelect_3 = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u DO_PWM config %u\n"
-	       "(PeriodPower 0x%x OutputSelect 0x%x 0x%x 0x%x 0x%x)\n",
-	  m_index, m_doPWMConfig.value, m_doPWMConfig.PeriodPower,
-	  m_doPWMConfig.OutputSelect_0, m_doPWMConfig.OutputSelect_1,
-	  m_doPWMConfig.OutputSelect_2, m_doPWMConfig.OutputSelect_3);
-#endif
-	*status = 0;
+	tDIO::tDO_PWMConfig new_value = m_doPWMConfig;
+	new_value.OutputSelect_3 = value;
+	writeDO_PWMConfig(new_value, status);
     }
     virtual tDIO::tDO_PWMConfig readDO_PWMConfig(tRioStatusCode *status) {
 	*status = 0;
@@ -935,11 +809,12 @@ public:
     }
 
     virtual void writePulseLength(unsigned char value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA %u pulse length %u\n", m_index, value);
-#endif
-	*status = 0;
+	if (m_pulseLength != value) {
+	    printf("FPGA %u pulse length was %u changed to %u\n",
+	    	m_index, m_pulseLength, value);
+	}
 	m_pulseLength = value;
+	*status = 0;
     }
     virtual unsigned char readPulseLength(tRioStatusCode *status) {
 	*status = 0;
@@ -947,76 +822,40 @@ public:
     }
 
     virtual void writeI2CConfig(tDIO::tI2CConfig value, tRioStatusCode *status) {
+	if (m_i2cConfig.value != value.value) {
+	    printf("FPGA digital I/O %u I2C config was %u changed to %u\n"
+		   "(Address 0x%02x Read %u Write %u Data 0x%04x Bitwise %c)\n",
+	      m_index, m_i2cConfig.value, value.value,
+	      value.Address, value.BytesToRead, value.BytesToWrite,
+	      value.DataToSendHigh, value.BitwiseHandshake ? 't' : 'f');
+	}
 	m_i2cConfig = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u I2C config %u\n"
-	       "(Address 0x%02x Read %u Write %u Data 0x%04x Bitwise %c)\n",
-	  m_index, m_i2cConfig.value, m_i2cConfig.Address,
-	  m_i2cConfig.BytesToRead, m_i2cConfig.BytesToWrite,
-	  m_i2cConfig.DataToSendHigh,
-	  m_i2cConfig.BitwiseHandshake ? 't' : 'f');
-#endif
 	*status = 0;
     }
     virtual void writeI2CConfig_Address(unsigned char value, tRioStatusCode *status) {
-	m_i2cConfig.Address = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u I2C config %u\n"
-	       "(Address 0x%02x Read %u Write %u Data 0x%04x Bitwise %c)\n",
-	  m_index, m_i2cConfig.value, m_i2cConfig.Address,
-	  m_i2cConfig.BytesToRead, m_i2cConfig.BytesToWrite,
-	  m_i2cConfig.DataToSendHigh,
-	  m_i2cConfig.BitwiseHandshake ? 't' : 'f');
-#endif
-	*status = 0;
+	tDIO::tI2CConfig new_config = m_i2cConfig;
+	new_config.Address = value;
+	writeI2CConfig(new_config, status);
     }
     virtual void writeI2CConfig_BytesToRead(unsigned char value, tRioStatusCode *status) {
-	m_i2cConfig.BytesToRead = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u I2C config %u\n"
-	       "(Address 0x%02x Read %u Write %u Data 0x%04x Bitwise %c)\n",
-	  m_index, m_i2cConfig.value, m_i2cConfig.Address,
-	  m_i2cConfig.BytesToRead, m_i2cConfig.BytesToWrite,
-	  m_i2cConfig.DataToSendHigh,
-	  m_i2cConfig.BitwiseHandshake ? 't' : 'f');
-#endif
-	*status = 0;
+	tDIO::tI2CConfig new_config = m_i2cConfig;
+	new_config.BytesToRead = value;
+	writeI2CConfig(new_config, status);
     }
     virtual void writeI2CConfig_BytesToWrite(unsigned char value, tRioStatusCode *status) {
-	m_i2cConfig.BytesToWrite = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u I2C config %u\n"
-	       "(Address 0x%02x Read %u Write %u Data 0x%04x Bitwise %c)\n",
-	  m_index, m_i2cConfig.value, m_i2cConfig.Address,
-	  m_i2cConfig.BytesToRead, m_i2cConfig.BytesToWrite,
-	  m_i2cConfig.DataToSendHigh,
-	  m_i2cConfig.BitwiseHandshake ? 't' : 'f');
-#endif
-	*status = 0;
+	tDIO::tI2CConfig new_config = m_i2cConfig;
+	new_config.BytesToWrite = value;
+	writeI2CConfig(new_config, status);
     }
     virtual void writeI2CConfig_DataToSendHigh(unsigned short value, tRioStatusCode *status) {
-	m_i2cConfig.DataToSendHigh = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u I2C config %u\n"
-	       "(Address 0x%02x Read %u Write %u Data 0x%04x Bitwise %c)\n",
-	  m_index, m_i2cConfig.value, m_i2cConfig.Address,
-	  m_i2cConfig.BytesToRead, m_i2cConfig.BytesToWrite,
-	  m_i2cConfig.DataToSendHigh,
-	  m_i2cConfig.BitwiseHandshake ? 't' : 'f');
-#endif
-	*status = 0;
+	tDIO::tI2CConfig new_config = m_i2cConfig;
+	new_config.DataToSendHigh = value;
+	writeI2CConfig(new_config, status);
     }
     virtual void writeI2CConfig_BitwiseHandshake(bool value, tRioStatusCode *status) {
-	m_i2cConfig.BitwiseHandshake = value;
-#ifdef DEBUG
-	printf("FPGA digital I/O %u I2C config %u\n"
-	       "(Address 0x%02x Read %u Write %u Data 0x%04x Bitwise %c)\n",
-	  m_index, m_i2cConfig.value, m_i2cConfig.Address,
-	  m_i2cConfig.BytesToRead, m_i2cConfig.BytesToWrite,
-	  m_i2cConfig.DataToSendHigh,
-	  m_i2cConfig.BitwiseHandshake ? 't' : 'f');
-#endif
-	*status = 0;
+	tDIO::tI2CConfig new_config = m_i2cConfig;
+	new_config.BitwiseHandshake = value;
+	writeI2CConfig(new_config, status);
     }
     virtual tDIO::tI2CConfig readI2CConfig(tRioStatusCode *status) {
 	*status = 0;
@@ -1048,31 +887,24 @@ public:
     }
 
     virtual void writePWMConfig(tPWMConfig value, tRioStatusCode *status) {
+	if (m_pwmConfig.value != value.value) {
+	    printf("FPGA %u PWM config was 0x%08x changed to 0x%08x"
+	    	   " (Period %u MinHigh %u)\n",
+		m_index, m_pwmConfig.value, value.value,
+		value.Period, value.MinHigh);
+	}
 	m_pwmConfig = value;
-#ifdef DEBUG
-	printf("FPGA %u PWM config 0x%08x (Period %u MinHigh %u)\n",
-	    m_index, m_pwmConfig.value, m_pwmConfig.Period,
-	    m_pwmConfig.MinHigh);
-#endif
 	*status = 0;
     }
     virtual void writePWMConfig_Period(unsigned short value, tRioStatusCode *status) {
-	m_pwmConfig.Period = value;
-#ifdef DEBUG
-	printf("FPGA %u PWM config 0x%08x (Period %u MinHigh %u)\n",
-	    m_index, m_pwmConfig.value, m_pwmConfig.Period,
-	    m_pwmConfig.MinHigh);
-#endif
-	*status = 0;
+	tPWMConfig new_config = m_pwmConfig;
+	new_config.Period = value;
+	writePWMConfig(new_config, status);
     }
     virtual void writePWMConfig_MinHigh(unsigned short value, tRioStatusCode *status) {
-	m_pwmConfig.MinHigh = value;
-#ifdef DEBUG
-	printf("FPGA %u PWM config 0x%08x (Period %u MinHigh %u)\n",
-	    m_index, m_pwmConfig.value, m_pwmConfig.Period,
-	    m_pwmConfig.MinHigh);
-#endif
-	*status = 0;
+	tPWMConfig new_config = m_pwmConfig;
+	new_config.MinHigh = value;
+	writePWMConfig(new_config, status);
     }
     virtual tPWMConfig readPWMConfig(tRioStatusCode *status) {
 	*status = 0;
@@ -1092,9 +924,10 @@ public:
 	    *status = NiFpga_Status_InvalidParameter;
 	    return;
 	}
-#ifdef DEBUG
-	printf("FPGA %u PWM %u value %u\n", m_index, reg_index, value);
-#endif
+	if (m_pwmValueRegisters[reg_index] != value) {
+	    printf("FPGA %u PWM %u value was %u changed to %u\n",
+	    	m_index, reg_index, m_pwmValueRegisters[reg_index], value);
+	}
 	m_pwmValueRegisters[reg_index] = value;
 	*status = 0;
     }
@@ -1123,6 +956,309 @@ tDIO* tDIO::create(
 }
 
 }; // namespace nFRC_2012_1_6_4
+}; // namespace nFPGA
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// ChipObject tInterrupt
+//
+///////////////////////////////////////////////////////////////////////////////
+
+namespace nFPGA {
+namespace nFRC_2012_1_6_4 {
+
+class stubInterrupt : public tInterrupt
+{
+private:
+    unsigned char m_index;
+    tSystemInterface *m_systemInterface;
+    tInterrupt::tConfig m_config;
+
+public:
+    stubInterrupt( unsigned char sys_index, const uint32_t guid[] ) : tInterrupt() {
+	m_index = sys_index;
+	m_systemInterface = new stubSystemInterface(guid);
+    }
+    virtual ~stubInterrupt() {
+	delete m_systemInterface;
+    }
+    virtual tSystemInterface* getSystemInterface() {
+	return m_systemInterface;
+    }
+    virtual unsigned char getSystemIndex() {
+	return m_index;
+    }
+
+    virtual unsigned int readTimeStamp(tRioStatusCode *status) {
+	*status = 0;
+	return time(0) * 1000000U;
+    }
+
+    virtual void writeConfig( tInterrupt::tConfig value,
+    			      tRioStatusCode *status )
+    {
+	if (m_config.value != value.value) {
+	    printf("FPGA interrupt %u config was 0x%02x changed to 0x%02x"
+		   " (channel %u module %u%s%s%s%s)\n",
+		m_index, m_config.value, value.value,
+		value.Source_Channel,
+		value.Source_Module,
+		value.Source_AnalogTrigger ? " analog_trigger" : "",
+		value.RisingEdge ? " rising_edge" : "",
+		value.FallingEdge ? " falling edge" : "",
+		value.WaitForAck ? " wait_for_ack" : "");
+	}
+	m_config = value;
+	*status = 0;
+    }
+    virtual void writeConfig_Source_Channel( unsigned char value, tRioStatusCode *status )
+    {
+	tInterrupt::tConfig new_config = m_config;
+	new_config.Source_Channel = value;
+	writeConfig(new_config, status);
+    }
+    virtual void writeConfig_Source_Module( unsigned char value, tRioStatusCode *status )
+    {
+	tInterrupt::tConfig new_config = m_config;
+	new_config.Source_Module = value;
+	writeConfig(new_config, status);
+    }
+    virtual void writeConfig_Source_AnalogTrigger( bool value, tRioStatusCode *status )
+    {
+	tInterrupt::tConfig new_config = m_config;
+	new_config.Source_AnalogTrigger = value;
+	writeConfig(new_config, status);
+    }
+    
+    virtual void writeConfig_RisingEdge( bool value, tRioStatusCode *status )
+    {
+	tInterrupt::tConfig new_config = m_config;
+	new_config.RisingEdge = value;
+	writeConfig(new_config, status);
+    }
+    virtual void writeConfig_FallingEdge( bool value, tRioStatusCode *status )
+    {
+	tInterrupt::tConfig new_config = m_config;
+	new_config.FallingEdge = value;
+	writeConfig(new_config, status);
+    }
+    virtual void writeConfig_WaitForAck( bool value, tRioStatusCode *status )
+    {
+	tInterrupt::tConfig new_config = m_config;
+	new_config.WaitForAck = value;
+	writeConfig(new_config, status);
+    }
+    virtual tConfig readConfig(tRioStatusCode *status)
+    {
+	*status = 0;
+	return m_config;
+    }
+    virtual unsigned char readConfig_Source_Channel(tRioStatusCode *status)
+    {
+	*status = 0;
+	return m_config.Source_Channel;
+    }
+    virtual unsigned char readConfig_Source_Module(tRioStatusCode *status)
+    {
+	*status = 0;
+	return m_config.Source_Module;
+    }
+    virtual bool readConfig_Source_AnalogTrigger(tRioStatusCode *status)
+    {
+	*status = 0;
+	return m_config.Source_AnalogTrigger;
+    }
+    virtual bool readConfig_RisingEdge(tRioStatusCode *status)
+    {
+	*status = 0;
+	return m_config.RisingEdge;
+    }
+    virtual bool readConfig_FallingEdge(tRioStatusCode *status)
+    {
+	*status = 0;
+	return m_config.FallingEdge;
+    }
+    virtual bool readConfig_WaitForAck(tRioStatusCode *status)
+    {
+	*status = 0;
+	return m_config.WaitForAck;
+    }
+
+private:
+    DISALLOW_COPY_AND_ASSIGN(stubInterrupt);
+};
+
+tInterrupt* tInterrupt::create(
+	unsigned char sys_index,
+	tRioStatusCode *status
+    )
+{
+    uint32_t guid[4];
+    snprintf((char *)guid, sizeof guid, "int %u", sys_index);
+    *status = 0;
+    return new stubInterrupt(sys_index, guid);
+}
+
+}; // namespace nFRC_2012_1_6_4
+}; // namespace nFPGA
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// ChipObject tInterruptManager
+//
+///////////////////////////////////////////////////////////////////////////////
+
+namespace nFPGA {
+
+char *tSystem::_FileName = NULL;
+char *tSystem::_Bitfile = NULL;
+NiFpga_Session tSystem::_DeviceHandle = 0;
+
+tSystem::tSystem( tRioStatusCode *status )
+{
+    *status = 0;
+}
+
+tSystem::~tSystem()
+{
+    ;
+}
+
+void tSystem::getFpgaGuid( uint32_t *guid_ptr, tRioStatusCode *status )
+{
+    tGlobal* glob = tGlobal::create( status );
+    glob->getSystemInterface()->getHardwareFpgaSignature( guid_ptr, status );
+    delete glob;
+}
+
+void tSystem::NiFpga_SharedOpen_common( const char *bitfile )
+{
+    printf("%s: %s\n", __FUNCTION__, bitfile);
+
+    _Bitfile = strdup(bitfile);
+    _FileName = strrchr(_Bitfile, '/');
+    if (!_FileName) {
+	_FileName = _Bitfile;
+    }
+}
+
+NiFpga_Status tSystem::NiFpga_SharedOpen( const char* bitfile,
+					  const char* signature,
+					  const char* resource,
+					  uint32_t attribute,
+					  NiFpga_Session* session )
+{
+    NiFpga_SharedOpen_common(bitfile);
+    return 0;
+}
+
+NiFpga_Status tSystem::NiFpgaLv_SharedOpen( const char* const bitfile,
+					    const char* const apiSignature,
+					    const char* const resource,
+					    const uint32_t attribute,
+					    NiFpga_Session* const session )
+{
+    NiFpga_SharedOpen_common(bitfile);
+    return 0;
+}
+
+uint32_t tInterruptManager::_globalInterruptMask = 0;
+SEM_ID tInterruptManager::_globalInterruptMaskSemaphore = NULL;
+
+tInterruptManager::tInterruptManager( uint32_t interruptMask,
+				      bool watcher,
+				      tRioStatusCode *status )
+    : tSystem( status )
+{
+    if (!_globalInterruptMaskSemaphore) {
+	_globalInterruptMaskSemaphore =
+	    semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
+    }
+    _handler = NULL;
+    _userParam = (void *)this;
+    _interruptMask = interruptMask;
+    _taskId = taskIdSelf();
+    _rioContext = 0;
+    _watcher = watcher;
+    _enabled = false;
+    {
+	Synchronized sync(_globalInterruptMaskSemaphore);
+	if (_enabled) {
+	    _globalInterruptMask |= _interruptMask;
+	} else {
+	    _globalInterruptMask &= ~_interruptMask;
+	}
+    }
+    *status = 0;
+}
+
+tInterruptManager::~tInterruptManager()
+{
+    ;
+}
+
+void tInterruptManager::registerHandler( tInterruptHandler handler,
+					void *param, tRioStatusCode *status)
+{
+    _handler = handler;
+    _userParam = param;
+    *status = 0;
+}
+
+uint32_t tInterruptManager::watch(int32_t timeoutInMs, tRioStatusCode *status)
+{
+    *status = 0;
+    return 0;
+}
+
+void tInterruptManager::enable(tRioStatusCode *status)
+{
+    _enabled = true;
+    *status = 0;
+}
+
+
+void tInterruptManager::disable(tRioStatusCode *status)
+{
+    _enabled = false;
+    *status = 0;
+}
+
+bool tInterruptManager::isEnabled(tRioStatusCode *status)
+{
+    *status = 0;
+    return _enabled;
+}
+
+void tInterruptManager::handler()
+{
+    if (_handler) {
+	(*_handler)(_interruptMask, _userParam);
+    }
+}
+
+
+int tInterruptManager::handlerWrapper(tInterruptManager *pInterrupt)
+{
+    pInterrupt->handler();
+    return 0;
+}
+
+void tInterruptManager::acknowledge(tRioStatusCode *status)
+{
+    *status = 0;
+}
+
+void tInterruptManager::reserve(tRioStatusCode *status)
+{
+    *status = 0;
+}
+
+void tInterruptManager::unreserve(tRioStatusCode *status)
+{
+    *status = 0;
+}
+
 }; // namespace nFPGA
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1161,11 +1297,8 @@ public:
 	    *status = NiFpga_Status_InvalidParameter;
 	    return;
 	}
-#ifdef DEBUG
-	printf("FPGA solenoid %u write DO7_0 %x\n", m_index, value);
-#endif
 	if (m_value[m_index] != value) {
-	    printf("FPGA solenoid %u DO7_0 was %x changed to %x\n",
+	    printf("FPGA solenoid %u DO7_0 was 0x%x changed to 0x%x\n",
 		m_index, m_value[m_index], value);
 	}
 	m_value[m_index] = value;
@@ -1233,62 +1366,38 @@ public:
     }
 
     virtual void writeStatus(tWatchdog::tStatus value, tRioStatusCode *status) {
+	if (m_status.value != value.value) {
+	    printf("FPGA watchdog was 0x%08x changed to 0x%08x\n"
+	    	   " (SystemActive %c Alive %c"
+		   " SysDisableCount %u DisableCount %u)\n",
+	      m_status.value, value.value,
+	      value.SystemActive ? 't' : 'f',
+	      value.Alive ? 't' : 'f',
+	      value.SysDisableCount,
+	      value.DisableCount);
+	}
 	m_status = value;
-#if 1
-	printf("FPGA watchdog 0x%08x (SystemActive %c Alive %c\n"
-	       "  SysDisableCount %u DisableCount %u)\n",
-	  m_status.value, m_status.SystemActive ? 't' : 'f',
-	  m_status.Alive ? 't' : 'f',
-	  m_status.SysDisableCount,
-	  m_status.DisableCount);
-#endif
 	*status = 0;
     }
     virtual void writeStatus_SystemActive(bool value, tRioStatusCode *status) {
-	m_status.SystemActive = value;
-#if 1
-	printf("FPGA watchdog 0x%08x (SystemActive %c Alive %c\n"
-	       "  SysDisableCount %u DisableCount %u)\n",
-	  m_status.value, m_status.SystemActive ? 't' : 'f',
-	  m_status.Alive ? 't' : 'f',
-	  m_status.SysDisableCount,
-	  m_status.DisableCount);
-#endif
-	*status = 0;
+	tWatchdog::tStatus new_status = m_status;
+	new_status.SystemActive = value;
+	writeStatus(new_status, status);
     }
     virtual void writeStatus_Alive(bool value, tRioStatusCode *status) {
-	m_status.Alive = value;
-#if 1
-	printf("FPGA watchdog 0x%08x (SystemActive %c Alive %c\n"
-	       "  SysDisableCount %u DisableCount %u)\n",
-	  m_status.value, m_status.SystemActive ? 't' : 'f',
-	  m_status.Alive ? 't' : 'f',
-	  m_status.SysDisableCount,
-	  m_status.DisableCount);
-#endif
-	*status = 0;
+	tWatchdog::tStatus new_status = m_status;
+	new_status.Alive = value;
+	writeStatus(new_status, status);
     }
     virtual void writeStatus_SysDisableCount(unsigned short value, tRioStatusCode *status) {
-	m_status.SysDisableCount = value;
-#if 1
-	printf("FPGA watchdog 0x%08x (SystemActive %c Alive %c\n"
-	       "  SysDisableCount %u DisableCount %u)\n",
-	  m_status.value, m_status.SystemActive ? 't' : 'f',
-	  m_status.Alive ? 't' : 'f',
-	  m_status.SysDisableCount,
-	  m_status.DisableCount);
-#endif
-	*status = 0;
+	tWatchdog::tStatus new_status = m_status;
+	new_status.SysDisableCount = value;
+	writeStatus(new_status, status);
     }
     virtual void writeStatus_DisableCount(unsigned short value, tRioStatusCode *status) {
-	m_status.DisableCount = value;
-#if 1
-	printf("FPGA watchdog 0x%08x (SystemActive %c Alive %c\n"
-	       "  SysDisableCount %u DisableCount %u)\n",
-	  m_status.value, m_status.SystemActive ? 't' : 'f',
-	  m_status.Alive ? 't' : 'f', m_status.SysDisableCount, m_status.DisableCount);
-#endif
-	*status = 0;
+	tWatchdog::tStatus new_status = m_status;
+	new_status.DisableCount = value;
+	writeStatus(new_status, status);
     }
     virtual tWatchdog::tStatus readStatus(tRioStatusCode *status) {
 	*status = 0;
@@ -1312,9 +1421,10 @@ public:
     }
 
     virtual void writeImmortal(bool value, tRioStatusCode *status) {
-#if 1
-	printf("FPGA watchdog immortal %c\n", value ? 't' : 'f');
-#endif
+	if (m_immortal != value) {
+	    printf("FPGA watchdog immortal was %c changed to %c\n",
+	    	m_immortal ? 't' : 'f', value ? 't' : 'f');
+	}
 	m_immortal = value;
 	*status = 0;
     }
@@ -1338,9 +1448,10 @@ public:
     }
 
     virtual void writeExpiration(unsigned int value, tRioStatusCode *status) {
-#ifdef DEBUG
-	printf("FPGA watchdog expiration %u\n", value);
-#endif
+	if (m_expiration == value) {
+	    printf("FPGA watchdog expiration was %u changed to %u\n",
+	    	m_expiration, value);
+	}
 	m_expiration = value;
 	*status = 0;
     }
@@ -1413,9 +1524,11 @@ INT32 LedInput(INT32 led)
 INT32 LedOutput(INT32 led, INT32 value)
 {
     assert(led == 0);
+    if (cRIO_User1_LED != (value != 0)) {
+	printf("cRIO USER1 LED was %s changed to %s\n",
+	  cRIO_User1_LED ? "ON" : "OFF", value ? "ON" : "OFF");
+    }
     cRIO_User1_LED = (value != 0);
-    printf("%s: cRIO USER1 LED is now %s\n",
-      __FUNCTION__, cRIO_User1_LED ? "ON" : "OFF");
     return cRIO_User1_LED;
 }
 
