@@ -15,7 +15,7 @@ OBJECTS := $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
 LIBS := WPILib/WPILib.a stubs/stubs.a
 LDLIBS := $(LIBS) -pthread -lrt -lz
 
-.PHONY: default all WPILib v2lin stubs clean clobber
+.PHONY: default all WPILib v2lin stubs clean allclean
 
 default: MyRobot.exe
 
@@ -28,18 +28,12 @@ stubs stubs/stubs.a:
 	$(MAKE) -C stubs
 
 MyRobot.exe: $(OBJECTS) $(LIBS)
-	@echo $(CXX) -o $@ $(CFLAGS) $(OBJECTS) $(LIBS) $(LDLIBS)
-	@if ! $(CXX) -o $@ $(CFLAGS) $(OBJECTS) $(LIBS) $(LDLIBS) >& errorlog; then \
-	    echo `wc -l < errorlog` errors reported, see \"errorlog\"; \
-	    sed -n -e '/undefined/s/.*`\(.*\)'\''.*/\1/p' < errorlog | sort -u > undefined; \
-	    echo `wc -l < undefined` undefined symbols, see \"undefined\"; \
-	    exit 1; \
-	fi
+	$(CXX) -o $@ $(CFLAGS) $(OBJECTS) $(LIBS) $(LDLIBS)
 
 clean:
 	$(RM) $(OBJECTS) MyRobot.exe errorlog undefined
 
-clobber: clean
+allclean: clean
 	$(MAKE) -C WPILib clean
 	$(MAKE) -C stubs clean
 

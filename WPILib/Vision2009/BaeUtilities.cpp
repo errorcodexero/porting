@@ -1,10 +1,10 @@
 /********************************************************************************
-*  Project   		: FIRST Motor Controller
-*  File Name  		: BaeUtilities.cpp        
-*  Contributors   	: JDG, ELF, EMF
-*  Creation Date 	: July 20, 2008
-*  Revision History	: Source code & revision history maintained at sourceforge.WPI.edu    
-*  File Description	: Open source utility extensions for FIRST Vision API.
+*  Project	    : FIRST Motor Controller
+*  File Name	    : BaeUtilities.cpp        
+*  Contributors	    : JDG, ELF, EMF
+*  Creation Date    : July 20, 2008
+*  Revision History : Source code & revision history maintained at sourceforge.WPI.edu    
+*  File Description : Open source utility extensions for FIRST Vision API.
 */                            
 /*----------------------------------------------------------------------------*/
 /*        Copyright (c) FIRST 2008.  All Rights Reserved.                     */
@@ -49,19 +49,19 @@ void SetDebugFlag ( DebugOutputType flag  )
  */
 void dprintf ( const char * tempString, ...  )  /* Variable argument list */
 {
-  va_list	args;			  /* Input argument list */
-  int		line_number;      /* Line number passed in argument */
-  int		type;
-  char		*functionName;    /* Format passed in argument */
-  char		*fmt;             /* Format passed in argument */
-  char		text[512];   	  /* Text string */
-  char		outtext[512];     /* Text string */
-  FILE		*outfile_fd;      /* Output file pointer */
-  char		filepath[128];    /* Text string */
-  int		fatalFlag=0;
+  va_list   args;	      /* Input argument list */
+  int	    line_number;      /* Line number passed in argument */
+  int	    type;
+  char	    *functionName;    /* Format passed in argument */
+  char	    *fmt;             /* Format passed in argument */
+  char	    text[512];	      /* Text string */
+  char	    outtext[512];     /* Text string */
+  FILE	    *outfile_fd;      /* Output file pointer */
+  char	    filepath[128];    /* Text string */
+  int	    fatalFlag=0;
   const char	*filename;
-  int		index;
-  int		tempStringLen;
+  int	    index;
+  int	    tempStringLen;
 
   if (dprintfFlag == DEBUG_OFF) { return; }
   
@@ -70,11 +70,11 @@ void dprintf ( const char * tempString, ...  )  /* Variable argument list */
   tempStringLen = strlen(tempString);
   filename = tempString;
   for (index=0;index<tempStringLen;index++){
-	  if (tempString[index] == ' ') {
-		  printf( "ERROR in dprintf: malformed calling sequence (%s)\n",tempString);return;
-	  	}
-	  if (tempString[index] == '\\' || tempString[index] == '/')
-		  filename = tempString + index + 1;
+      if (tempString[index] == ' ') {
+	  printf( "ERROR in dprintf: malformed calling sequence (%s)\n",tempString);return;
+	}
+      if (tempString[index] == '\\' || tempString[index] == '/')
+	  filename = tempString + index + 1;
   }
   
   /* Extract function name */
@@ -130,31 +130,31 @@ void dprintf ( const char * tempString, ...  )  /* Variable argument list */
   {
   default:
   case DEBUG_OFF: 
-  	break;
+    break;
   case DEBUG_MOSTLY_OFF: 
-  	if (fatalFlag)	{
-	  if ((outfile_fd = fopen (filepath, "a+")) != NULL)	  {
-	    fwrite (outtext, sizeof (char), strlen (outtext), outfile_fd);
-	    fclose (outfile_fd);
-	  }
-	}
-  	break;
+    if (fatalFlag)  {
+      if ((outfile_fd = fopen (filepath, "a+")) != NULL)      {
+	fwrite (outtext, sizeof (char), strlen (outtext), outfile_fd);
+	fclose (outfile_fd);
+      }
+    }
+    break;
   case DEBUG_SCREEN_ONLY: 
-  	printf ("%s", outtext);
-  	break;
+    printf ("%s", outtext);
+    break;
   case DEBUG_FILE_ONLY: 
-	if ((outfile_fd = fopen (filepath, "a+")) != NULL)	{
-	  fwrite (outtext, sizeof (char), strlen (outtext), outfile_fd);
-	  fclose (outfile_fd);
-	}
-  	break;
+    if ((outfile_fd = fopen (filepath, "a+")) != NULL)	{
+      fwrite (outtext, sizeof (char), strlen (outtext), outfile_fd);
+      fclose (outfile_fd);
+    }
+    break;
   case DEBUG_SCREEN_AND_FILE: // BOTH
-  	printf ("%s", outtext);
-	if ((outfile_fd = fopen (filepath, "a+")) != NULL)	{
-	  fwrite (outtext, sizeof (char), strlen (outtext), outfile_fd);
-	  fclose (outfile_fd);
-	}
-  	break;
+    printf ("%s", outtext);
+    if ((outfile_fd = fopen (filepath, "a+")) != NULL)	{
+      fwrite (outtext, sizeof (char), strlen (outtext), outfile_fd);
+      fclose (outfile_fd);
+    }
+    break;
   }
 }
 
@@ -165,7 +165,7 @@ void dprintf ( const char * tempString, ...  )  /* Variable argument list */
  * @return The normalized position from -1 to +1
  */
 double RangeToNormalized(double position, int range){
-	return(((position*2.0)/(double)range)-1.0);
+    return(((position*2.0)/(double)range)-1.0);
 }
 
 /**
@@ -177,13 +177,13 @@ double RangeToNormalized(double position, int range){
  * @return The value in the range corresponding to the input normalized value
  */
 float NormalizeToRange(float normalizedValue, float minRange, float maxRange) {
-	float range = maxRange-minRange;
-	float temp = (float)((normalizedValue / 2.0)+ 0.5)*range;
-	return (temp + minRange);
-}	
+    float range = maxRange-minRange;
+    float temp = (float)((normalizedValue / 2.0)+ 0.5)*range;
+    return (temp + minRange);
+}   
 float NormalizeToRange(float normalizedValue) {
-	return (float)((normalizedValue / 2.0) + 0.5);
-}	
+    return (float)((normalizedValue / 2.0) + 0.5);
+}   
 
 /**
  * @brief Displays an activity indicator to console. 
@@ -229,8 +229,8 @@ double SinPosition (double *period, double sinStart)
   //1st call
   if (period != NULL) {
     sinePeriod = *period;
-	timestamp = GetTime();
-	return 0.0;
+    timestamp = GetTime();
+    return 0.0;
   }
 
   //Multiplying by 2*pi to the time difference makes sinePeriod work if it's measured in seconds.
@@ -248,8 +248,8 @@ double SinPosition (double *period, double sinStart)
  */
 double ElapsedTime ( double startTime )  
 {
-	double realTime = GetTime();	
-	return (realTime-startTime);
+    double realTime = GetTime();    
+    return (realTime-startTime);
 }
 
 /**
@@ -257,13 +257,13 @@ double ElapsedTime ( double startTime )
  * @param period The number of seconds to complete one pan
  */
 void panInit()	{
-	double period = 3.0;  	// number of seconds for one complete pan
-	SinPosition(&period, 0.0);	// initial call to set up time
+    double period = 3.0;    // number of seconds for one complete pan
+    SinPosition(&period, 0.0);	// initial call to set up time
 }
 
-void panInit(double period)	{
-	if (period < 0.0) period=3.0;
-	SinPosition(&period, 0.0);	// initial call to set up time
+void panInit(double period) {
+    if (period < 0.0) period=3.0;
+    SinPosition(&period, 0.0);	// initial call to set up time
 }
 
 /**
@@ -271,14 +271,14 @@ void panInit(double period)	{
  * @param panServo The servo object to move
  * @param sinStart The position on the sine wave to begin the pan
  */
-void panForTarget(Servo *panServo)	{ panForTarget(panServo, 0.0); }
+void panForTarget(Servo *panServo)  { panForTarget(panServo, 0.0); }
 
-void panForTarget(Servo *panServo, double sinStart)	{
-	float normalizedSinPosition = (float)SinPosition(NULL, sinStart);
-	float newServoPosition = NormalizeToRange(normalizedSinPosition);
-	panServo->Set( newServoPosition );
-	//ShowActivity ("pan x: normalized %f newServoPosition = %f" , 
-	//		normalizedSinPosition, newServoPosition );
+void panForTarget(Servo *panServo, double sinStart) {
+    float normalizedSinPosition = (float)SinPosition(NULL, sinStart);
+    float newServoPosition = NormalizeToRange(normalizedSinPosition);
+    panServo->Set( newServoPosition );
+    //ShowActivity ("pan x: normalized %f newServoPosition = %f" , 
+    //	    normalizedSinPosition, newServoPosition );
 }
 
 
@@ -295,64 +295,68 @@ be one property=value entry on each line, i.e. "exposure=auto"
  **/
 int processFile(char *inputFile, char *outputString, int lineNumber)
 {
-	FILE *infile;
-	int stringSize = 80;		// max size of one line in file 
-	char inputStr[stringSize];
-	struct stat fileStatus;
-	int fileSize=0;
-	int lineCount=0;
-	  
-	if (lineNumber < 0)
-		  return (-1);
+    FILE *infile;
+    int stringSize = 80;	// max size of one line in file 
+    char inputStr[stringSize];
+    /*
+    struct stat fileStatus;
+    int fileSize=0;
+    */
+    int lineCount=0;
+      
+    if (lineNumber < 0)
+	  return (-1);
 
-	if ((infile = fopen (inputFile, "r")) == NULL) {
-	    printf ("Fatal error opening file %s\n",inputFile);
-	    return (0);
-	}
+    if ((infile = fopen (inputFile, "r")) == NULL) {
+	printf ("Fatal error opening file %s\n",inputFile);
+	return (0);
+    }
+    /*
     memset (&fileStatus, 0, sizeof(fileStatus));
     if (!stat(inputFile, &fileStatus)) {
       if (S_ISREG(fileStatus.st_mode)) {
         fileSize = fileStatus.st_size;
       }
     }
+    */
 
-  while (!feof(infile)) {
-    if (fgets (inputStr, stringSize, infile) != NULL) {
-      // Skip empty lines
-      if (emptyString(inputStr))
-        continue;
-      // Skip comment lines
-      if (inputStr[0] == '#' || inputStr[0] == '!')
-        continue;
+    while (!feof(infile)) {
+	if (fgets (inputStr, stringSize, infile) != NULL) {
+	    // Skip empty lines
+	    if (emptyString(inputStr))
+		continue;
+	    // Skip comment lines
+	    if (inputStr[0] == '#' || inputStr[0] == '!')
+		continue;
 
-      lineCount++;
-      if (lineNumber == 0)
-        continue;
-      else
-      {
-    	  if (lineCount == lineNumber)
-    		  break;
-      }
+	    lineCount++;
+	    if (lineNumber == 0)
+		continue;
+	    else
+	    {
+		if (lineCount == lineNumber)
+		    break;
+	    }
+	}
     }
-  }
 
-  // close file 
-  fclose (infile);
-  // if number lines requested return the count
-  if (lineNumber == 0)
-	  return (lineCount);
-  // check for input out of range
-  if (lineNumber > lineCount)
-	  return (-1);
-  // return the line selected
-  if (lineCount) {
-    stripString(inputStr);
-    strcpy(outputString, inputStr);
-    return(lineCount);
-  } 
-  else {
-    return(-1);
-  }
+    // close file 
+    fclose (infile);
+    // if number lines requested return the count
+    if (lineNumber == 0)
+	return (lineCount);
+    // check for input out of range
+    if (lineNumber > lineCount)
+	return (-1);
+    // return the line selected
+    if (lineCount) {
+	stripString(inputStr);
+	strcpy(outputString, inputStr);
+	return(lineCount);
+    } 
+    else {
+	return(-1);
+    }
 }
 
 /** Ignore empty string 

@@ -31,7 +31,8 @@
  || defined(M_I386) \
  || defined(M_I86) \
  || defined(_M_I386) \
- || defined(_M_I86)
+ || defined(_M_I86) \
+ || defined(__arm__)
    #if defined(_WIN32) \
     || defined(_WIN64) \
     || defined(__WIN32__) \

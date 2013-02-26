@@ -6,17 +6,30 @@
 
 #include <WPILib.h>
 
+#define INCLUDE_SOLENOID	// OK
+#define INCLUDE_DOUBLE_SOLENOID	// OK
+#define INCLUDE_RELAY		// OK
+#define INCLUDE_SWITCH		// deadlock
+
 class MyRobot : public IterativeRobot
 {
 private:
-#if 0
+#ifdef INCLUDE_COMPRESSOR
     Compressor *m_compressor;
 #endif
+#ifdef INCLUDE_SOLENOID
     Solenoid *m_pSol1;
     Solenoid *m_pSol2;
+#endif
+#ifdef INCLUDE_DOUBLE_SOLENOID
     DoubleSolenoid *m_pSol3;
+#endif
+#ifdef INCLUDE_RELAY
     Relay *m_pRelay;
+#endif
+#ifdef INCLUDE_SWITCH
     DigitalInput *m_pSw;
+#endif
 
     // OI *m_pOI; // command-based OI
     DriverStation *m_pDS;

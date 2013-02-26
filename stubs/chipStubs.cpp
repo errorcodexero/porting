@@ -1,6 +1,7 @@
 // stubs for NI cRIO FPGA interface
 #include "stubs.h"
 #include "ChipObject.h"
+#include "DigitalModule.h"  // for kExpectedLoopTiming
 #include "NetworkCommunication/LoadOut.h"
 #include "Synchronized.h"
 #include <string.h>
@@ -422,7 +423,9 @@ public:
 	return 0;
     }
     virtual void strobeLatchOutput(tRioStatusCode *status) {
+#ifdef DEBUG
 	printf("FPGA analog in %u strobe latch output\n", m_index);
+#endif
 	*status = 0;
     }
 
@@ -481,7 +484,7 @@ public:
 	m_index = sys_index;
 	m_systemInterface = new stubSystemInterface(guid);
 	m_i2cDataToSend = 0;
-	m_loopTiming = 0;
+	m_loopTiming = kExpectedLoopTiming;
 	m_DO = 0;
 	memset(m_filterSelect, 0, sizeof m_filterSelect);
 	memset(m_filterPeriod, 0, sizeof m_filterPeriod);
@@ -593,8 +596,8 @@ public:
 
     virtual void writeSlowValue(tDIO::tSlowValue value, tRioStatusCode *status) {
 	if (m_slowValue.value != value.value) {
-	    printf("FPGA digital I/O %u slowValue was %u changed to %u"
-	    	   " (RelayFwd 0x%02x RelayRev 0x%02x I2CHeader 0x%x)\n",
+	    printf("FPGA digital I/O %u slowValue was %u changed to %u\n"
+	    	   "(RelayFwd 0x%02x RelayRev 0x%02x I2CHeader 0x%x)\n",
 		m_index, m_slowValue.value, value.value,
 		value.RelayFwd, value.RelayRev, value.I2CHeader);
 	}

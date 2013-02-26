@@ -10,15 +10,24 @@ void MyRobot::RobotInit()
     // Subsystems
     ///////////////////////////////////////////////////////
 
-#if 0
+#ifdef INCLUDE_COMPRESSOR
     m_compressor = new Compressor( 1, 1 );
     m_compressor->Start();
 #endif
+#ifdef INCLUDE_SOLENOID
     m_pSol1 = new Solenoid(1);
     m_pSol2 = new Solenoid(2);
+#endif
+#ifdef INCLUDE_DOUBLE_SOLENOID
     m_pSol3 = new DoubleSolenoid(3,4);
+#endif
+#ifdef INCLUDE_RELAY
     m_pRelay = new Relay(2, Relay::kBothDirections);
+#endif
+#ifdef INCLUDE_SWITCH
     m_pSw = new DigitalInput(6);
+    LiveWindow::GetInstance()->AddSensor("Robot","Switch",m_pSw);
+#endif
 
     ///////////////////////////////////////////////////////
     // OI
@@ -52,8 +61,10 @@ void MyRobot::DisabledPeriodic()
     ++disabled_periodic;
     m_pLCD->Clear();
     m_pLCD->Printf(DriverStationLCD::kUser_Line2, 1, "dsbl %d", disabled_periodic);
+#ifdef INCLUDE_SWITCH
     m_pLCD->Printf(DriverStationLCD::kUser_Line3, 1, "sw %s",
 	m_pSw->Get() ? "true " : "false");
+#endif
     m_pLCD->UpdateLCD();
 }
 
@@ -71,8 +82,10 @@ void MyRobot::AutonomousPeriodic()
 {
     ++autonomous_periodic;
     m_pLCD->Printf(DriverStationLCD::kUser_Line2, 1, "auto %d", autonomous_periodic);
+#ifdef INCLUDE_SWITCH
     m_pLCD->Printf(DriverStationLCD::kUser_Line3, 1, "sw %s",
 	m_pSw->Get() ? "true " : "false");
+#endif
     m_pLCD->UpdateLCD();
 
     Scheduler::GetInstance()->Run();
@@ -92,8 +105,10 @@ void MyRobot::TeleopPeriodic()
 {
     ++teleop_periodic;
     m_pLCD->Printf(DriverStationLCD::kUser_Line2, 1, "tele %d", teleop_periodic);
+#ifdef INCLUDE_SWITCH
     m_pLCD->Printf(DriverStationLCD::kUser_Line3, 1, "sw %s",
 	m_pSw->Get() ? "true " : "false");
+#endif
     m_pLCD->Printf(DriverStationLCD::kUser_Line4, 1,
 	"x %4.1f y %4.1f z %4.1f t %4.1f",
 	m_pJoy->GetX(), m_pJoy->GetY(), m_pJoy->GetZ(), m_pJoy->GetTwist());
@@ -120,14 +135,20 @@ void MyRobot::TeleopPeriodic()
     m_pEIO->SetLED(5, din5);
     m_pEIO->SetLED(6, din6);
 
+#ifdef INCLUDE_SOLENOID
     m_pSol1->Set(din1);
     m_pSol2->Set(din2);
+#endif
+#ifdef INCLUDE_DOUBLE_SOLENOID
     m_pSol3->Set(din3 ? DoubleSolenoid::kForward :
 		 din4 ? DoubleSolenoid::kReverse :
 		 DoubleSolenoid::kOff);
+#endif
+#ifdef INCLUDE_RELAY
     m_pRelay->Set(din5 ? Relay::kForward :
 		  din6 ? Relay::kReverse :
 		  Relay::kOff);
+#endif
     m_pLCD->UpdateLCD();
 
     Scheduler::GetInstance()->Run();
