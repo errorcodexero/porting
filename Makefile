@@ -13,7 +13,7 @@ SOURCES := \
 OBJECTS := $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
 
 LIBS := WPILib/WPILib.a stubs/stubs.a
-LDLIBS := $(LIBS) -pthread -lrt -lz
+LDLIBS := $(LIBS) -lpthread -lrt -lz
 
 .PHONY: default all WPILib v2lin stubs clean allclean
 
