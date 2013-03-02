@@ -106,7 +106,7 @@ IOStream* SocketServerStreamProvider::accept(){
 			if (FD_ISSET(serverSocket, &fdSet))
 			{
 				struct sockaddr clientAddr = {0};
-				addrlen_t clientAddrSize = 0;
+				addrlen_t clientAddrSize = sizeof(clientAddr);
 				int connectedSocket = ::accept(serverSocket, &clientAddr, &clientAddrSize);
 				if (connectedSocket == ERROR)
 					return NULL;

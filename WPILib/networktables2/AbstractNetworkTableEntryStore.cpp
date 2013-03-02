@@ -19,7 +19,7 @@
 		LOCK.take();
 		std::map<std::string, NetworkTableEntry*>::iterator itr;
 		for(itr = namedEntries.begin(); itr != namedEntries.end();){
-		    delete itr->second;
+		    if (itr->second) delete itr->second;
 		    namedEntries.erase(itr++);
 		}
 	};
@@ -84,7 +84,7 @@
 			
 			for(itr = namedEntries.begin(); itr != namedEntries.end(); itr++)
 			{
-				((NetworkTableEntry*)(*itr).second)->ClearId();
+				if (itr->second) itr->second->ClearId();
 			}
 		}
 	}
@@ -191,7 +191,7 @@
 			for(itr = namedEntries.begin(); itr != namedEntries.end(); itr++)
 			{
 				NetworkTableEntry* entry = namedEntries[(*itr).first];//this may seem odd, but its so we get the address of the list element, rather than the copy stored in the itr
-				listener->ValueChanged(table, (*itr).first, entry->GetValue(), true);
+				if (entry) listener->ValueChanged(table, (*itr).first, entry->GetValue(), true);
 			}
 		}
 	}
