@@ -9,6 +9,7 @@
 #include "NetworkCommunication/UsageReporting.h"
 #include "Timer.h"
 #include "WPIErrors.h"
+#include "LiveWindow/LiveWindow.h"
 
 /**
  * Internal task.
@@ -49,7 +50,9 @@ void Compressor::InitCompressor(UINT8 pressureSwitchModuleNumber,
 {
     m_enabled = false;
     m_pressureSwitch = new DigitalInput(pressureSwitchModuleNumber, pressureSwitchChannel);
+    LiveWindow::GetInstance()->AddSensor("Compressor", "PressureSwitch", m_pressureSwitch);
     m_relay = new Relay(compresssorRelayModuleNumber, compressorRelayChannel, Relay::kForwardOnly);
+    LiveWindow::GetInstance()->AddActuator("Compressor", "CompressorRelay", m_relay);
 
     nUsageReporting::report(nUsageReporting::kResourceType_Compressor, 0);
 

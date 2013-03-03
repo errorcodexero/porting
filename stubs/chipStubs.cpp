@@ -1337,6 +1337,75 @@ tSolenoid* tSolenoid::create(
 
 ///////////////////////////////////////////////////////////////////////////////
 //
+// ChipObject tAlarm
+//
+///////////////////////////////////////////////////////////////////////////////
+
+namespace nFPGA {
+namespace nFRC_2012_1_6_4 {
+
+class stubAlarm : public tAlarm
+{
+private:
+    tSystemInterface *m_systemInterface;
+    unsigned int m_triggerTime;
+    bool m_enable;
+
+public:
+    stubAlarm( const uint32_t guid[] ) : tAlarm() {
+	m_systemInterface = new stubSystemInterface(guid);
+	m_triggerTime = 0;
+	m_enable = false;
+    }
+    virtual ~stubAlarm() {
+	delete m_systemInterface;
+    }
+    virtual tSystemInterface* getSystemInterface() {
+	return m_systemInterface;
+    }
+
+    virtual void writeTriggerTime(unsigned int value, tRioStatusCode *status) {
+	if (m_triggerTime != value) {
+	    printf("FPGA alarm trigger time was %u changed to %u\n",
+		    m_triggerTime, value);
+	}
+	m_triggerTime = value;
+	*status = 0;
+    }
+    virtual unsigned int readTriggerTime(tRioStatusCode *status) {
+	*status = 0;
+	return m_triggerTime;
+    }
+    virtual void writeEnable(bool value, tRioStatusCode *status) {
+	if (m_enable != value) {
+	    printf("FPGA alarm enable was %c changed to %c\n",
+	    	m_enable ? 't' : 'f', value ? 't' : 'f');
+	}
+	m_enable = value;
+	*status = 0;
+    }
+    virtual bool readEnable(tRioStatusCode *status) {
+	*status = 0;
+	return m_enable;
+    }
+
+private:
+    DISALLOW_COPY_AND_ASSIGN(stubAlarm);
+};
+
+tAlarm* tAlarm::create( tRioStatusCode *status )
+{
+    uint32_t guid[4];
+    snprintf((char *)guid, sizeof guid, "alarm");
+    *status = 0;
+    return new stubAlarm(guid);
+}
+
+}; // namespace nFRC_2012_1_6_4
+}; // namespace nFPGA
+
+///////////////////////////////////////////////////////////////////////////////
+//
 // ChipObject tWatchdog
 //
 ///////////////////////////////////////////////////////////////////////////////
@@ -1451,7 +1520,7 @@ public:
     }
 
     virtual void writeExpiration(unsigned int value, tRioStatusCode *status) {
-	if (m_expiration == value) {
+	if (m_expiration != value) {
 	    printf("FPGA watchdog expiration was %u changed to %u\n",
 	    	m_expiration, value);
 	}

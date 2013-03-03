@@ -34,6 +34,8 @@ int main(int argc, char **argv)
 	_argv = argv;
 	FRC_NetworkCommunicationInitialize();
 	FRC_UserProgram_StartupLibraryInit();
-	sleep(300); // should wait for robot task to die?
+	for (;;) {
+	    sleep(3); // should wait for robot task to die?
+	}
 	return 0;
 }

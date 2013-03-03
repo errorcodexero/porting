@@ -1579,3 +1579,23 @@ UINT32 report(
 
 }; // namespace UsageReporting
 
+extern "C" void FRC_NetworkCommunication_JaguarCANDriver_sendMessage(
+    UINT32 messageID,
+    const UINT8 *data,
+    UINT8 dataSize,
+    INT32 *status )
+{
+    *status = 0;
+}
+
+extern "C" void FRC_NetworkCommunication_JaguarCANDriver_receiveMessage(
+    UINT32 *messageID,
+    UINT8 *data,
+    UINT8 *dataSize,
+    UINT32 timeoutMs,
+    INT32 *status )
+{
+    if (messageID) *messageID = 0;
+    if (dataSize) *dataSize = 0;
+    *status = 0;
+}

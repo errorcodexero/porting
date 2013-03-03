@@ -13,6 +13,7 @@
 #include "MotorSafetyHelper.h"
 #include "Utility.h"
 #include "WPIErrors.h"
+#include "LiveWindow/LiveWindow.h"
 #include <strLib.h>
 
 const UINT32 DriverStation::kBatteryModuleNumber;
@@ -86,6 +87,7 @@ DriverStation::DriverStation()
     m_controlData->dsDigitalIn = 0;
 
     m_batteryChannel = new AnalogChannel(kBatteryModuleNumber, kBatteryChannel);
+    LiveWindow::GetInstance()->AddSensor("DriverStation", "Battery", m_batteryChannel);
 
     AddToSingletonList();
 

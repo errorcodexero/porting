@@ -56,7 +56,7 @@ void AnalogChannel::InitChannel(UINT8 moduleNumber, UINT32 channel)
     {
 	m_accumulator = NULL;
     }
-    LiveWindow::GetInstance()->AddActuator("AnalogChannel", GetModuleNumber(), channel, this);
+    LiveWindow::GetInstance()->AddSensor("AnalogChannel", GetModuleNumber(), channel, this);
     nUsageReporting::report(nUsageReporting::kResourceType_AnalogChannel, channel, GetModuleNumber() - 1);
 }
 

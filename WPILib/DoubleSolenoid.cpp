@@ -54,7 +54,7 @@ void DoubleSolenoid::InitSolenoid()
     nUsageReporting::report(nUsageReporting::kResourceType_Solenoid, m_forwardChannel, m_moduleNumber - 1);
     nUsageReporting::report(nUsageReporting::kResourceType_Solenoid, m_reverseChannel, m_moduleNumber - 1);
 
-    LiveWindow::GetInstance()->AddActuator("DoubleSolenoid", m_moduleNumber, m_forwardChannel, this);
+    LiveWindow::GetInstance()->AddActuator("Double Solenoid", m_moduleNumber, m_forwardChannel, this);
 }
 
 /**

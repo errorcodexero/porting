@@ -9,6 +9,7 @@
 #include "NetworkCommunication/UsageReporting.h"
 #include "Resource.h"
 #include "WPIErrors.h"
+#include "LiveWindow/LiveWindow.h"
 
 // TODO: This is not a good place for this...
 Resource *interruptsResource = NULL;
@@ -38,6 +39,7 @@ void DigitalInput::InitDigitalInput(UINT8 moduleNumber, UINT32 channel)
     m_module = DigitalModule::GetInstance(moduleNumber);
     m_module->AllocateDIO(channel, true);
 
+    LiveWindow::GetInstance()->AddSensor("Digital Input", moduleNumber, channel, this);
     nUsageReporting::report(nUsageReporting::kResourceType_DigitalInput, channel, moduleNumber - 1);
 }
 
@@ -214,7 +216,7 @@ void DigitalInput::StopLiveWindowMode() {
 }
 
 std::string DigitalInput::GetSmartDashboardType() {
-    return "DigitalInput";
+    return "Digital Input";
 }
 
 void DigitalInput::InitTable(ITable *subTable) {
