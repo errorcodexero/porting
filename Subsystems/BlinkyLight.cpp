@@ -11,6 +11,7 @@ BlinkyLight::BlinkyLight( int pwmChannel )
     m_pwm->Set(0.0);
     // blinky lights don't need watchdogs
     m_pwm->SetSafetyEnabled(false);
+    LiveWindow::GetInstance()->AddActuator("BlinkyLight", "PWM", m_pwm);
 }
     
 void BlinkyLight::InitDefaultCommand()
