@@ -1,7 +1,11 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
+#include <WPILib.h>
 #include "Robot.h"
+#include "OI.h"
+#include "Shooter.h"
+#include "ShootManual.h"
 
 ShootManual::ShootManual()
 {
@@ -22,7 +26,7 @@ void ShootManual::Execute()
     Shooter::TargetDistance target;
     double speed;
 
-    switch (Robot::oi()->getTarget()) {
+    switch (Robot::oi()->GetTarget()) {
     case 0:
 	target = Shooter::kShort;
 	speed = SPEED_SHORT;
@@ -42,18 +46,18 @@ void ShootManual::Execute()
     }
 
     // adjust base speed +/- 16.67%
-    speed *= (1.0 + (Robot::oi()->getSpeedAdjust() - 0.5) / 3.0);
+    speed *= (1.0 + (Robot::oi()->GetSpeedAdjust() - 0.5) / 3.0);
 
     Robot::shooter()->SetAngle(target);
     Robot::shooter()->SetSpeed(speed);
 
     if (Robot::shooter()->IsReadyToShoot()) {
-	Robot::oi()->setReadyLED(true);
-	if (Robot::oi()->getLaunch()) {
+	Robot::oi()->SetReadyLED(true);
+	if (Robot::oi()->GetLaunch()) {
 	    Robot::shooter()->Inject();
 	}
     } else {
-	Robot::oi()->setReadyLED(false);
+	Robot::oi()->SetReadyLED(false);
     }
 }
 

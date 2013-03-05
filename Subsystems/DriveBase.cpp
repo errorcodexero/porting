@@ -1,4 +1,4 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
 #include "DriveBase.h"
@@ -66,7 +66,7 @@ void DriveBase::InitDefaultCommand()
 
 void DriveBase::Stop()
 {
-    printf("DriveBase::Stop\n");
+    // printf("DriveBase::Stop\n");
 
     // stop and disable all motors
     m_drive3->StopMotor();
@@ -82,7 +82,7 @@ void DriveBase::Stop()
 void DriveBase::Start()
 {
     if (!m_started) {
-	printf("DriveBase::Start\n");
+	// printf("DriveBase::Start\n");
 	// set all motors to 0.0 in order to feed their watchdogs
 	m_drive3->SetLeftRightMotorOutputs(0.0, 0.0);
 	// now enable the watchdogs

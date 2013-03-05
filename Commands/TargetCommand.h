@@ -1,9 +1,10 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
 #ifndef TARGETCOMMAND_H
 #define TARGETCOMMAND_H
 
+#include <Commands/Command.h>
 #include <Commands/TimedDrive.h>
 
 #define CAMERA_FOV   45.0
@@ -17,8 +18,9 @@ struct RobotRotation {
     float  time;
 };
 
-// TargetCommand uses a simple time/power vs. offset algorithm to aim the robot at the 
-// target.  The aiming process proceeds in three steps:
+// TargetCommand uses a simple time/power vs. offset algorithm
+// to aim the robot at the target.  The aiming process proceeds
+// in three steps:
 //   1 - Get a camera frame, determine offset to target (m_tgtOffset)
 //   2 - based on pre-measured rotation metrics, compute necessary time/power
 //   3 - use TimedDrive to turn drive the robot

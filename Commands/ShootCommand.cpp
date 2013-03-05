@@ -1,7 +1,10 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
+#include <WPILib.h>
 #include "Robot.h"
+#include "Shooter.h"
+#include "ShootCommand.h"
 
 ShootCommand::ShootCommand( Shooter::TargetDistance targetDistance )
 {

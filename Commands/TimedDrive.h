@@ -1,4 +1,4 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
 #ifndef TIMED_DRIVE_H

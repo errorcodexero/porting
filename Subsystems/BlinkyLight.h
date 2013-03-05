@@ -1,3 +1,6 @@
+// FIRST Team 1425 "Error Code Xero"
+// for FRC 2013 game "Ultimate Ascent"
+
 #ifndef BLINKY_LIGHT_H
 #define BLINKY_LIGHT_H
 

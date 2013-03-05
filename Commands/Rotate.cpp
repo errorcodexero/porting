@@ -1,11 +1,16 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
 #include <WPILib.h>
 #include <Utility.h>
 #include "Robot.h"
+#include "DriveBase.h"
 #include "Rotate.h"
 #include <math.h>
+
+// Rotate and TimedDrive are similar, but Rotate gets its speed and time
+// inputs from the SmartDashboard while TimedDrive gets them from its
+// caller.
 
 Rotate::Rotate( int direction )
 {

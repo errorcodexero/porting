@@ -1,4 +1,4 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
 #ifndef AUTOCOMMAND_H
@@ -19,7 +19,7 @@ public:
     virtual void Initialize();
     virtual void Execute();
     virtual bool IsFinished();
-    virtual void Stop();
+    virtual void End();
     virtual void Interrupted();
 
 private:

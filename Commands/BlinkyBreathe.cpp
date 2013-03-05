@@ -1,9 +1,11 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
+#include <WPILib.h>
 #include "Robot.h"
+#include "BlinkyLight.h"
+#include "BlinkyBreathe.h"
 #include <math.h>
-#include <Utility.h>
 
 #ifndef M_PI
 #define	M_PI	3.1415926535

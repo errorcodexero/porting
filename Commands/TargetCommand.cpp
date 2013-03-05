@@ -1,7 +1,11 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
+#include <WPILib.h>
 #include "Robot.h"
+#include "DriveBase.h"
+#include "TimedDrive.h"
+#include "TargetCommand.h"
 #include <math.h>
 
 // m_powercurve uses observations to figure out how far we'll rotate with a
@@ -70,7 +74,7 @@ bool TargetCommand::ReadCamera()
 // Identify resources required by this command.
 // Other commands that are using these resources will be Canceled
 // when this command is Started.
-TargetCommand::TargetCommand() 
+TargetCommand::TargetCommand() : TimedDrive()
 {
     Requires(Robot::driveBase());
 

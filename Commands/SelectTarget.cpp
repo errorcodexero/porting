@@ -1,6 +1,11 @@
+// FIRST Team 1425 "Error Code Xero"
+// for FRC 2013 game "Ultimate Ascent"
+
+#include <WPILib.h>
+#include "Robot.h"
 #include "SelectTarget.h"
 
-SelectTarget::SelectTarget(char* targetName) :
+SelectTarget::SelectTarget(const char* targetName) :
     Command("SelectTarget")
 {
     m_targetName = targetName; 

@@ -1,4 +1,4 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
 #include "Shooter.h"
@@ -52,7 +52,7 @@ Shooter::Shooter( int motorChannel, int positionerChannel, int switchChannel,
     m_positioner = new TripleSolenoid( positionerChannel,
 				       positionerChannel+1,
 				       switchChannel );
-    lw->AddActuator("Shooter", "Positioner", dynamic_cast<DoubleSolenoid*>(m_positioner));
+    lw->AddActuator("Shooter", "Positioner", m_positioner);
     lw->AddSensor("Shooter", "PositionCenter", m_positioner->m_switch);
     SmartDashboard::PutString("Shooter Position", "Unknown");
     SmartDashboard::PutBoolean("Shooter InPosition", false);

@@ -1,8 +1,11 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
+#include <WPILib.h>
 #include "Robot.h"
-#include "Utility.h"
+#include "OI.h"
+#include "DriveBase.h"
+#include "DriveCommand.h"
 
 static UINT32 then;
 
@@ -31,7 +34,7 @@ void DriveCommand::Execute()
 //  }
 //  then = now;
 
-    Joystick *joy = Robot::oi()->getStick();
+    Joystick *joy = Robot::oi()->GetStick();
     float throttle = (1.0 - joy->GetThrottle())/2.0;
     float x = joy->GetX() * throttle;
     float y = joy->GetY() * throttle;

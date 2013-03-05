@@ -1,7 +1,10 @@
+// FIRST Team 1425 "Error Code Xero"
+// for FRC 2013 game "Ultimate Ascent"
+
 #ifndef AIM_TRIM_H
 #define AIM_TRIM_H
 
-#include "Robot.h"
+#include <Commands/Command.h>
 
 class AimTrim: public Command {
 public:

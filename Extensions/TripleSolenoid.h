@@ -1,3 +1,6 @@
+// FIRST Team 1425 "Error Code Xero"
+// for FRC 2013 game "Ultimate Ascent"
+
 #ifndef _TRIPLE_SOLENOID_H_
 #define _TRIPLE_SOLENOID_H_
 
@@ -22,7 +25,7 @@ public:
     Position GetPosition(void);
     void Start();
     void Stop();
-    // std::string GetSmartDashboardType() { return "3PS"; };
+    std::string GetSmartDashboardType() { return "3PS"; };
 
 private:
     Position m_goal;

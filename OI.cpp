@@ -1,7 +1,17 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
 #include "OI.h"
+#include "TimedDrive.h"
+#include "Rotate.h"
+#include "AimTrim.h"
+#include "ClimbCommand.h"
+#include "TargetCommand.h"
+#include "SelectTarget.h"
+#include "ShootCommand.h"
+#include "ShootManual.h"
+#include "TiltCommand.h"
+#include "ResetRobot.h"
 
 OI::OI() 
 {
@@ -61,20 +71,79 @@ OI::OI()
     m_pReadyLED           = new DSDigitalOutput(m_pEIO, 8);
 }
 
+OI::~OI()
+{
+    // initialized in constructor
+    delete m_pStick;
+    delete m_pGamepadButtonA;
+    delete m_pGamepadButtonB;
+    delete m_pGamepadButtonX;
+    delete m_pGamepadButtonY;
+    delete m_pGamepadLeftBumper;
+    delete m_pGamepadRightBumper;
+    delete m_pGamepadBack;
+    delete m_pGamepadStart;
+    delete m_pClimber;
+    delete m_pTip;
+    delete m_pSpeedAdjust;
+    delete m_pShooterTarget;
+    delete m_pDump;
+    delete m_pCameraLight;
+    delete m_pCameraPosition;
+    delete m_pQueryButton;
+    delete m_pManualOverride;
+    delete m_pLaunch;
+    delete m_pKey;
+    delete m_pReadyLED;
+
+    // initialized in Initialize()
+    if (m_pNudgeLeft) delete m_pNudgeLeft;
+    if (m_pNudgeRight) delete m_pNudgeRight;
+    if (m_pRotateFwd) delete m_pRotateFwd;
+    if (m_pRotateRev) delete m_pRotateRev;
+    if (m_pTrimLeft) delete m_pTrimLeft;
+    if (m_pTrimRight) delete m_pTrimRight;
+    if (m_pTargetCommand) delete m_pTargetCommand;
+    if (m_pSelectTargetLeft) delete m_pSelectTargetLeft;
+    if (m_pSelectTargetRight) delete m_pSelectTargetRight;
+    if (m_pSelectTargetMid) delete m_pSelectTargetMid;
+    if (m_pShootShort) delete m_pShootShort;
+    if (m_pShootMid) delete m_pShootMid;
+    if (m_pShootLong) delete m_pShootLong;
+    if (m_pShootManual) delete m_pShootManual;
+    if (m_pTiltShort) delete m_pTiltShort;
+    if (m_pTiltMid) delete m_pTiltMid;
+    if (m_pTiltLong) delete m_pTiltLong;
+    if (m_pResetRobot) delete m_pResetRobot;
+}
+
+
 void OI::Initialize()
 {
     // Link controls to commands
-    m_pGamepadButtonA->WhenPressed(new TargetCommand());
-    static char right[] = "right";
-    m_pGamepadButtonB->WhenPressed(new SelectTarget(right));
-    static char left[] = "left";
-    m_pGamepadButtonX->WhenPressed(new SelectTarget(left));
-    static char mid[] = "mid";
-    m_pGamepadButtonY->WhenPressed(new SelectTarget(mid));
-    m_pGamepadLeftBumper->WhenPressed(new TimedDrive( 0.0, 0.0, -.35, 0.20 ));
-    m_pGamepadRightBumper->WhenPressed(new TimedDrive( 0.0, 0.0, .35, 0.20 ));
-    m_pGamepadBack->WhenPressed(new AimTrim(true));
-    m_pGamepadStart->WhenPressed(new AimTrim(false));
+    m_pTargetCommand = new TargetCommand();
+    m_pGamepadButtonA->WhenPressed(m_pTargetCommand);
+
+    m_pSelectTargetRight = new SelectTarget("right");
+    m_pGamepadButtonB->WhenPressed(m_pSelectTargetRight);
+
+    m_pSelectTargetLeft = new SelectTarget("left");
+    m_pGamepadButtonX->WhenPressed(m_pSelectTargetLeft);
+
+    m_pSelectTargetMid = new SelectTarget("mid");
+    m_pGamepadButtonY->WhenPressed(m_pSelectTargetMid);
+
+    m_pNudgeLeft = new TimedDrive( 0.0, 0.0, -.35, 0.20 );
+    m_pGamepadLeftBumper->WhenPressed(m_pNudgeLeft);
+
+    m_pNudgeRight = new TimedDrive( 0.0, 0.0, .35, 0.20 );
+    m_pGamepadRightBumper->WhenPressed(m_pNudgeRight);
+
+    m_pTrimLeft = new AimTrim(true);
+    m_pGamepadBack->WhenPressed(m_pTrimLeft);
+
+    m_pTrimRight = new AimTrim(false);
+    m_pGamepadStart->WhenPressed(m_pTrimRight);
 
     m_pRotateFwd = new Rotate(1);
     SmartDashboard::PutData("Rotate Fwd", m_pRotateFwd);
@@ -103,8 +172,14 @@ void OI::Initialize()
     m_pTiltLong = new TiltCommand( Shooter::kLong );
     SmartDashboard::PutData("Tilt Long", m_pTiltLong);
 
+    m_pClimbCommand = new ClimbCommand();
+    SmartDashboard::PutData("Climb", m_pClimbCommand);
+
     // m_pBlinkyOn = new BlinkyOn();
     // SmartDashboard::PutData("Blinky On", m_pBlinkyOn);
     // m_pCameraLight->WhileHeld(m_pBlinkyOn);
+
+    m_pResetRobot = new ResetRobot();
+    SmartDashboard::PutData("Reset Robot", m_pResetRobot);
 }
 

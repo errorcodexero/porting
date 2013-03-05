@@ -1,4 +1,4 @@
-// First Team 1425 "Error Code Xero"
+// FIRST Team 1425 "Error Code Xero"
 // for FRC 2013 game "Ultimate Ascent"
 
 class OI;
@@ -8,7 +8,6 @@ class OI;
 
 #include <WPILib.h>
 #include "Robot.h"
-
 
 class DSAnalogInput {
 private:
@@ -112,30 +111,53 @@ private:
     DSDigitalOutput* m_pReadyLED;
 
     // aiming
-    Rotate* m_pRotateFwd;
-    Rotate* m_pRotateRev;
+    class TimedDrive* m_pNudgeLeft;
+    class TimedDrive* m_pNudgeRight;
+
+    class Rotate* m_pRotateFwd;
+    class Rotate* m_pRotateRev;
+
+    class AimTrim* m_pTrimLeft;
+    class AimTrim* m_pTrimRight;
 
     // shooting
-    ShootCommand* m_pShootShort;
-    ShootCommand* m_pShootMid;
-    ShootCommand* m_pShootLong;
-    ShootManual*  m_pShootManual;
+    class TargetCommand* m_pTargetCommand;
 
-    TiltCommand* m_pTiltShort;
-    TiltCommand* m_pTiltMid;
-    TiltCommand* m_pTiltLong;
+    class SelectTarget* m_pSelectTargetLeft;
+    class SelectTarget* m_pSelectTargetRight;
+    class SelectTarget* m_pSelectTargetMid;
+
+    class ShootCommand* m_pShootShort;
+    class ShootCommand* m_pShootMid;
+    class ShootCommand* m_pShootLong;
+
+    class ShootManual*  m_pShootManual;
+
+    class TiltCommand* m_pTiltShort;
+    class TiltCommand* m_pTiltMid;
+    class TiltCommand* m_pTiltLong;
+
+    // climber
+    class ClimbCommand* m_pClimbCommand;
+
+    // reset (for pit use!)
+    class ResetRobot* m_pResetRobot;
 
 public:
     OI();
+    ~OI();
     void Initialize();
-    DriverStation *getDS() { return m_pDS; }
-    Joystick* getStick() { return m_pStick; }
-    DriverStationEnhancedIO* getEIO() { return m_pEIO; }
-    DriverStationLCD* getLCD() { return m_pLCD; }
-    int getTarget() { return m_pShooterTarget->GetDigital(3); }
-    double getSpeedAdjust() { return m_pSpeedAdjust->GetAnalog(); }
-    void setReadyLED( bool value ) { m_pReadyLED->Set(value); }
-    bool getLaunch() { return m_pLaunch->Get(); }
+    DriverStation *GetDS() { return m_pDS; }
+    Joystick* GetStick() { return m_pStick; }
+    DriverStationEnhancedIO* GetEIO() { return m_pEIO; }
+    DriverStationLCD* GetLCD() { return m_pLCD; }
+    bool GetTip() { return (m_pTip->GetDigital(2) != 0); }
+    bool GetDump() { return m_pDump->Get(); }
+    int GetClimber() { return m_pClimber->GetDigital(3); }
+    int GetTarget() { return m_pShooterTarget->GetDigital(3); }
+    double GetSpeedAdjust() { return m_pSpeedAdjust->GetAnalog(); }
+    void SetReadyLED( bool value ) { m_pReadyLED->Set(value); }
+    bool GetLaunch() { return m_pLaunch->Get(); }
 };
 
 #endif
