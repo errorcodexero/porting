@@ -53,7 +53,7 @@ void NetworkTable::SetTableProvider(NetworkTableProvider* provider){
 
 void NetworkTable::SetClientMode(){
 	CheckInit();
-	mode = &NetworkTableMode::Client;
+	mode = &NetworkTableMode::Server;
 }
 
 void NetworkTable::SetServerMode(){
