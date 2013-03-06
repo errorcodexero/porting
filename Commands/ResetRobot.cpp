@@ -26,6 +26,7 @@ void ResetRobot::Initialize()
     Robot::climber()->SetHooks(Climber::kDown);
     Robot::shooter()->SetAngle(Shooter::kShort);
     Robot::shooter()->SetSpeed(0.0);
+    Robot::shooter()->SetInjector(true);
     Robot::shooter()->Start();
 }
 

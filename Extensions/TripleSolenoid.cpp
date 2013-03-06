@@ -10,7 +10,7 @@
 const double TripleSolenoid::kPollInterval = 0.053;
 
 // end-to-end travel time
-const double TripleSolenoid::kTravelTime = 4.00;
+const double TripleSolenoid::kTravelTime = 2.00;
 
 TripleSolenoid::TripleSolenoid( int forwardChannel,
 			        int reverseChannel,
@@ -24,9 +24,9 @@ TripleSolenoid::TripleSolenoid( int forwardChannel,
     m_position = kUnknown;
     m_direction = DoubleSolenoid::kOff;
     m_howLong = 0;
-    SmartDashboard::PutNumber("position time", 0.0);
+    SmartDashboard::PutNumber("position direction", (double)m_direction);
+    SmartDashboard::PutNumber("position time", (double)m_howLong);
     SmartDashboard::PutBoolean("position center", false);
-    SmartDashboard::PutNumber("position direction", 0.0);
 }
 
 TripleSolenoid::~TripleSolenoid()

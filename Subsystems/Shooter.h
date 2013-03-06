@@ -9,8 +9,8 @@
 
 class Shooter : public Subsystem {
 public:
-    Shooter( int motorChannel, int positionerChannel, int switchChannel,
-    		int injectorChannel );
+    Shooter( int motorChannel, int positionerChannel,
+    	     int switchChannel, int injectorChannel );
     ~Shooter();
 
     enum TargetDistance {
@@ -49,7 +49,7 @@ private:
     TripleSolenoid *m_positioner;
     TargetDistance m_distance;
 
-    Solenoid *m_injector;
+    DoubleSolenoid *m_injector;
 
     Notifier* m_notifier;
 

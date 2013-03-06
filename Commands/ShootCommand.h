@@ -10,11 +10,12 @@
 class ShootCommand: public Command {
 private:
     Shooter::TargetDistance m_targetDistance;
+    int m_numDisks;
     int m_launched;
 
 public:
-    ShootCommand( Shooter::TargetDistance targetDistance
-		    = Shooter::kUnknown );
+    ShootCommand( Shooter::TargetDistance targetDistance = Shooter::kUnknown,
+    		  int num_disks = 45 );
     int GetLaunched();
     virtual void Initialize();
     virtual void Execute();

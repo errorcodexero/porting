@@ -61,7 +61,7 @@ Shooter::Shooter( int motorChannel, int positionerChannel, int switchChannel,
     m_injectCounter = 0;
     m_injectTime = 2.2; // time for full travel
     SmartDashboard::PutNumber("Shooter Injection Time", m_injectTime);
-    m_injector = new Solenoid( injectorChannel );
+    m_injector = new DoubleSolenoid( injectorChannel, injectorChannel+1 );
     lw->AddActuator("Shooter", "Injector", m_injector);
     SmartDashboard::PutBoolean("Shooter Active", false);
 
@@ -174,8 +174,8 @@ void Shooter::Stop()
     // stop positioner
     m_positioner->Stop();
 
-    // reset injector
-    m_injector->Set(true);
+    // stop injector
+    m_injector->Set( DoubleSolenoid::kOff );
 
     // not running any more!
     m_timeAtSpeed = 0;
@@ -190,15 +190,23 @@ void Shooter::TimerEvent( void *param )
 
 void Shooter::Run()
 {
-    if (!m_injector->Get()) {
+    switch (m_injector->Get()) {
+    case DoubleSolenoid::kReverse:
 	m_injectTime = (int)SmartDashboard::GetNumber("Shooter Injection Time");
 	if (++m_injectCounter * kPollInterval >= m_injectTime) {
-	    m_injector->Set(true);
+	    m_injector->Set(DoubleSolenoid::kForward);
 	}
-    } else if (m_injectCounter) {
-	if (--m_injectCounter == 0) {
-	    SmartDashboard::PutBoolean("Shooter Active", false);
+	break;
+    case DoubleSolenoid::kForward:
+	if (m_injectCounter) {
+	    if (--m_injectCounter == 0) {
+		m_injector->Set(DoubleSolenoid::kOff);
+		SmartDashboard::PutBoolean("Shooter Active", false);
+	    }
 	}
+	break;
+    case DoubleSolenoid::kOff:
+	break;
     }
 
     m_speed = SmartDashboard::GetNumber("Shooter Speed");
@@ -310,16 +318,17 @@ bool Shooter::IsReadyToShoot()
  */
 void Shooter::Inject()
 {
-    m_injector->Set(false);
+    m_injector->Set( DoubleSolenoid::kReverse );
     SmartDashboard::PutBoolean("Shooter Active", true);
     m_injectCounter++;
     SmartDashboard::PutBoolean("Shooter Ready", false);
 }
 
 /*
- * Current setup false is the inject position (retracted), true is the ready (extended) position
+ * false is the ready (extended) position,
+ * true is the inject (retracted) position
  */
 void Shooter::SetInjector( bool state )
 {
-	m_injector->Set(state);
+    m_injector->Set(state ? DoubleSolenoid::kReverse : DoubleSolenoid::kForward );
 }

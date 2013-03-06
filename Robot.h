@@ -80,18 +80,19 @@ class OI;
 #define SOLENOID_SHOOTER_EXTEND		3
 #define SOLENOID_SHOOTER_RETRACT	4
 
-// 5 - shooter injector
-//     false = retract (idle)
-//     true  = extend (to let a disk drop into firing position)
+// 5,6 - shooter injector
+//     5 = extend (to let a disk drop into firing position)
+//     6 = retract (idle)
 
-#define SOLENOID_SHOOTER_INJECT		5
+#define SOLENOID_SHOOTER_LOAD		5
+#define SOLENOID_SHOOTER_SHOOT		6
 
-// 6,7 - climber claw
-//     6 = retract (close)
-//     7 = extend (open)
+// 7,8 - climber claw
+//     7 = extend (close)
+//     8 = retract (open)
 
-#define	SOLENOID_CLIMBER_CLAW_CLOSE	6
-#define	SOLENOID_CLIMBER_CLAW_OPEN	7
+#define	SOLENOID_CLIMBER_CLAW_CLOSE	7
+#define	SOLENOID_CLIMBER_CLAW_OPEN	8
 
 ////////////////////////////////////////////////////////////////////
 // PWM Outputs:
@@ -123,7 +124,7 @@ class OI;
 ////////////////////////////////////////////////////////////////////
 
 #define	SPEED_SHORT	1600	// shooting at tower from base of tower
-#define	SPEED_MID	2800	// shooting at high goal from back of tower
+#define	SPEED_MID	2500	// shooting at high goal from back of tower
 #define	SPEED_LONG	3200	// shooting at high goal from feeder station
 
 ////////////////////////////////////////////////////////////////////
