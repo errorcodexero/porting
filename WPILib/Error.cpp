@@ -77,6 +77,7 @@ void Error::Report()
     // Error string buffers
     char *error = new char[256];
     char *error_with_code = new char[256];
+    static char last_error[256];
 
     // Build error strings
     if (m_code != -1)
@@ -98,7 +99,10 @@ void Error::Report()
     delete [] error_with_code;
 
     // Print to console
-    printf("\n\n>>>>%s", error);
+    if (strncmp(error, last_error, 256) != 0) {
+	printf("\n\n>>>>%s", error);
+	strncpy(last_error, error, 256);
+    }
 
     delete [] error;
 
