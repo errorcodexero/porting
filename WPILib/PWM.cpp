@@ -261,7 +261,11 @@ float PWM::GetSpeed()
 {
     if (StatusIsFatal()) return 0.0;
     INT32 value = GetRaw();
-    if (value > GetMaxPositivePwm())
+    if (value == kPwmDisabled)
+    {
+	return 0.0;
+    }
+    else if (value > GetMaxPositivePwm())
     {
 	return 1.0;
     }
