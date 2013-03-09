@@ -22,9 +22,16 @@ void ClimbManual::Initialize()
 void ClimbManual::Execute()
 {
     // The OI "tip" switch controls the extender.
-    Robot::climber()->SetExtender(
-	Robot::oi()->GetTip() ? Climber::kExtended : Climber::kRetracted
-    );
+    switch (Robot::oi()->GetTip()) {
+    case 0:
+	Robot::climber()->SetExtender(Climber::kRetracted);
+	break;
+    case 1:
+	break;
+    case 2:
+	Robot::climber()->SetExtender(Climber::kExtended);
+	break;
+    }
 
     // The OI "dump" switch controls the claw.
     Robot::climber()->SetClaw(

@@ -151,7 +151,7 @@ public:
     Joystick* GetStick() { return m_pStick; }
     DriverStationEnhancedIO* GetEIO() { return m_pEIO; }
     DriverStationLCD* GetLCD() { return m_pLCD; }
-    bool GetTip() { return (m_pTip->GetDigital(2) != 0); }
+    int GetTip() { return m_pTip->GetDigital(2); }
     bool GetDump() { return m_pDump->Get(); }
     int GetClimber() { return m_pClimber->GetDigital(3); }
     int GetTarget() { return m_pShooterTarget->GetDigital(3); }
