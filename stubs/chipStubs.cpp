@@ -4,6 +4,8 @@
 #include "DigitalModule.h"  // for kExpectedLoopTiming
 #include "NetworkCommunication/LoadOut.h"
 #include "Synchronized.h"
+#include <sys/time.h>
+#include <signal.h>
 #include <string.h>
 
 bool nLoadOut::getModulePresence(
@@ -113,7 +115,9 @@ public:
     }
     virtual unsigned int readLocalTime(tRioStatusCode *status) {
 	*status = 0;
-	return time(0) * 1000000U;
+	timespec ts;
+	clock_gettime(CLOCK_REALTIME, &ts);
+	return ((ts.tv_sec * 1000000U) + (ts.tv_nsec / 1000U));
     }
     virtual unsigned int readRevision(tRioStatusCode *status) {
 	*status = 0;
@@ -374,12 +378,12 @@ public:
 	return m_oversampleBits[bitfield_index];
     }
     virtual void writeReadSelect(tAI::tReadSelect value, tRioStatusCode *status) {
-	if (m_readSelect.value != value.value) {
-	    printf("FPGA analog in %u readSelect was 0x%02x changed to 0x%02x"
-	    	   " (Module %u Channel %u Averaged %c)\n",
-	      m_index, m_readSelect.value, value.value,
-	      value.Module, value.Channel, value.Averaged ? 't' : 'f');
-	}
+//	if (m_readSelect.value != value.value) {
+//	    printf("FPGA analog in %u readSelect was 0x%02x changed to 0x%02x"
+//	    	   " (Module %u Channel %u Averaged %c)\n",
+//	      m_index, m_readSelect.value, value.value,
+//	      value.Module, value.Channel, value.Averaged ? 't' : 'f');
+//	}
 	m_readSelect = value;
 	*status = 0;
     }
@@ -928,6 +932,7 @@ public:
 	    return;
 	}
 	if (m_pwmValueRegisters[reg_index] != value) {
+if (m_index != 0 || reg_index != 0)
 	    printf("FPGA %u PWM %u value was %u changed to %u\n",
 	    	m_index, reg_index, m_pwmValueRegisters[reg_index], value);
 	}
@@ -1168,6 +1173,16 @@ NiFpga_Status tSystem::NiFpgaLv_SharedOpen( const char* const bitfile,
 uint32_t tInterruptManager::_globalInterruptMask = 0;
 SEM_ID tInterruptManager::_globalInterruptMaskSemaphore = NULL;
 
+static tInterruptManager* globalTimerInterruptManager = NULL;
+
+static void globalTimerInterruptHandler( int sig )
+{
+    if (globalTimerInterruptManager) {
+	tInterruptManager::handlerWrapper( globalTimerInterruptManager );
+    }
+}
+
+
 tInterruptManager::tInterruptManager( uint32_t interruptMask,
 				      bool watcher,
 				      tRioStatusCode *status )
@@ -1184,14 +1199,6 @@ tInterruptManager::tInterruptManager( uint32_t interruptMask,
     _rioContext = 0;
     _watcher = watcher;
     _enabled = false;
-    {
-	Synchronized sync(_globalInterruptMaskSemaphore);
-	if (_enabled) {
-	    _globalInterruptMask |= _interruptMask;
-	} else {
-	    _globalInterruptMask &= ~_interruptMask;
-	}
-    }
     *status = 0;
 }
 
@@ -1217,6 +1224,15 @@ uint32_t tInterruptManager::watch(int32_t timeoutInMs, tRioStatusCode *status)
 void tInterruptManager::enable(tRioStatusCode *status)
 {
     _enabled = true;
+    {
+	Synchronized sync(_globalInterruptMaskSemaphore);
+	const UINT32 kTimerInterruptNumber = 28;
+	if (_interruptMask == (1 << kTimerInterruptNumber)) {
+	    globalTimerInterruptManager = this;
+	    signal(SIGALRM, globalTimerInterruptHandler);
+	}
+	_globalInterruptMask |= _interruptMask;
+    }
     *status = 0;
 }
 
@@ -1224,6 +1240,15 @@ void tInterruptManager::enable(tRioStatusCode *status)
 void tInterruptManager::disable(tRioStatusCode *status)
 {
     _enabled = false;
+    {
+	Synchronized sync(_globalInterruptMaskSemaphore);
+	const UINT32 kTimerInterruptNumber = 28;
+	if (_interruptMask == (1 << kTimerInterruptNumber)) {
+	    signal(SIGALRM, SIG_DFL);
+	    globalTimerInterruptManager = NULL;
+	}
+	_globalInterruptMask &= ~_interruptMask;
+    }
     *status = 0;
 }
 
@@ -1366,10 +1391,28 @@ public:
 
     virtual void writeTriggerTime(unsigned int value, tRioStatusCode *status) {
 	if (m_triggerTime != value) {
-	    printf("FPGA alarm trigger time was %u changed to %u\n",
-		    m_triggerTime, value);
+//	    printf("FPGA alarm trigger time was %u changed to %u\n",
+//		    m_triggerTime, value);
 	}
 	m_triggerTime = value;
+	if (m_enable && m_triggerTime) {
+	    struct timeval now;
+	    gettimeofday(&now, NULL);
+	    UINT32 us = m_triggerTime - (now.tv_sec * 1000000U + now.tv_usec);
+	    struct itimerval it;
+	    it.it_interval.tv_sec = 0;
+	    it.it_interval.tv_usec = 0;
+	    it.it_value.tv_sec = us / 1000000U;
+	    it.it_value.tv_usec = us % 1000000U;
+	    setitimer(ITIMER_REAL, &it, NULL);
+	} else {
+	    struct itimerval it;
+	    it.it_interval.tv_sec = 0;
+	    it.it_interval.tv_usec = 0;
+	    it.it_value.tv_sec = 0;
+	    it.it_value.tv_usec = 0;
+	    setitimer(ITIMER_REAL, &it, NULL);
+	}
 	*status = 0;
     }
     virtual unsigned int readTriggerTime(tRioStatusCode *status) {
@@ -1382,6 +1425,24 @@ public:
 	    	m_enable ? 't' : 'f', value ? 't' : 'f');
 	}
 	m_enable = value;
+	if (m_enable && m_triggerTime) {
+	    struct timeval now;
+	    gettimeofday(&now, NULL);
+	    UINT32 us = m_triggerTime - (now.tv_sec * 1000000U + now.tv_usec);
+	    struct itimerval it;
+	    it.it_interval.tv_sec = 0;
+	    it.it_interval.tv_usec = 0;
+	    it.it_value.tv_sec = us / 1000000U;
+	    it.it_value.tv_usec = us % 1000000U;
+	    setitimer(ITIMER_REAL, &it, NULL);
+	} else {
+	    struct itimerval it;
+	    it.it_interval.tv_sec = 0;
+	    it.it_interval.tv_usec = 0;
+	    it.it_value.tv_sec = 0;
+	    it.it_value.tv_usec = 0;
+	    setitimer(ITIMER_REAL, &it, NULL);
+	}
 	*status = 0;
     }
     virtual bool readEnable(tRioStatusCode *status) {

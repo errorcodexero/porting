@@ -151,6 +151,14 @@ void ErrorBase::SetError(Error::Code code, const char *contextMessage,
 void ErrorBase::SetWPIError(const char *errorMessage, const char *contextMessage,
 	const char* filename, const char* function, UINT32 lineNumber) const
 {
+#if 1 // keep things quiet while debugging other issues
+    static char lastErr[256];
+    if (strncmp(errorMessage, lastErr, 256) == 0) {
+	return;
+    }
+    strncpy(lastErr, errorMessage, 256);
+#endif
+
     char err[256];
     sprintf(err, "%s: %s", errorMessage, contextMessage);
 

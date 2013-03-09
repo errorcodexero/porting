@@ -63,7 +63,16 @@ MotorSafetyHelper::~MotorSafetyHelper()
 void MotorSafetyHelper::Feed()
 {
     Synchronized sync(m_syncMutex);
-    m_stopTime = Timer::GetFPGATimestamp() + m_expiration;
+    double now = Timer::GetFPGATimestamp();
+    if (m_enabled) {
+	double safety = m_stopTime - now;
+	if (safety < m_expiration * 0.40) {
+	    char desc[64];
+	    m_safeObject->GetDescription(desc);
+	    printf("%s... MotorSafetyHelper close call! %g\n", desc, safety);
+	}
+    }
+    m_stopTime = now + m_expiration;
 }
 
 /*

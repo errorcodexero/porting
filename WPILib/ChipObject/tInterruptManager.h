@@ -23,10 +23,9 @@ public:
    void enable(tRioStatusCode *status);
    void disable(tRioStatusCode *status);
    bool isEnabled(tRioStatusCode *status);
+   static int handlerWrapper(tInterruptManager *pInterrupt);
 private:
    void handler();
-   static int handlerWrapper(tInterruptManager *pInterrupt);
-
    void acknowledge(tRioStatusCode *status);
    void reserve(tRioStatusCode *status);
    void unreserve(tRioStatusCode *status);
