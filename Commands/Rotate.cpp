@@ -12,7 +12,8 @@
 // inputs from the SmartDashboard while TimedDrive gets them from its
 // caller.
 
-Rotate::Rotate( int direction )
+Rotate::Rotate( int direction ) :
+    Command("Rotate")
 {
     Requires(Robot::driveBase());
     m_direction = direction;

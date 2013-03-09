@@ -6,7 +6,8 @@
 #include "Shooter.h"
 #include "TiltCommand.h"
 
-TiltCommand::TiltCommand( Shooter::TargetDistance targetDistance )
+TiltCommand::TiltCommand( Shooter::TargetDistance targetDistance ) :
+    Command("TiltCommand")
 {
     Requires(Robot::shooter());
     m_targetDistance = targetDistance;

@@ -7,7 +7,8 @@
 #include "TimedDrive.h"
 #include <math.h>
 
-TimedDrive::TimedDrive( double x, double y, double t, double seconds )
+TimedDrive::TimedDrive( double x, double y, double t, double seconds ) :
+    Command("TimedDrive")
 {
     Requires(Robot::driveBase());
     m_x = x;

@@ -11,7 +11,8 @@
 #include "TargetCommand.h"
 #include "ShootCommand.h"
 
-AutoCommand::AutoCommand()
+AutoCommand::AutoCommand() :
+    CommandGroup("AutoCommand")
 {
     m_blinky = new BlinkyBreathe(3.0);
     m_tilt = new TiltCommand(Shooter::kLong);

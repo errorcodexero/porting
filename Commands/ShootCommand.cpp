@@ -7,7 +7,8 @@
 #include "ShootCommand.h"
 
 ShootCommand::ShootCommand( Shooter::TargetDistance targetDistance,
-			    int num_disks )
+			    int num_disks ) :
+    Command("ShootCommand")
 {
     Requires(Robot::shooter());
     m_targetDistance = targetDistance;

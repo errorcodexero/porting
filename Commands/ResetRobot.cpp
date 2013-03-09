@@ -8,7 +8,8 @@
 #include "Climber.h"
 #include "ResetRobot.h"
 
-ResetRobot::ResetRobot()
+ResetRobot::ResetRobot() :
+    Command("ResetRobot")
 {
     // Use Requires() here to declare subsystem dependencies
     // eg. Requires(chassis);

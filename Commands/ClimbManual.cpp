@@ -10,7 +10,8 @@
 #define	EXTEND_TIME	1.2
 #define	GRAB_TIME	1.2
 
-ClimbManual::ClimbManual()
+ClimbManual::ClimbManual() :
+    Command("ClimbManual")
 {
     Requires(Robot::climber());
 }

@@ -6,7 +6,8 @@
 #include "BlinkyLight.h"
 #include "BlinkyOn.h"
 
-BlinkyOn::BlinkyOn()
+BlinkyOn::BlinkyOn() :
+    Command("BlinkyOn")
 {
     // Use Requires() here to declare subsystem dependencies
     // eg. Requires(chassis);

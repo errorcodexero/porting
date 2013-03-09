@@ -7,7 +7,8 @@
 #include "Shooter.h"
 #include "ShootManual.h"
 
-ShootManual::ShootManual()
+ShootManual::ShootManual() :
+    Command("ShootManual")
 {
     Requires(Robot::shooter());
 }

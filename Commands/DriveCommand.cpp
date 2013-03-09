@@ -12,7 +12,8 @@ static UINT32 then;
 // Identify resources required by this command.
 // Other commands that are using these resources will be Canceled
 // when this command is Started.
-DriveCommand::DriveCommand()
+DriveCommand::DriveCommand() :
+    Command("DriveCommand")
 {
     Requires(Robot::driveBase());
 }

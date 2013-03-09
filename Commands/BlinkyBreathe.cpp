@@ -11,7 +11,8 @@
 #define	M_PI	3.1415926535
 #endif
 
-BlinkyBreathe::BlinkyBreathe( float seconds )
+BlinkyBreathe::BlinkyBreathe( float seconds ) :
+    Command("BlinkyBreathe")
 {
     // Use Requires() here to declare subsystem dependencies
     // eg. Requires(chassis);
