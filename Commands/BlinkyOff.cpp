@@ -17,6 +17,7 @@ BlinkyOff::BlinkyOff()
 void BlinkyOff::Initialize()
 {
     printf("Robot: Turn blinky light off NOW!\n");
+printf("Command BlinkyOff Initialize\n");
     Robot::blinkyLight()->Set(0.0);
 }
 
@@ -29,12 +30,14 @@ void BlinkyOff::Execute()
 // Make this return true when this Command no longer needs to run execute()
 bool BlinkyOff::IsFinished()
 {
+printf("Command BlinkyOff IsFinished\n");
     return true;
 }
 
 // Called once after isFinished returns true
 void BlinkyOff::End()
 {
+printf("Command BlinkyOff End\n");
     ;
 }
 
@@ -42,5 +45,6 @@ void BlinkyOff::End()
 // subsystems is scheduled to run
 void BlinkyOff::Interrupted()
 {
+printf("Command BlinkyOff Interrupted\n");
     ;
 }

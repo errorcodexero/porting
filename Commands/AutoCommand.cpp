@@ -32,6 +32,7 @@ AutoCommand::~AutoCommand()
 
 void AutoCommand::Initialize()
 {
+printf("Command AutoCommand Initialize\n");
 }
 
 void AutoCommand::Execute()
@@ -46,10 +47,12 @@ bool AutoCommand::IsFinished()
 
 void AutoCommand::End()
 {
+printf("Command AutoCommand End\n");
 }
 
 void AutoCommand::Interrupted()
 {
+printf("Command AutoCommand Interrupted\n");
     Robot::blinkyLight()->Set(0.0);
 }
 

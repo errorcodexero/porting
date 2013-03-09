@@ -14,6 +14,7 @@ AimTrim::AimTrim(bool left) :
 // Called just before this Command runs the first time
 void AimTrim::Initialize()
 {
+printf("Command AimTrim Initialize\n");
     double val = SmartDashboard::GetNumber("trim");
     if (m_left)
 	val -= 1;
@@ -32,12 +33,14 @@ void AimTrim::Execute()
 // Make this return true when this Command no longer needs to run execute()
 bool AimTrim::IsFinished()
 {
+printf("Command AimTrim IsFinished\n");
     return true;
 }
 
 // Called once after isFinished returns true
 void AimTrim::End()
 {
+printf("Command AimTrim End\n");
     ;
 }
 
@@ -45,5 +48,6 @@ void AimTrim::End()
 // subsystems is scheduled to run
 void AimTrim::Interrupted()
 {
+printf("Command AimTrim Interrupted\n");
     ;
 }

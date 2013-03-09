@@ -24,6 +24,7 @@ BlinkyBreathe::BlinkyBreathe( float seconds )
 // Called just before this Command runs the first time
 void BlinkyBreathe::Initialize()
 {
+printf("Command BlinkyBreathe Initialize\n");
     m_startTime = Timer::GetFPGATimestamp();
     Robot::blinkyLight()->Set(0.0);
 }
@@ -46,12 +47,13 @@ bool BlinkyBreathe::IsFinished()
 // Called once after isFinished returns true
 void BlinkyBreathe::End()
 {
-    ;
+printf("Command BlinkyBreathe End\n");
 }
 
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
 void BlinkyBreathe::Interrupted()
 {
+printf("Command BlinkyBreathe Interrupted\n");
     Robot::blinkyLight()->Set(0.0);
 }

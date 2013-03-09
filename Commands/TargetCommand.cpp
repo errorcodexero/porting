@@ -89,7 +89,7 @@ TargetCommand::TargetCommand() : TimedDrive()
 // Called just before this Command runs the first time
 void TargetCommand::Initialize()
 {
-    printf("TargetCommand::Initialize\n");
+printf("Command TargetCommand Initialize\n");
 
     m_cameraFrame = -1;
     // m_tgtHeight = 0;
@@ -115,6 +115,7 @@ void TargetCommand::Initialize()
 // Called once after IsFinished returns true
 void TargetCommand::End() 
 {
+printf("Command TargetCommand End\n");
     ReadCamera();  // one last time, just to report 
 
     int aimFrames = m_cameraFrame - m_cameraStartFrame;
@@ -129,5 +130,5 @@ void TargetCommand::End()
 // subsystems is scheduled to run
 void TargetCommand::Interrupted()
 {
-    printf("TargetCommand::Interrupted\n");
+printf("Command TargetCommand Interrupted\n");
 }

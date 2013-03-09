@@ -17,6 +17,7 @@ ClimbCommand::ClimbCommand()
 
 void ClimbCommand::Initialize()
 {
+printf("Command ClimbCommand Initialize\n");
     Robot::climber()->SetClaw(Climber::kOpen);
     Robot::climber()->SetExtender(Climber::kRetracted);
     m_state = 0;
@@ -183,12 +184,12 @@ bool ClimbCommand::IsFinished()
 
 void ClimbCommand::End()
 {
-    ;
+printf("Command ClimbCommand End\n");
 }
 
 void ClimbCommand::Interrupted()
 {
-    ;
+printf("Command ClimbCommand Interrupted\n");
 }
 
 

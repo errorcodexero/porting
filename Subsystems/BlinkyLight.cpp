@@ -3,6 +3,7 @@
 
 #include "Robot.h"
 #include "BlinkyLight.h"
+#include "BlinkyOn.h"
 
 BlinkyLight::BlinkyLight( int pwmChannel )
     : Subsystem("BlinkyLight")
@@ -16,7 +17,7 @@ BlinkyLight::BlinkyLight( int pwmChannel )
     
 void BlinkyLight::InitDefaultCommand()
 {
-    // SetDefaultCommand(new BlinkyOff());
+    // SetDefaultCommand(new BlinkyOn());
 }
 
 // Put methods for controlling this subsystem

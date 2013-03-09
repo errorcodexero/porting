@@ -66,10 +66,17 @@ void DriveBase::InitDefaultCommand()
 
 void DriveBase::Stop()
 {
-    // printf("DriveBase::Stop\n");
+printf("DriveBase::Stop\n");
 
     // stop and disable all motors
+#if 0
+    // Disabling the PWM outputs is confusing because it looks like
+    // the controllers are disconnected (blinking).  Just set the
+    // outputs to zero instead.
+    m_drive3->SetLeftRightMotorOutputs(0.0, 0.0);
+#else
     m_drive3->StopMotor();
+#endif
     // watchdogs not needed while stopped
     m_drive3->SetSafetyEnabled(false);
     dynamic_cast<MotorSafety*>(m_rear)->SetSafetyEnabled(false);
@@ -82,7 +89,7 @@ void DriveBase::Stop()
 void DriveBase::Start()
 {
     if (!m_started) {
-	// printf("DriveBase::Start\n");
+printf("DriveBase::Start\n");
 	// set all motors to 0.0 in order to feed their watchdogs
 	m_drive3->SetLeftRightMotorOutputs(0.0, 0.0);
 	// now enable the watchdogs

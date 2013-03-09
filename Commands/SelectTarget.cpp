@@ -14,6 +14,7 @@ SelectTarget::SelectTarget(const char* targetName) :
 // Called just before this Command runs the first time
 void SelectTarget::Initialize()
 {
+printf("Command SelectTarget Initialize\n");
     SmartDashboard::PutString("targetSelection", m_targetName);
 }
 
@@ -26,18 +27,19 @@ void SelectTarget::Execute()
 // Make this return true when this Command no longer needs to run execute()
 bool SelectTarget::IsFinished()
 {
+printf("Command SelectTarget IsFinished\n");
     return true;
 }
 
 // Called once after isFinished returns true
 void SelectTarget::End()
 {
-    ;
+printf("Command SelectTarget End\n");
 }
 
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
 void SelectTarget::Interrupted()
 {
-    ;
+printf("Command SelectTarget Interrupted\n");
 }

@@ -30,6 +30,7 @@ Rotate::Rotate( int direction )
 // Called just before this Command runs the first time
 void Rotate::Initialize()
 {
+printf("Command Rotate Initialize\n");
     m_x = SmartDashboard::GetNumber("Rotate X") * m_direction;
     m_y = SmartDashboard::GetNumber("Rotate Y") * m_direction;
     m_t = SmartDashboard::GetNumber("Rotate T") * m_direction;
@@ -58,12 +59,15 @@ void Rotate::Execute()
 // Make this return true when this Command no longer needs to run execute()
 bool Rotate::IsFinished()
 {
-    return ((Timer::GetFPGATimestamp() - m_startTime) >= m_time);
+    bool finished = ((Timer::GetFPGATimestamp() - m_startTime) >= m_time);
+if (finished) printf("Command Rotate IsFinished\n");
+    return finished;
 }
 
 // Called once after isFinished returns true
 void Rotate::End()
 {
+printf("Command Rotate End\n");
     Robot::driveBase()->Drive3(0.0, 0.0, 0.0);
 }
 
@@ -71,6 +75,6 @@ void Rotate::End()
 // subsystems is scheduled to run
 void Rotate::Interrupted()
 {
-    ;
+printf("Command Rotate Interrupted\n");
 }
 

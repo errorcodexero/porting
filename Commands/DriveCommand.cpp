@@ -14,14 +14,13 @@ static UINT32 then;
 // when this command is Started.
 DriveCommand::DriveCommand()
 {
-//  printf("DriveCommand::DriveCommand\n");
     Requires(Robot::driveBase());
 }
 
 // Called just before this Command runs the first time
 void DriveCommand::Initialize()
 {
-//  printf("DriveCommand::Initialize\n");
+printf("Command DriveCommand Initialize\n");
     then = GetFPGATime();
 }
 
@@ -53,13 +52,13 @@ bool DriveCommand::IsFinished()
 // Called once after isFinished returns true
 void DriveCommand::End()
 {
-//  printf("DriveCommand::End (can't happen)\n");
+printf("Command DriveCommand End\n");
 }
 
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
 void DriveCommand::Interrupted()
 {
-//  printf("DriveCommand::Interrupted\n");
+printf("Command DriveCommand Interrupted\n");
     Robot::driveBase()->Stop();
 }

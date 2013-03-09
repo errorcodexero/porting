@@ -673,7 +673,7 @@ public:
 
     virtual unsigned short readDI(tRioStatusCode *status) {
 	*status = 0;
-	return 0;
+	return 0xffff;
     }
 
     virtual void writePulse(unsigned short value, tRioStatusCode *status) {
