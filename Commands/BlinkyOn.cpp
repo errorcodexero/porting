@@ -18,7 +18,7 @@ BlinkyOn::BlinkyOn() :
 // Called just before this Command runs the first time
 void BlinkyOn::Initialize()
 {
-printf("Command BlinkyOn Initialize\n");
+    printf("BlinkyOn::Initialize\n");
     Robot::blinkyLight()->Set(1.0);
     m_onTimer.Reset();
 }
@@ -33,20 +33,20 @@ void BlinkyOn::Execute()
 bool BlinkyOn::IsFinished()
 {
     bool finished = (m_onTimer.Get() >= 1.0);
-if (finished) printf("Command BlinkyOn IsFinished\n");
+    if (finished) printf("BlinkyOn::IsFinished\n");
     return finished;
 }
 
 // Called once after isFinished returns true
 void BlinkyOn::End()
 {
-printf("Command BlinkyOn End\n");
+    printf("BlinkyOn::End\n");
 }
 
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
 void BlinkyOn::Interrupted()
 {
-printf("Command BlinkyOn Interrupted\n");
+    printf("BlinkyOn::Interrupted\n");
     ;
 }

@@ -21,7 +21,7 @@ DriveCommand::DriveCommand() :
 // Called just before this Command runs the first time
 void DriveCommand::Initialize()
 {
-printf("Command DriveCommand Initialize\n");
+    printf("DriveCommand::Initialize\n");
     then = GetFPGATime();
 }
 
@@ -53,13 +53,13 @@ bool DriveCommand::IsFinished()
 // Called once after isFinished returns true
 void DriveCommand::End()
 {
-printf("Command DriveCommand End\n");
+    printf("DriveCommand::End\n");
 }
 
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
 void DriveCommand::Interrupted()
 {
-printf("Command DriveCommand Interrupted\n");
+    printf("DriveCommand::Interrupted\n");
     Robot::driveBase()->Stop();
 }

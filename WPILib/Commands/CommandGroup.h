@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -26,46 +26,46 @@
  *
  * <p>CommandGroups can also execute commands in parallel, simply by adding them
  * using {@link CommandGroup#AddParallel(Command) AddParallel(...)}.</p>
- * 
+ *
  * @see Command
  * @see Subsystem
  */
 class CommandGroup : public Command
 {
 public:
-	CommandGroup();
-	CommandGroup(const char *name);
-	virtual ~CommandGroup();
-	
-	void AddSequential(Command *command);
-	void AddSequential(Command *command, double timeout);
-	void AddParallel(Command *command);
-	void AddParallel(Command *command, double timeout);
-	bool IsInterruptible();
-	int GetSize();
+    CommandGroup();
+    CommandGroup(const char *name);
+    virtual ~CommandGroup();
+
+    void AddSequential(Command *command);
+    void AddSequential(Command *command, double timeout);
+    void AddParallel(Command *command);
+    void AddParallel(Command *command, double timeout);
+    bool IsInterruptible();
+    int GetSize();
 
 protected:
-	virtual void Initialize();
-	virtual void Execute();
-	virtual bool IsFinished();
-	virtual void End();
-	virtual void Interrupted();
-	virtual void _Initialize();
-	virtual void _Interrupted();
-	virtual void _Execute();
-	virtual void _End();
+    virtual void Initialize();
+    virtual void Execute();
+    virtual bool IsFinished();
+    virtual void End();
+    virtual void Interrupted();
+    virtual void _Initialize();
+    virtual void _Interrupted();
+    virtual void _Execute();
+    virtual void _End();
 
 private:
-	void CancelConflicts(Command *command);
+    void CancelConflicts(Command *command);
 
-	typedef std::vector<CommandGroupEntry> CommandVector;
-	/** The commands in this group (stored in entries) */
-	CommandVector m_commands;
-	typedef std::list<CommandGroupEntry> CommandList;
-	/** The active children in this group (stored in entries) */
-	CommandList m_children;
-	/** The current command, -1 signifies that none have been run */
-	int m_currentCommandIndex;
+    typedef std::vector<CommandGroupEntry> CommandVector;
+    /** The commands in this group (stored in entries) */
+    CommandVector m_commands;
+    typedef std::list<CommandGroupEntry> CommandList;
+    /** The active children in this group (stored in entries) */
+    CommandList m_children;
+    /** The current command, -1 signifies that none have been run */
+    int m_currentCommandIndex;
 };
 
 #endif

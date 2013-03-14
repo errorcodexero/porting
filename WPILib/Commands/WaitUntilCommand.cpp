@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -15,13 +15,13 @@
  * @see CommandGroup
  */
 WaitUntilCommand::WaitUntilCommand(double time) :
-	Command("WaitUntilCommand", time)
+    Command("WaitUntilCommand", time)
 {
     m_time = time;
 }
 
 WaitUntilCommand::WaitUntilCommand(const char *name, double time) :
-	Command(name, time)
+    Command(name, time)
 {
     m_time = time;
 }

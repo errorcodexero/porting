@@ -29,8 +29,8 @@ SOURCES := \
 	Subsystems/BlinkyLight.cpp \
 	Subsystems/Climber.cpp \
 	Subsystems/DriveBase.cpp \
-	Subsystems/RateGyro.cpp \
 	Subsystems/Shooter.cpp \
+	Extensions/RateGyro.cpp \
 	Extensions/RobotDrive3.cpp \
 	Extensions/TripleSolenoid.cpp
 

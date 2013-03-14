@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -15,9 +15,9 @@ class Command;
 class PressedButtonScheduler : public ButtonScheduler
 {
 public:
-	PressedButtonScheduler(bool last, Trigger *button, Command *orders);
-	virtual ~PressedButtonScheduler() {}
-	virtual void Execute();
+    PressedButtonScheduler(bool last, Trigger *button, Command *orders);
+    virtual ~PressedButtonScheduler() {}
+    virtual void Execute();
 };
 
 #endif

@@ -18,7 +18,7 @@ ClimbManual::ClimbManual() :
 
 void ClimbManual::Initialize()
 {
-printf("Command ClimbManual Initialize\n");
+    printf("ClimbManual::Initialize\n");
 }
 
 void ClimbManual::Execute()
@@ -64,12 +64,12 @@ bool ClimbManual::IsFinished()
 
 void ClimbManual::End()
 {
-printf("Command ClimbManual End\n");
+    printf("ClimbManual::End\n");
 }
 
 void ClimbManual::Interrupted()
 {
-printf("Command ClimbManual Interrupted\n");
+    printf("ClimbManual::Interrupted\n");
 }
 
 

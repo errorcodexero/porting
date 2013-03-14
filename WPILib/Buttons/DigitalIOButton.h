@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -12,15 +12,15 @@
 class DigitalIOButton: public Button
 {
 public:
-	static const bool kActiveState;
+    static const bool kActiveState;
 
-	DigitalIOButton(int port);
-	virtual ~DigitalIOButton() {}
+    DigitalIOButton(int port);
+    virtual ~DigitalIOButton() {}
 
-	virtual bool Get();
+    virtual bool Get();
 
 private:
-	int m_port;
+    int m_port;
 };
 
 #endif

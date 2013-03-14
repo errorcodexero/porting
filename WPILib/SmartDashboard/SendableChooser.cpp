@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -15,7 +15,7 @@ static const char *kSelected = "selected";
 
 SendableChooser::SendableChooser()
 {
-	m_defaultChoice = "";
+    m_defaultChoice = "";
 }
 
 /**
@@ -26,7 +26,7 @@ SendableChooser::SendableChooser()
  */
 void SendableChooser::AddObject(const char *name, void *object)
 {
-	m_choices[name] = object;
+    m_choices[name] = object;
 }
 
 /**
@@ -38,8 +38,8 @@ void SendableChooser::AddObject(const char *name, void *object)
  */
 void SendableChooser::AddDefault(const char *name, void *object)
 {
-	m_defaultChoice = name;
-	AddObject(name, object);
+    m_defaultChoice = name;
+    AddObject(name, object);
 }
 
 /**
@@ -49,30 +49,30 @@ void SendableChooser::AddDefault(const char *name, void *object)
  */
 void *SendableChooser::GetSelected()
 {
-	std::string selected = m_table->GetString(kSelected, m_defaultChoice);
-	if (selected == "")
-		return NULL;
-	else
-		return m_choices[selected];
+    std::string selected = m_table->GetString(kSelected, m_defaultChoice);
+    if (selected == "")
+	return NULL;
+    else
+	return m_choices[selected];
 }
 
 void SendableChooser::InitTable(ITable* subtable) {
-	StringArray keys;
-	m_table = subtable;
-	if (m_table != NULL) {
-		std::map<std::string, void *>::iterator iter;
-		for (iter = m_choices.begin(); iter != m_choices.end(); iter++) {
-			keys.add(iter->first);
-		}
-		m_table->PutValue(kOptions, keys);
-		m_table->PutString(kDefault, m_defaultChoice);
+    StringArray keys;
+    m_table = subtable;
+    if (m_table != NULL) {
+	std::map<std::string, void *>::iterator iter;
+	for (iter = m_choices.begin(); iter != m_choices.end(); iter++) {
+	    keys.add(iter->first);
 	}
+	m_table->PutValue(kOptions, keys);
+	m_table->PutString(kDefault, m_defaultChoice);
+    }
 }
 
 ITable* SendableChooser::GetTable() {
-	return m_table;
+    return m_table;
 }
 
 std::string SendableChooser::GetSmartDashboardType() {
-	return "String Chooser";
+    return "String Chooser";
 }

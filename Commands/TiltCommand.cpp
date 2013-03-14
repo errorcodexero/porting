@@ -17,7 +17,7 @@ TiltCommand::TiltCommand( Shooter::TargetDistance targetDistance ) :
 
 void TiltCommand::Initialize()
 {
-printf("Command TiltCommand Initialize\n");
+    printf("TiltCommand::Initialize\n");
     m_currentDistance = Robot::shooter()->GetAngle();
     
     switch(m_targetDistance) {
@@ -62,18 +62,18 @@ bool TiltCommand::IsFinished()
 	Robot::shooter()->SetAngle(m_targetDistance);
 	isInPosition = false;
     }
-if (isInPosition) printf("Command TiltCommand IsFinished\n");
+    if (isInPosition) printf("TiltCommand::IsFinished\n");
     return isInPosition;
 }
 
 void TiltCommand::End()
 {
-printf("Command TiltCommand End\n");
+    printf("TiltCommand::End\n");
     Robot::shooter()->Stop();
 }
 
 void TiltCommand::Interrupted()
 {
-printf("Command TiltCommand Interrupted\n");
+    printf("TiltCommand::Interrupted\n");
     Robot::shooter()->Stop();
 }

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -12,7 +12,7 @@
  */
 CommandGroup::CommandGroup()
 {
-	m_currentCommandIndex = -1;
+    m_currentCommandIndex = -1;
 }
 
 /**
@@ -20,9 +20,9 @@ CommandGroup::CommandGroup()
  * @param name the name for this command group
  */
 CommandGroup::CommandGroup(const char *name) :
-	Command(name)
+    Command(name)
 {
-	m_currentCommandIndex = -1;
+    m_currentCommandIndex = -1;
 }
 
 CommandGroup::~CommandGroup()
@@ -38,27 +38,27 @@ CommandGroup::~CommandGroup()
  * being added to a group.</p>
  *
  * <p>It is recommended that this method be called in the constructor.</p>
- * 
+ *
  * @param command The {@link Command Command} to be added
  */
 void CommandGroup::AddSequential(Command *command)
 {
-	if (command == NULL)
-	{
-		wpi_setWPIErrorWithContext(NullParameter, "command");
-		return;
-	}
-	if (!AssertUnlocked("Cannot add new command to command group"))
-		return;
+    if (command == NULL)
+    {
+	wpi_setWPIErrorWithContext(NullParameter, "command");
+	return;
+    }
+    if (!AssertUnlocked("Cannot add new command to command group"))
+	return;
 
-	command->SetParent(this);
+    command->SetParent(this);
 
-	m_commands.push_back(CommandGroupEntry(command, CommandGroupEntry::kSequence_InSequence));
-	// Iterate through command->GetRequirements() and call Requires() on each required subsystem
-	Command::SubsystemSet requirements = command->GetRequirements();
-	Command::SubsystemSet::iterator iter = requirements.begin();
-	for (; iter != requirements.end(); iter++)
-		Requires(*iter);
+    m_commands.push_back(CommandGroupEntry(command, CommandGroupEntry::kSequence_InSequence));
+    // Iterate through command->GetRequirements() and call Requires() on each required subsystem
+    Command::SubsystemSet requirements = command->GetRequirements();
+    Command::SubsystemSet::iterator iter = requirements.begin();
+    for (; iter != requirements.end(); iter++)
+	Requires(*iter);
 }
 
 /**
@@ -80,27 +80,27 @@ void CommandGroup::AddSequential(Command *command)
  */
 void CommandGroup::AddSequential(Command *command, double timeout)
 {
-	if (command == NULL)
-	{
-		wpi_setWPIErrorWithContext(NullParameter, "command");
-		return;
-	}
-	if (!AssertUnlocked("Cannot add new command to command group"))
-		return;
-	if (timeout < 0.0)
-	{
-		wpi_setWPIErrorWithContext(ParameterOutOfRange, "timeout < 0.0");
-		return;
-	}
+    if (command == NULL)
+    {
+	wpi_setWPIErrorWithContext(NullParameter, "command");
+	return;
+    }
+    if (!AssertUnlocked("Cannot add new command to command group"))
+	return;
+    if (timeout < 0.0)
+    {
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "timeout < 0.0");
+	return;
+    }
 
-	command->SetParent(this);
+    command->SetParent(this);
 
-	m_commands.push_back(CommandGroupEntry(command, CommandGroupEntry::kSequence_InSequence, timeout));
-	// Iterate through command->GetRequirements() and call Requires() on each required subsystem
-	Command::SubsystemSet requirements = command->GetRequirements();
-	Command::SubsystemSet::iterator iter = requirements.begin();
-	for (; iter != requirements.end(); iter++)
-		Requires(*iter);
+    m_commands.push_back(CommandGroupEntry(command, CommandGroupEntry::kSequence_InSequence, timeout));
+    // Iterate through command->GetRequirements() and call Requires() on each required subsystem
+    Command::SubsystemSet requirements = command->GetRequirements();
+    Command::SubsystemSet::iterator iter = requirements.begin();
+    for (; iter != requirements.end(); iter++)
+	Requires(*iter);
 }
 
 /**
@@ -124,22 +124,22 @@ void CommandGroup::AddSequential(Command *command, double timeout)
  */
 void CommandGroup::AddParallel(Command *command)
 {
-	if (command == NULL)
-	{
-		wpi_setWPIErrorWithContext(NullParameter, "command");
-		return;
-	}
-	if (!AssertUnlocked("Cannot add new command to command group"))
-		return;
+    if (command == NULL)
+    {
+	wpi_setWPIErrorWithContext(NullParameter, "command");
+	return;
+    }
+    if (!AssertUnlocked("Cannot add new command to command group"))
+	return;
 
-	command->SetParent(this);
+    command->SetParent(this);
 
-	m_commands.push_back(CommandGroupEntry(command, CommandGroupEntry::kSequence_BranchChild));
-	// Iterate through command->GetRequirements() and call Requires() on each required subsystem
-	Command::SubsystemSet requirements = command->GetRequirements();
-	Command::SubsystemSet::iterator iter = requirements.begin();
-	for (; iter != requirements.end(); iter++)
-		Requires(*iter);
+    m_commands.push_back(CommandGroupEntry(command, CommandGroupEntry::kSequence_BranchChild));
+    // Iterate through command->GetRequirements() and call Requires() on each required subsystem
+    Command::SubsystemSet requirements = command->GetRequirements();
+    Command::SubsystemSet::iterator iter = requirements.begin();
+    for (; iter != requirements.end(); iter++)
+	Requires(*iter);
 }
 
 /**
@@ -168,140 +168,140 @@ void CommandGroup::AddParallel(Command *command)
  */
 void CommandGroup::AddParallel(Command *command, double timeout)
 {
-	if (command == NULL)
-	{
-		wpi_setWPIErrorWithContext(NullParameter, "command");
-		return;
-	}
-	if (!AssertUnlocked("Cannot add new command to command group"))
-		return;
-	if (timeout < 0.0)
-	{
-		wpi_setWPIErrorWithContext(ParameterOutOfRange, "timeout < 0.0");
-		return;
-	}
+    if (command == NULL)
+    {
+	wpi_setWPIErrorWithContext(NullParameter, "command");
+	return;
+    }
+    if (!AssertUnlocked("Cannot add new command to command group"))
+	return;
+    if (timeout < 0.0)
+    {
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "timeout < 0.0");
+	return;
+    }
 
-	command->SetParent(this);
+    command->SetParent(this);
 
-	m_commands.push_back(CommandGroupEntry(command, CommandGroupEntry::kSequence_BranchChild, timeout));
-	// Iterate through command->GetRequirements() and call Requires() on each required subsystem
-	Command::SubsystemSet requirements = command->GetRequirements();
-	Command::SubsystemSet::iterator iter = requirements.begin();
-	for (; iter != requirements.end(); iter++)
-		Requires(*iter);
+    m_commands.push_back(CommandGroupEntry(command, CommandGroupEntry::kSequence_BranchChild, timeout));
+    // Iterate through command->GetRequirements() and call Requires() on each required subsystem
+    Command::SubsystemSet requirements = command->GetRequirements();
+    Command::SubsystemSet::iterator iter = requirements.begin();
+    for (; iter != requirements.end(); iter++)
+	Requires(*iter);
 }
 
 void CommandGroup::_Initialize()
 {
-	m_currentCommandIndex = -1;
+    m_currentCommandIndex = -1;
 }
 
 void CommandGroup::_Execute()
 {
-	CommandGroupEntry entry;
-	Command *cmd = NULL;
-	bool firstRun = false;
+    CommandGroupEntry entry;
+    Command *cmd = NULL;
+    bool firstRun = false;
 
-	if (m_currentCommandIndex == -1)
+    if (m_currentCommandIndex == -1)
+    {
+	firstRun = true;
+	m_currentCommandIndex = 0;
+    }
+
+    while ((unsigned)m_currentCommandIndex < m_commands.size())
+    {
+	if (cmd != NULL)
 	{
+	    if (entry.IsTimedOut())
+		cmd->_Cancel();
+
+	    if (cmd->Run())
+	    {
+		break;
+	    }
+	    else
+	    {
+		cmd->Removed();
+		m_currentCommandIndex++;
 		firstRun = true;
-		m_currentCommandIndex = 0;
-	}
-
-	while ((unsigned)m_currentCommandIndex < m_commands.size())
-	{
-		if (cmd != NULL)
-		{
-			if (entry.IsTimedOut())
-				cmd->_Cancel();
-
-			if (cmd->Run())
-			{
-				break;
-			}
-			else
-			{
-				cmd->Removed();
-				m_currentCommandIndex++;
-				firstRun = true;
-				cmd = NULL;
-				continue;
-			}
-		}
-
-		entry = m_commands[m_currentCommandIndex];
 		cmd = NULL;
-
-		switch (entry.m_state)
-		{
-			case CommandGroupEntry::kSequence_InSequence:
-				cmd = entry.m_command;
-				if (firstRun)
-				{
-					cmd->StartRunning();
-					CancelConflicts(cmd);
-					firstRun = false;
-				}
-				break;
-
-			case CommandGroupEntry::kSequence_BranchPeer:
-				m_currentCommandIndex++;
-				entry.m_command->Start();
-				break;
-
-			case CommandGroupEntry::kSequence_BranchChild:
-				m_currentCommandIndex++;
-				CancelConflicts(entry.m_command);
-				entry.m_command->StartRunning();
-				m_children.push_back(entry);
-				break;
-		}
+		continue;
+	    }
 	}
 
-	// Run Children
-	CommandList::iterator iter = m_children.begin();
-	for (; iter != m_children.end();)
+	entry = m_commands[m_currentCommandIndex];
+	cmd = NULL;
+
+	switch (entry.m_state)
 	{
-		entry = *iter;
-		Command *child = entry.m_command;
-		if (entry.IsTimedOut())
-			child->_Cancel();
+	    case CommandGroupEntry::kSequence_InSequence:
+		cmd = entry.m_command;
+		if (firstRun)
+		{
+		    cmd->StartRunning();
+		    CancelConflicts(cmd);
+		    firstRun = false;
+		}
+		break;
 
-		if (!child->Run())
-		{
-			child->Removed();
-			iter = m_children.erase(iter);
-		}
-		else
-		{
-			iter++;
-		}
+	    case CommandGroupEntry::kSequence_BranchPeer:
+		m_currentCommandIndex++;
+		entry.m_command->Start();
+		break;
+
+	    case CommandGroupEntry::kSequence_BranchChild:
+		m_currentCommandIndex++;
+		CancelConflicts(entry.m_command);
+		entry.m_command->StartRunning();
+		m_children.push_back(entry);
+		break;
 	}
+    }
+
+    // Run Children
+    CommandList::iterator iter = m_children.begin();
+    for (; iter != m_children.end();)
+    {
+	entry = *iter;
+	Command *child = entry.m_command;
+	if (entry.IsTimedOut())
+	    child->_Cancel();
+
+	if (!child->Run())
+	{
+	    child->Removed();
+	    iter = m_children.erase(iter);
+	}
+	else
+	{
+	    iter++;
+	}
+    }
 }
 
 void CommandGroup::_End()
 {
-	// Theoretically, we don't have to check this, but we do if teams override the IsFinished method
-	if (m_currentCommandIndex != -1 && (unsigned)m_currentCommandIndex < m_commands.size())
-	{
-		Command *cmd = m_commands[m_currentCommandIndex].m_command;
-		cmd->_Cancel();
-		cmd->Removed();
-	}
+    // Theoretically, we don't have to check this, but we do if teams override the IsFinished method
+    if (m_currentCommandIndex != -1 && (unsigned)m_currentCommandIndex < m_commands.size())
+    {
+	Command *cmd = m_commands[m_currentCommandIndex].m_command;
+	cmd->_Cancel();
+	cmd->Removed();
+    }
 
-	CommandList::iterator iter = m_children.begin();
-	for (; iter != m_children.end(); iter++)
-	{
-		Command *cmd = iter->m_command;
-		cmd->_Cancel();
-		cmd->Removed();
-	}
-	m_children.clear();
+    CommandList::iterator iter = m_children.begin();
+    for (; iter != m_children.end(); iter++)
+    {
+	Command *cmd = iter->m_command;
+	cmd->_Cancel();
+	cmd->Removed();
+    }
+    m_children.clear();
 }
 
 void CommandGroup::_Interrupted()
 {
-	_End();
+    _End();
 }
 
 // Can be overwritten by teams
@@ -326,58 +326,58 @@ void CommandGroup::Interrupted()
 
 bool CommandGroup::IsFinished()
 {
-	return (unsigned)m_currentCommandIndex >= m_commands.size() && m_children.empty();
+    return (unsigned)m_currentCommandIndex >= m_commands.size() && m_children.empty();
 }
 
 bool CommandGroup::IsInterruptible()
 {
-	if (!Command::IsInterruptible())
-		return false;
+    if (!Command::IsInterruptible())
+	return false;
 
-	if (m_currentCommandIndex != -1 && (unsigned)m_currentCommandIndex < m_commands.size())
-	{
-		Command *cmd = m_commands[m_currentCommandIndex].m_command;
-		if (!cmd->IsInterruptible())
-			return false;
-	}
+    if (m_currentCommandIndex != -1 && (unsigned)m_currentCommandIndex < m_commands.size())
+    {
+	Command *cmd = m_commands[m_currentCommandIndex].m_command;
+	if (!cmd->IsInterruptible())
+	    return false;
+    }
 
-	CommandList::iterator iter = m_children.begin();
-	for (; iter != m_children.end(); iter++)
-	{
-		if (!iter->m_command->IsInterruptible())
-			return false;
-	}
+    CommandList::iterator iter = m_children.begin();
+    for (; iter != m_children.end(); iter++)
+    {
+	if (!iter->m_command->IsInterruptible())
+	    return false;
+    }
 
-	return true;
+    return true;
 }
 
 void CommandGroup::CancelConflicts(Command *command)
 {
-	CommandList::iterator childIter = m_children.begin();
-	for (; childIter != m_children.end();)
-	{
-		Command *child = childIter->m_command;
-		bool erased = false;
+    CommandList::iterator childIter = m_children.begin();
+    for (; childIter != m_children.end();)
+    {
+	Command *child = childIter->m_command;
+	bool erased = false;
 
-		Command::SubsystemSet requirements = command->GetRequirements();
-		Command::SubsystemSet::iterator requirementIter = requirements.begin();
-		for (; requirementIter != requirements.end(); requirementIter++)
-		{
-			if (child->DoesRequire(*requirementIter))
-			{
-				child->_Cancel();
-				child->Removed();
-				childIter = m_children.erase(childIter);
-				erased = true;
-				break;
-			}
-		}
-		if (!erased)
-			childIter++;
+	Command::SubsystemSet requirements = command->GetRequirements();
+	Command::SubsystemSet::iterator requirementIter = requirements.begin();
+	for (; requirementIter != requirements.end(); requirementIter++)
+	{
+	    if (child->DoesRequire(*requirementIter))
+	    {
+		child->_Cancel();
+		child->Removed();
+		childIter = m_children.erase(childIter);
+		erased = true;
+		break;
+	    }
 	}
+	if (!erased)
+	    childIter++;
+    }
 }
 
 int CommandGroup::GetSize()
 {
-	return m_children.size();
+    return m_children.size();
 }

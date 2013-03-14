@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -27,14 +27,14 @@ KinectStick::KinectStickData KinectStick::_sticks;
  */
 KinectStick::KinectStick(int id)
 {
-	if (id != 1 && id != 2)
-	{
-		wpi_setWPIErrorWithContext(ParameterOutOfRange, "KinectStick ID must be 1 or 2");
-		return;
-	}
-	m_id = id;
+    if (id != 1 && id != 2)
+    {
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "KinectStick ID must be 1 or 2");
+	return;
+    }
+    m_id = id;
 
-	nUsageReporting::report(nUsageReporting::kResourceType_KinectStick, id);
+    nUsageReporting::report(nUsageReporting::kResourceType_KinectStick, id);
 }
 
 /**
@@ -46,7 +46,7 @@ KinectStick::KinectStick(int id)
  */
 float KinectStick::GetX(JoystickHand hand)
 {
-	return GetRawAxis(Joystick::kDefaultXAxis);
+    return GetRawAxis(Joystick::kDefaultXAxis);
 }
 
 /**
@@ -57,7 +57,7 @@ float KinectStick::GetX(JoystickHand hand)
  */
 float KinectStick::GetY(JoystickHand hand)
 {
-	return GetRawAxis(Joystick::kDefaultYAxis);
+    return GetRawAxis(Joystick::kDefaultYAxis);
 }
 
 /**
@@ -69,7 +69,7 @@ float KinectStick::GetY(JoystickHand hand)
  */
 float KinectStick::GetZ()
 {
-	return GetRawAxis(Joystick::kDefaultZAxis);
+    return GetRawAxis(Joystick::kDefaultZAxis);
 }
 
 /**
@@ -80,7 +80,7 @@ float KinectStick::GetZ()
  */
 float KinectStick::GetTwist()
 {
-	return GetRawAxis(Joystick::kDefaultTwistAxis);
+    return GetRawAxis(Joystick::kDefaultTwistAxis);
 }
 
 /**
@@ -91,7 +91,7 @@ float KinectStick::GetTwist()
  */
 float KinectStick::GetThrottle()
 {
-	return GetRawAxis(Joystick::kDefaultThrottleAxis);
+    return GetRawAxis(Joystick::kDefaultThrottleAxis);
 }
 
 /**
@@ -102,11 +102,11 @@ float KinectStick::GetThrottle()
  */
 float KinectStick::GetRawAxis(UINT32 axis)
 {
-	if (StatusIsFatal()) return 0.0;
+    if (StatusIsFatal()) return 0.0;
 
-	GetData();
-	float value = ConvertRawToFloat(_sticks.formatted.rawSticks[m_id - 1].axis[axis-1]);
-	return value;
+    GetData();
+    float value = ConvertRawToFloat(_sticks.formatted.rawSticks[m_id - 1].axis[axis-1]);
+    return value;
 }
 
 /**
@@ -117,7 +117,7 @@ float KinectStick::GetRawAxis(UINT32 axis)
  */
 bool KinectStick::GetTrigger(JoystickHand hand)
 {
-	return GetRawButton(kTriggerMask);
+    return GetRawButton(kTriggerMask);
 }
 
 /**
@@ -128,7 +128,7 @@ bool KinectStick::GetTrigger(JoystickHand hand)
  */
 bool KinectStick::GetTop(JoystickHand hand)
 {
-	return GetRawButton(kTopMask);
+    return GetRawButton(kTopMask);
 }
 
 /**
@@ -139,8 +139,8 @@ bool KinectStick::GetTop(JoystickHand hand)
  */
 bool KinectStick::GetBumper(JoystickHand hand)
 {
-	// TODO: Should this even be in GenericHID?  Is 4 an appropriate mask value (button 3)?
-	return GetRawButton(4);
+    // TODO: Should this even be in GenericHID?  Is 4 an appropriate mask value (button 3)?
+    return GetRawButton(4);
 }
 
 /**
@@ -154,10 +154,10 @@ bool KinectStick::GetBumper(JoystickHand hand)
  */
 bool KinectStick::GetRawButton(UINT32 button)
 {
-	if (StatusIsFatal()) return false;
+    if (StatusIsFatal()) return false;
 
-	GetData();
-	return (_sticks.formatted.rawSticks[m_id - 1].buttons & (1 << button)) != 0;
+    GetData();
+    return (_sticks.formatted.rawSticks[m_id - 1].buttons & (1 << button)) != 0;
 }
 
 /**
@@ -165,16 +165,16 @@ bool KinectStick::GetRawButton(UINT32 button)
  */
 void KinectStick::GetData()
 {
-	UINT32 packetNumber = DriverStation::GetInstance()->GetPacketNumber();
-	if (_recentPacketNumber != packetNumber)
+    UINT32 packetNumber = DriverStation::GetInstance()->GetPacketNumber();
+    if (_recentPacketNumber != packetNumber)
+    {
+	_recentPacketNumber = packetNumber;
+	int retVal = getDynamicControlData(kJoystickBundleID, _sticks.data, sizeof(_sticks.data), 5);
+	if (retVal == 0)
 	{
-		_recentPacketNumber = packetNumber;
-		int retVal = getDynamicControlData(kJoystickBundleID, _sticks.data, sizeof(_sticks.data), 5);
-		if (retVal == 0)
-		{
-			wpi_assert(_sticks.formatted.size == sizeof(_sticks.data) - 1);
-		}
+	    wpi_assert(_sticks.formatted.size == sizeof(_sticks.data) - 1);
 	}
+    }
 }
 
 /**
@@ -183,19 +183,19 @@ void KinectStick::GetData()
  */
 float KinectStick::ConvertRawToFloat(INT8 value)
 {
-	float result;
+    float result;
 
-	if (value < 0)
-		result = ((float) value) / 128.0;
-	else
-		result = ((float) value) / 127.0;
+    if (value < 0)
+	result = ((float) value) / 128.0;
+    else
+	result = ((float) value) / 127.0;
 
-	wpi_assert(result <= 1.0 && result >= -1.0);
+    wpi_assert(result <= 1.0 && result >= -1.0);
 
-	if (result > 1.0)
-		result = 1.0;
-	else if (result < -1.0)
-		result = -1.0;
+    if (result > 1.0)
+	result = 1.0;
+    else if (result < -1.0)
+	result = -1.0;
 
-	return result;
+    return result;
 }

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -19,28 +19,28 @@ int Command::m_commandCounter = 0;
 
 void Command::InitCommand(const char *name, double timeout)
 {
-	m_commandID = m_commandCounter++;
-	m_timeout = timeout;
-	m_locked = false;
-	m_startTime = -1;
-	m_initialized = false;
-	m_running = false;
-	m_interruptible = true;
-	m_canceled = false;
-	m_runWhenDisabled = false;
-	m_parent = NULL;
-	if (name == NULL)
-	{
-		// Don't have a way to find the subclass name like java, so use the address
-		char buf[32];
-		snprintf(buf, 32, "Command_%p", this);
-		m_name = buf;
-	}
-	else
-	{
-		m_name = name;
-	}
-	m_table = NULL;	
+    m_commandID = m_commandCounter++;
+    m_timeout = timeout;
+    m_locked = false;
+    m_startTime = -1;
+    m_initialized = false;
+    m_running = false;
+    m_interruptible = true;
+    m_canceled = false;
+    m_runWhenDisabled = false;
+    m_parent = NULL;
+    if (name == NULL)
+    {
+	// Don't have a way to find the subclass name like java, so use the address
+	char buf[32];
+	snprintf(buf, 32, "Command_%p", this);
+	m_name = buf;
+    }
+    else
+    {
+	m_name = name;
+    }
+    m_table = NULL;
 }
 
 /**
@@ -49,7 +49,7 @@ void Command::InitCommand(const char *name, double timeout)
  */
 Command::Command()
 {
-	InitCommand(NULL, -1.0);
+    InitCommand(NULL, -1.0);
 }
 
 /**
@@ -58,9 +58,9 @@ Command::Command()
  */
 Command::Command(const char *name)
 {
-	if (name == NULL)
-		wpi_setWPIErrorWithContext(NullParameter, "name");
-	InitCommand(name, -1.0);
+    if (name == NULL)
+	wpi_setWPIErrorWithContext(NullParameter, "name");
+    InitCommand(name, -1.0);
 }
 
 /**
@@ -70,9 +70,9 @@ Command::Command(const char *name)
  */
 Command::Command(double timeout)
 {
-	if (timeout < 0.0)
-		wpi_setWPIErrorWithContext(ParameterOutOfRange, "timeout < 0.0");
-	InitCommand(NULL, timeout);
+    if (timeout < 0.0)
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "timeout < 0.0");
+    InitCommand(NULL, timeout);
 }
 
 /**
@@ -83,18 +83,18 @@ Command::Command(double timeout)
  */
 Command::Command(const char *name, double timeout)
 {
-	if (name == NULL)
-		wpi_setWPIErrorWithContext(NullParameter, "name");
-	if (timeout < 0.0)
-		wpi_setWPIErrorWithContext(ParameterOutOfRange, "timeout < 0.0");
-	InitCommand(name, timeout);
+    if (name == NULL)
+	wpi_setWPIErrorWithContext(NullParameter, "name");
+    if (timeout < 0.0)
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "timeout < 0.0");
+    InitCommand(name, timeout);
 }
 
 Command::~Command()
 {//TODO deal with cleaning up all listeners
-	/*if (m_table != NULL){
-		m_table->RemoveChangeListener(kRunning, this);
-	}*/
+    /*if (m_table != NULL){
+	m_table->RemoveChangeListener(kRunning, this);
+    }*/
 }
 
 /**
@@ -103,7 +103,7 @@ Command::~Command()
  * @return the ID of this command
  */
 int Command::GetID() {
-	return m_commandID;
+    return m_commandID;
 }
 
 /**
@@ -113,10 +113,10 @@ int Command::GetID() {
  */
 void Command::SetTimeout(double timeout)
 {
-	if (timeout < 0.0)
-		wpi_setWPIErrorWithContext(ParameterOutOfRange, "timeout < 0.0");
-	else
-		m_timeout = timeout;
+    if (timeout < 0.0)
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "timeout < 0.0");
+    else
+	m_timeout = timeout;
 }
 
 /**
@@ -126,10 +126,10 @@ void Command::SetTimeout(double timeout)
  */
 double Command::TimeSinceInitialized()
 {
-	if (m_startTime < 0.0)
-		return 0.0;
-	else
-		return Timer::GetFPGATimestamp() - m_startTime;
+    if (m_startTime < 0.0)
+	return 0.0;
+    else
+	return Timer::GetFPGATimestamp() - m_startTime;
 }
 
 /**
@@ -143,13 +143,13 @@ double Command::TimeSinceInitialized()
  */
 void Command::Requires(Subsystem *subsystem)
 {
-	if (!AssertUnlocked("Can not add new requirement to command"))
-		return;
+    if (!AssertUnlocked("Can not add new requirement to command"))
+	return;
 
-	if (subsystem != NULL)
-		m_requirements.insert(subsystem);
-	else
-		wpi_setWPIErrorWithContext(NullParameter, "subsystem");
+    if (subsystem != NULL)
+	m_requirements.insert(subsystem);
+    else
+	wpi_setWPIErrorWithContext(NullParameter, "subsystem");
 }
 
 /**
@@ -158,24 +158,24 @@ void Command::Requires(Subsystem *subsystem)
  */
 void Command::Removed()
 {
-	if (m_initialized)
+    if (m_initialized)
+    {
+	if (IsCanceled())
 	{
-		if (IsCanceled())
-		{
-			Interrupted();
-			_Interrupted();
-		}
-		else
-		{
-			End();
-			_End();
-		}
+	    Interrupted();
+	    _Interrupted();
 	}
-	m_initialized = false;
-	m_canceled = false;
-	m_running = false;
-	if (m_table != NULL)
-		m_table->PutBoolean(kRunning, false);
+	else
+	{
+	    End();
+	    _End();
+	}
+    }
+    m_initialized = false;
+    m_canceled = false;
+    m_running = false;
+    if (m_table != NULL)
+	m_table->PutBoolean(kRunning, false);
 }
 
 /**
@@ -185,11 +185,11 @@ void Command::Removed()
  */
 void Command::Start()
 {
-	LockChanges();
-	if (m_parent != NULL)
-		wpi_setWPIErrorWithContext(CommandIllegalUse, "Can not start a command that is part of a command group");
+    LockChanges();
+    if (m_parent != NULL)
+	wpi_setWPIErrorWithContext(CommandIllegalUse, "Can not start a command that is part of a command group");
 
-	Scheduler::GetInstance()->AddCommand(this);
+    Scheduler::GetInstance()->AddCommand(this);
 }
 
 /**
@@ -198,22 +198,22 @@ void Command::Start()
  */
 bool Command::Run()
 {
-	if (!m_runWhenDisabled && m_parent == NULL && DriverStation::GetInstance()->IsDisabled())
-		Cancel();
+    if (!m_runWhenDisabled && m_parent == NULL && DriverStation::GetInstance()->IsDisabled())
+	Cancel();
 
-	if (IsCanceled())
-		return false;
+    if (IsCanceled())
+	return false;
 
-	if (!m_initialized)
-	{
-		m_initialized = true;
-		StartTiming();
-		_Initialize();
-		Initialize();
-	}
-	_Execute();
-	Execute();
-	return !IsFinished();
+    if (!m_initialized)
+    {
+	m_initialized = true;
+	StartTiming();
+	_Initialize();
+	Initialize();
+    }
+    _Execute();
+    Execute();
+    return !IsFinished();
 }
 
 void Command::_Initialize()
@@ -239,7 +239,7 @@ void Command::_End()
  */
 void Command::StartTiming()
 {
-	m_startTime = Timer::GetFPGATimestamp();
+    m_startTime = Timer::GetFPGATimestamp();
 }
 
 /**
@@ -250,7 +250,7 @@ void Command::StartTiming()
  */
 bool Command::IsTimedOut()
 {
-	return m_timeout != -1 && TimeSinceInitialized() >= m_timeout;
+    return m_timeout != -1 && TimeSinceInitialized() >= m_timeout;
 }
 
 /**
@@ -259,7 +259,7 @@ bool Command::IsTimedOut()
  */
 Command::SubsystemSet Command::GetRequirements()
 {
-	return m_requirements;
+    return m_requirements;
 }
 
 /**
@@ -267,7 +267,7 @@ Command::SubsystemSet Command::GetRequirements()
  */
 void Command::LockChanges()
 {
-	m_locked = true;
+    m_locked = true;
 }
 
 /**
@@ -277,14 +277,14 @@ void Command::LockChanges()
  */
 bool Command::AssertUnlocked(const char *message)
 {
-	if (m_locked)
-	{
-		char buf[128];
-		snprintf(buf, 128, "%s after being started or being added to a command group", message);
-		wpi_setWPIErrorWithContext(CommandIllegalUse, buf);
-		return false;
-	}
-	return true;
+    if (m_locked)
+    {
+	char buf[128];
+	snprintf(buf, 128, "%s after being started or being added to a command group", message);
+	wpi_setWPIErrorWithContext(CommandIllegalUse, buf);
+	return false;
+    }
+    return true;
 }
 
 /**
@@ -293,23 +293,23 @@ bool Command::AssertUnlocked(const char *message)
  */
 void Command::SetParent(CommandGroup *parent)
 {
-	if (parent == NULL)
+    if (parent == NULL)
+    {
+	wpi_setWPIErrorWithContext(NullParameter, "parent");
+    }
+    else if (m_parent != NULL)
+    {
+	wpi_setWPIErrorWithContext(CommandIllegalUse, "Can not give command to a command group after already being put in a command group");
+    }
+    else
+    {
+	LockChanges();
+	m_parent = parent;
+	if (m_table != NULL)
 	{
-		wpi_setWPIErrorWithContext(NullParameter, "parent");
+	    m_table->PutBoolean(kIsParented, true);
 	}
-	else if (m_parent != NULL)
-	{
-		wpi_setWPIErrorWithContext(CommandIllegalUse, "Can not give command to a command group after already being put in a command group");
-	}
-	else
-	{
-		LockChanges();
-		m_parent = parent;
-		if (m_table != NULL)
-		{
-			m_table->PutBoolean(kIsParented, true);
-		}
-	}
+    }
 }
 
 /**
@@ -325,10 +325,10 @@ void Command::SetParent(CommandGroup *parent)
  */
 void Command::StartRunning()
 {
-	m_running = true;
-	m_startTime = -1;
-	if (m_table != NULL)
-		m_table->PutBoolean(kRunning, true);
+    m_running = true;
+    m_startTime = -1;
+    if (m_table != NULL)
+	m_table->PutBoolean(kRunning, true);
 }
 
 /**
@@ -339,7 +339,7 @@ void Command::StartRunning()
  */
 bool Command::IsRunning()
 {
-	return m_running;
+    return m_running;
 }
 
 /**
@@ -352,10 +352,10 @@ bool Command::IsRunning()
  */
 void Command::Cancel()
 {
-	if (m_parent != NULL)
-		wpi_setWPIErrorWithContext(CommandIllegalUse, "Can not cancel a command that is part of a command group");
+    if (m_parent != NULL)
+	wpi_setWPIErrorWithContext(CommandIllegalUse, "Can not cancel a command that is part of a command group");
 
-	_Cancel();
+    _Cancel();
 }
 
 /**
@@ -364,8 +364,8 @@ void Command::Cancel()
  */
 void Command::_Cancel()
 {
-	if (IsRunning())
-		m_canceled = true;
+    if (IsRunning())
+	m_canceled = true;
 }
 
 /**
@@ -374,7 +374,7 @@ void Command::_Cancel()
  */
 bool Command::IsCanceled()
 {
-	return m_canceled;
+    return m_canceled;
 }
 
 /**
@@ -383,7 +383,7 @@ bool Command::IsCanceled()
  */
 bool Command::IsInterruptible()
 {
-	return m_interruptible;
+    return m_interruptible;
 }
 
 /**
@@ -392,7 +392,7 @@ bool Command::IsInterruptible()
  */
 void Command::SetInterruptible(bool interruptible)
 {
-	m_interruptible = interruptible;
+    m_interruptible = interruptible;
 }
 
 /**
@@ -402,7 +402,7 @@ void Command::SetInterruptible(bool interruptible)
  */
 bool Command::DoesRequire(Subsystem *system)
 {
-	return m_requirements.count(system) > 0;
+    return m_requirements.count(system) > 0;
 }
 
 /**
@@ -412,7 +412,7 @@ bool Command::DoesRequire(Subsystem *system)
  */
 CommandGroup *Command::GetGroup()
 {
-	return m_parent;
+    return m_parent;
 }
 
 /**
@@ -423,7 +423,7 @@ CommandGroup *Command::GetGroup()
  */
 void Command::SetRunWhenDisabled(bool run)
 {
-	m_runWhenDisabled = run;
+    m_runWhenDisabled = run;
 }
 
 /**
@@ -432,44 +432,44 @@ void Command::SetRunWhenDisabled(bool run)
  */
 bool Command::WillRunWhenDisabled()
 {
-	return m_runWhenDisabled;
+    return m_runWhenDisabled;
 }
 
 std::string Command::GetName()
 {
-	return m_name;
+    return m_name;
 }
 
 std::string Command::GetSmartDashboardType()
 {
-	return "Command";
+    return "Command";
 }
 
 void Command::InitTable(ITable* table)
 {
     if(m_table!=NULL)
-    	m_table->RemoveTableListener(this);
+	m_table->RemoveTableListener(this);
     m_table = table;
     if(m_table!=NULL){
-    	m_table->PutString(kName, GetName());
-    	m_table->PutBoolean(kRunning, IsRunning());
-    	m_table->PutBoolean(kIsParented, m_parent != NULL);
-    	m_table->AddTableListener(kRunning, this, false);
+	m_table->PutString(kName, GetName());
+	m_table->PutBoolean(kRunning, IsRunning());
+	m_table->PutBoolean(kIsParented, m_parent != NULL);
+	m_table->AddTableListener(kRunning, this, false);
     }
 }
 
 ITable* Command::GetTable(){
-	return m_table;
+    return m_table;
 }
 
 void Command::ValueChanged(ITable* source, const std::string& key, EntryValue value, bool isNew)
 {
-	if (value.b){
-		if(!IsRunning())
-			Start();
-	}
-	else{
-		if(IsRunning())
-			Cancel();
-	}
+    if (value.b){
+	if(!IsRunning())
+	    Start();
+    }
+    else{
+	if(IsRunning())
+	    Cancel();
+    }
 }

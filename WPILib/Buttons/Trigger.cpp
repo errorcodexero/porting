@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -11,55 +11,55 @@
 #include "Buttons/ReleasedButtonScheduler.h"
 
 Trigger::Trigger() {
-	m_table = NULL;
+    m_table = NULL;
 }
 
 bool Trigger::Grab()
 {
-	if (Get())
-		return true;
-	else if (m_table != NULL)
-	{
-		//if (m_table->isConnected())//TODO is connected on button?
-			return m_table->GetBoolean("pressed");
-		/*else
-			return false;*/
-	}
-	else
-		return false;
+    if (Get())
+	return true;
+    else if (m_table != NULL)
+    {
+	//if (m_table->isConnected())//TODO is connected on button?
+	    return m_table->GetBoolean("pressed");
+	/*else
+	    return false;*/
+    }
+    else
+	return false;
 }
 
 void Trigger::WhenActive(Command *command)
 {
-	PressedButtonScheduler *pbs = new PressedButtonScheduler(Grab(), this, command);
-	pbs->Start();
+    PressedButtonScheduler *pbs = new PressedButtonScheduler(Grab(), this, command);
+    pbs->Start();
 }
 
 void Trigger::WhileActive(Command *command)
 {
-	HeldButtonScheduler *hbs = new HeldButtonScheduler(Grab(), this, command);
-	hbs->Start();
+    HeldButtonScheduler *hbs = new HeldButtonScheduler(Grab(), this, command);
+    hbs->Start();
 }
 
 void Trigger::WhenInactive(Command *command)
 {
-	ReleasedButtonScheduler *rbs = new ReleasedButtonScheduler(Grab(), this, command);
-	rbs->Start();
+    ReleasedButtonScheduler *rbs = new ReleasedButtonScheduler(Grab(), this, command);
+    rbs->Start();
 }
 
 
 
 std::string Trigger::GetSmartDashboardType(){
-	return "Button";
+    return "Button";
 }
 
 void Trigger::InitTable(ITable* table){
-	m_table = table;
-	if(m_table!=NULL){
-		m_table->PutBoolean("pressed", Get());
-	}
+    m_table = table;
+    if(m_table!=NULL){
+	m_table->PutBoolean("pressed", Get());
+    }
 }
 
 ITable* Trigger::GetTable(){
-	return m_table;
+    return m_table;
 }

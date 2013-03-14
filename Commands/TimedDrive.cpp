@@ -21,7 +21,7 @@ TimedDrive::TimedDrive( double x, double y, double t, double seconds ) :
 // Called just before this Command runs the first time
 void TimedDrive::Initialize()
 {
-printf("Command TimedDrive Initialize\n");
+    printf("TimedDrive::Initialize\n");
     m_startTime = Timer::GetFPGATimestamp();
 }
 
@@ -45,14 +45,14 @@ void TimedDrive::Execute()
 bool TimedDrive::IsFinished()
 {
     bool finished = ((Timer::GetFPGATimestamp() - m_startTime) >= m_time);
-if (finished) printf("Command TimedDrive IsFinished\n");
+    if (finished) printf("TimedDrive::IsFinished\n");
     return finished;
 }
 
 // Called once after isFinished returns true
 void TimedDrive::End()
 {
-printf("Command TimedDrive End\n");
+    printf("TimedDrive::End\n");
     Robot::driveBase()->Drive3(0.0, 0.0, 0.0);
 }
 
@@ -60,6 +60,6 @@ printf("Command TimedDrive End\n");
 // subsystems is scheduled to run
 void TimedDrive::Interrupted()
 {
-printf("Command TimedDrive Interrupted\n");
+    printf("TimedDrive::Interrupted\n");
 }
 

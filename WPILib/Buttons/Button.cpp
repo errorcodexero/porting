@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -11,7 +11,7 @@
  * @param command The pointer to the command to run
  */
 void Button::WhenPressed(Command *command) {
-	WhenActive(command);
+    WhenActive(command);
 }
 
 /**
@@ -21,7 +21,7 @@ void Button::WhenPressed(Command *command) {
  * @param command The pointer to the command to run
  */
 void Button::WhileHeld(Command *command) {
-	WhileActive(command);
+    WhileActive(command);
 }
 
 /**
@@ -30,5 +30,5 @@ void Button::WhileHeld(Command *command) {
  * @param The pointer to the command to run
  */
 void Button::WhenReleased(Command *command) {
-	WhenInactive(command);
+    WhenInactive(command);
 }

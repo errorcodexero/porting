@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -29,19 +29,19 @@ class Command;
 class Trigger : public Sendable
 {
 public:
-	Trigger();
-	virtual ~Trigger() {}
-	bool Grab();
-	virtual bool Get() = 0;
-	void WhenActive(Command *command);
-	void WhileActive(Command *command);
-	void WhenInactive(Command *command);
-	
-	virtual void InitTable(ITable* table);
-	virtual ITable* GetTable();
-	virtual std::string GetSmartDashboardType();
+    Trigger();
+    virtual ~Trigger() {}
+    bool Grab();
+    virtual bool Get() = 0;
+    void WhenActive(Command *command);
+    void WhileActive(Command *command);
+    void WhenInactive(Command *command);
+
+    virtual void InitTable(ITable* table);
+    virtual ITable* GetTable();
+    virtual std::string GetSmartDashboardType();
 protected:
-	ITable* m_table;
+    ITable* m_table;
 };
 
 #endif

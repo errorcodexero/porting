@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -27,21 +27,21 @@
 class SendableChooser : public Sendable
 {
 public:
-	SendableChooser();
-	virtual ~SendableChooser() {};
+    SendableChooser();
+    virtual ~SendableChooser() {};
 
-	void AddObject(const char *name, void *object);
-	void AddDefault(const char *name, void *object);
-	void *GetSelected();
+    void AddObject(const char *name, void *object);
+    void AddDefault(const char *name, void *object);
+    void *GetSelected();
 
-	virtual void InitTable(ITable* subtable);
-	virtual ITable* GetTable();
-	virtual std::string GetSmartDashboardType();
+    virtual void InitTable(ITable* subtable);
+    virtual ITable* GetTable();
+    virtual std::string GetSmartDashboardType();
 
 private:
-	std::string m_defaultChoice;
-	std::map<std::string, void *> m_choices;
-	ITable *m_table;
+    std::string m_defaultChoice;
+    std::map<std::string, void *> m_choices;
+    ITable *m_table;
 };
 
 #endif

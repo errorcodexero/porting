@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -15,7 +15,7 @@ ITable* SmartDashboard::m_table = NULL;
 std::map<ITable *, Sendable *> SmartDashboard::m_tablesToData;
 
 void SmartDashboard::init(){
-	m_table = NetworkTable::GetTable("SmartDashboard");
+    m_table = NetworkTable::GetTable("SmartDashboard");
 }
 
 //TODO usage reporting
@@ -29,11 +29,11 @@ void SmartDashboard::init(){
  */
 void SmartDashboard::PutData(std::string key, Sendable *data)
 {
-	if (data == NULL)
-	{
-		//TODO wpi_setWPIErrorWithContext(NullParameter, "value");
-		return;
-	}
+    if (data == NULL)
+    {
+	//TODO wpi_setWPIErrorWithContext(NullParameter, "value");
+	return;
+    }
     ITable* dataTable = m_table->GetSubTable(key);
     dataTable->PutString("~TYPE~", data->GetSmartDashboardType());
     data->InitTable(dataTable);
@@ -48,12 +48,12 @@ void SmartDashboard::PutData(std::string key, Sendable *data)
  */
 void SmartDashboard::PutData(NamedSendable *value)
 {
-	if (value == NULL)
-	{
-		//TODO wpi_setWPIErrorWithContext(NullParameter, "value");
-		return;
-	}
-	PutData(value->GetName(), value);
+    if (value == NULL)
+    {
+	//TODO wpi_setWPIErrorWithContext(NullParameter, "value");
+	return;
+    }
+    PutData(value->GetName(), value);
 }
 
 /**
@@ -63,13 +63,13 @@ void SmartDashboard::PutData(NamedSendable *value)
  */
 //TODO Sendable *SmartDashboard::GetData(std::string key)
 /*{
-	ITable* subtable = m_table->GetSubTable(keyName);
-	Sendable *data = m_tablesToData[subtable];
-	if (data == NULL)
-	{
-		wpi_setWPIErrorWithContext(SmartDashboardMissingKey, keyName);
-		return NULL;
-	}
+    ITable* subtable = m_table->GetSubTable(keyName);
+    Sendable *data = m_tablesToData[subtable];
+    if (data == NULL)
+    {
+	wpi_setWPIErrorWithContext(SmartDashboardMissingKey, keyName);
+	return NULL;
+    }
     return data;
 }*/
 
@@ -82,7 +82,7 @@ void SmartDashboard::PutData(NamedSendable *value)
  */
 void SmartDashboard::PutValue(std::string keyName, ComplexData& value)
 {
-	m_table->PutValue(keyName, value);
+    m_table->PutValue(keyName, value);
 }
 
 /**
@@ -93,7 +93,7 @@ void SmartDashboard::PutValue(std::string keyName, ComplexData& value)
  */
 void SmartDashboard::RetrieveValue(std::string keyName, ComplexData& value)
 {
-	m_table->RetrieveValue(keyName, value);
+    m_table->RetrieveValue(keyName, value);
 }
 
 /**
@@ -105,7 +105,7 @@ void SmartDashboard::RetrieveValue(std::string keyName, ComplexData& value)
  */
 void SmartDashboard::PutBoolean(std::string keyName, bool value)
 {
-	m_table->PutBoolean(keyName, value);
+    m_table->PutBoolean(keyName, value);
 }
 
 /**
@@ -115,7 +115,7 @@ void SmartDashboard::PutBoolean(std::string keyName, bool value)
  */
 bool SmartDashboard::GetBoolean(std::string keyName)
 {
-	return m_table->GetBoolean(keyName);
+    return m_table->GetBoolean(keyName);
 }
 
 /**
@@ -126,7 +126,7 @@ bool SmartDashboard::GetBoolean(std::string keyName)
  * @param value the value
  */
 void SmartDashboard::PutNumber(std::string keyName, double value){
-	m_table->PutNumber(keyName, value);
+    m_table->PutNumber(keyName, value);
 }
 
 /**
@@ -136,7 +136,7 @@ void SmartDashboard::PutNumber(std::string keyName, double value){
  */
 double SmartDashboard::GetNumber(std::string keyName)
 {
-	return m_table->GetNumber(keyName);
+    return m_table->GetNumber(keyName);
 }
 
 /**
@@ -148,7 +148,7 @@ double SmartDashboard::GetNumber(std::string keyName)
  */
 void SmartDashboard::PutString(std::string keyName, std::string value)
 {
-	m_table->PutString(keyName, value);
+    m_table->PutString(keyName, value);
 }
 
 /**
@@ -159,12 +159,12 @@ void SmartDashboard::PutString(std::string keyName, std::string value)
  * @return the length of the string
  */
 int SmartDashboard::GetString(std::string keyName, char *outBuffer, unsigned int bufferLen){
-	std::string value = m_table->GetString(keyName);
-	unsigned int i;
-	for(i = 0; i<bufferLen-1&&i<value.length(); ++i)
-		outBuffer[i] = (char)value.at(i);
-	outBuffer[i] = '\0';
-	return i;
+    std::string value = m_table->GetString(keyName);
+    unsigned int i;
+    for(i = 0; i<bufferLen-1&&i<value.length(); ++i)
+	outBuffer[i] = (char)value.at(i);
+    outBuffer[i] = '\0';
+    return i;
 }
 
 
@@ -175,5 +175,5 @@ int SmartDashboard::GetString(std::string keyName, char *outBuffer, unsigned int
  */
 std::string SmartDashboard::GetString(std::string keyName)
 {
-	return m_table->GetString(keyName);
+    return m_table->GetString(keyName);
 }

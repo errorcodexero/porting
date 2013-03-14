@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2011. All Rights Reserved.							  */
+/* Copyright (c) FIRST 2011. All Rights Reserved.			      */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in $(WIND_BASE)/WPILib.  */
 /*----------------------------------------------------------------------------*/
@@ -18,9 +18,9 @@
  * @param d the derivative value
  */
 PIDSubsystem::PIDSubsystem(const char *name, double p, double i, double d) :
-	Subsystem(name)
+    Subsystem(name)
 {
-	m_controller = new PIDController(p, i, d, this, this);
+    m_controller = new PIDController(p, i, d, this, this);
 }
 
 /**
@@ -32,9 +32,9 @@ PIDSubsystem::PIDSubsystem(const char *name, double p, double i, double d) :
  * @param f the feedforward value
  */
 PIDSubsystem::PIDSubsystem(const char *name, double p, double i, double d, double f) :
-	Subsystem(name)
+    Subsystem(name)
 {
-	m_controller = new PIDController(p, i, d, f, this, this);
+    m_controller = new PIDController(p, i, d, f, this, this);
 }
 
 /**
@@ -48,10 +48,10 @@ PIDSubsystem::PIDSubsystem(const char *name, double p, double i, double d, doubl
  * @param period the time (in seconds) between calculations
  */
 PIDSubsystem::PIDSubsystem(const char *name, double p, double i, double d, double f,
-	double period) :
-	Subsystem(name)
+    double period) :
+    Subsystem(name)
 {
-	m_controller = new PIDController(p, i, d, f, this, this, period);
+    m_controller = new PIDController(p, i, d, f, this, this, period);
 }
 
 /**
@@ -62,9 +62,9 @@ PIDSubsystem::PIDSubsystem(const char *name, double p, double i, double d, doubl
  * @param d the derivative value
  */
 PIDSubsystem::PIDSubsystem(double p, double i, double d) :
-	Subsystem("PIDSubsystem")
+    Subsystem("PIDSubsystem")
 {
-	m_controller = new PIDController(p, i, d, this, this);
+    m_controller = new PIDController(p, i, d, this, this);
 }
 
 /**
@@ -76,9 +76,9 @@ PIDSubsystem::PIDSubsystem(double p, double i, double d) :
  * @param f the feedforward value
  */
 PIDSubsystem::PIDSubsystem(double p, double i, double d, double f) :
-	Subsystem("PIDSubsystem")
+    Subsystem("PIDSubsystem")
 {
-	m_controller = new PIDController(p, i, d, f, this, this);
+    m_controller = new PIDController(p, i, d, f, this, this);
 }
 
 /**
@@ -93,14 +93,14 @@ PIDSubsystem::PIDSubsystem(double p, double i, double d, double f) :
  * @param period the time (in seconds) between calculations
  */
 PIDSubsystem::PIDSubsystem(double p, double i, double d, double f, double period) :
-	Subsystem("PIDSubsystem")
+    Subsystem("PIDSubsystem")
 {
-	m_controller = new PIDController(p, i, d, f, this, this, period);
+    m_controller = new PIDController(p, i, d, f, this, this, period);
 }
 
 PIDSubsystem::~PIDSubsystem()
 {
-	delete m_controller;
+    delete m_controller;
 }
 
 /**
@@ -108,15 +108,15 @@ PIDSubsystem::~PIDSubsystem()
  */
 void PIDSubsystem::Enable()
 {
-	m_controller->Enable();
+    m_controller->Enable();
 }
 
-/** 
+/**
   * Disables the internal {@link PIDController}
   */
 void PIDSubsystem::Disable()
 {
-	m_controller->Disable();
+    m_controller->Disable();
 }
 
 
@@ -128,7 +128,7 @@ void PIDSubsystem::Disable()
  */
 PIDController *PIDSubsystem::GetPIDController()
 {
-	return m_controller;
+    return m_controller;
 }
 
 /**
@@ -140,7 +140,7 @@ PIDController *PIDSubsystem::GetPIDController()
  */
 void PIDSubsystem::SetSetpoint(double setpoint)
 {
-	m_controller->SetSetpoint(setpoint);
+    m_controller->SetSetpoint(setpoint);
 }
 
 /**
@@ -151,7 +151,7 @@ void PIDSubsystem::SetSetpoint(double setpoint)
  */
 void PIDSubsystem::SetSetpointRelative(double deltaSetpoint)
 {
-	SetSetpoint(GetSetpoint() + deltaSetpoint);
+    SetSetpoint(GetSetpoint() + deltaSetpoint);
 }
 
 /**
@@ -160,18 +160,18 @@ void PIDSubsystem::SetSetpointRelative(double deltaSetpoint)
  */
 double PIDSubsystem::GetSetpoint()
 {
-	return m_controller->GetSetpoint();
+    return m_controller->GetSetpoint();
 }
 
 /**
  * Sets the maximum and minimum values expected from the input.
- * 
+ *
  * @param minimumInput the minimum value expected from the input
  * @param maximumInput the maximum value expected from the output
  */
 void PIDSubsystem::SetInputRange(float minimumInput, float maximumInput)
 {
-	m_controller->SetInputRange(minimumInput, maximumInput);
+    m_controller->SetInputRange(minimumInput, maximumInput);
 }
 
 /*
@@ -180,7 +180,7 @@ void PIDSubsystem::SetInputRange(float minimumInput, float maximumInput)
  * @param percentage error which is tolerable
  */
 void PIDSubsystem::SetAbsoluteTolerance(float absValue) {
-	m_controller->SetAbsoluteTolerance(absValue);
+    m_controller->SetAbsoluteTolerance(absValue);
 }
 
 /*
@@ -189,7 +189,7 @@ void PIDSubsystem::SetAbsoluteTolerance(float absValue) {
  * @param percentage error which is tolerable
  */
 void PIDSubsystem::SetPercentTolerance(float percent) {
-	m_controller->SetPercentTolerance(percent);
+    m_controller->SetPercentTolerance(percent);
 }
 
 /*
@@ -197,15 +197,15 @@ void PIDSubsystem::SetPercentTolerance(float percent) {
  * determined by SetTolerance. This asssumes that the maximum and minimum input
  * were set using SetInput. Use OnTarget() in the IsFinished() method of commands
  * that use this subsystem.
- * 
+ *
  * Currently this just reports on target as the actual value passes through the setpoint.
  * Ideally it should be based on being within the tolerance for some period of time.
- * 
+ *
  * @return true if the error is within the percentage tolerance of the input range
  */
 bool PIDSubsystem::OnTarget()
 {
-	return m_controller->OnTarget();
+    return m_controller->OnTarget();
 }
 
 /**
@@ -214,24 +214,24 @@ bool PIDSubsystem::OnTarget()
  */
 double PIDSubsystem::GetPosition()
 {
-	return ReturnPIDInput();
+    return ReturnPIDInput();
 }
 
 void PIDSubsystem::PIDWrite(float output)
 {
-	UsePIDOutput(output);
+    UsePIDOutput(output);
 }
 
 double PIDSubsystem::PIDGet()
 {
-	return ReturnPIDInput();
+    return ReturnPIDInput();
 }
 
 
 std::string PIDSubsystem::GetSmartDashboardType(){
-	return "PIDCommand";
+    return "PIDCommand";
 }
 void PIDSubsystem::InitTable(ITable* table){
-	m_controller->InitTable(table);
-	Subsystem::InitTable(table);
+    m_controller->InitTable(table);
+    Subsystem::InitTable(table);
 }

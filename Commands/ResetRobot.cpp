@@ -21,7 +21,7 @@ ResetRobot::ResetRobot() :
 // Called just before this Command runs the first time
 void ResetRobot::Initialize()
 {
-printf("Command ResetRobot Initialize\n");
+    printf("ResetRobot::Initialize\n");
     Robot::driveBase()->Stop();
     Robot::climber()->SetClaw(Climber::kOpen);
     Robot::climber()->SetExtender(Climber::kRetracted);
@@ -41,15 +41,16 @@ void ResetRobot::Execute()
 // Make this return true when this Command no longer needs to run execute()
 bool ResetRobot::IsFinished()
 {
-    bool finished = (Robot::shooter()->IsInPosition() && Robot::climber()->HooksAtBottom());
-if (finished) printf("Command RobotReset IsFinished\n");
+    bool finished = (Robot::shooter()->IsInPosition() &&
+    		     Robot::climber()->HooksAtBottom());
+    if (finished) printf("RobotReset::IsFinished\n");
     return finished;
 }
 
 // Called once after isFinished returns true
 void ResetRobot::End()
 {
-printf("Command ResetRobot End\n");
+    printf("ResetRobot::End\n");
     Robot::shooter()->Stop();
 }
 
@@ -57,7 +58,7 @@ printf("Command ResetRobot End\n");
 // subsystems is scheduled to run
 void ResetRobot::Interrupted()
 {
-printf("Command ResetRobot Interrupted\n");
+    printf("ResetRobot::Interrupted\n");
     Robot::shooter()->Stop();
     Robot::climber()->SetHooks(Climber::kStop);
 }
