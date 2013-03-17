@@ -18,9 +18,6 @@ Shooter::Shooter( int motorChannel, int positionerChannel, int switchChannel,
     lw->AddActuator("Shooter", "Motor", m_motor);
     m_motor->SetSafetyEnabled(false);	// motor safety off while configuring
 
-    m_rampRate = 0.5; // 0.0 disables rate limiting
-    SmartDashboard::PutNumber("Shooter RampRate", m_rampRate);
-
     m_P = 1.000;
     SmartDashboard::PutNumber("Shooter P", m_P);
 
@@ -39,7 +36,7 @@ Shooter::Shooter( int motorChannel, int positionerChannel, int switchChannel,
     m_speedTolerance = 4.0;  // +/- 4% speed tolerance
     SmartDashboard::PutNumber("Shooter Tolerance (%)", m_speedTolerance);
 
-    m_speedStable = 1.2; // must remain in tolerance at least this long
+    m_speedStable = 0.9; // must remain in tolerance at least this long
     SmartDashboard::PutNumber("Shooter Stable Time", m_speedStable);
 
     m_timeAtSpeed = 0;
@@ -59,7 +56,7 @@ Shooter::Shooter( int motorChannel, int positionerChannel, int switchChannel,
 
     // Initialize injector
     m_injectCounter = 0;
-    m_injectTime = 2.2; // time for full travel
+    m_injectTime = 0.6; // time for full travel
     SmartDashboard::PutNumber("Shooter Injection Time", m_injectTime);
     m_injector = new DoubleSolenoid( injectorChannel, injectorChannel+1 );
     lw->AddActuator("Shooter", "Injector", m_injector);
@@ -135,10 +132,6 @@ void Shooter::Start()
     // Set codes per revolution parameter:
     m_motor->ConfigEncoderCodesPerRev( 1 );
 
-    // Set voltage ramp rate:
-    m_rampRate = SmartDashboard::GetNumber("Shooter RampRate");
-    m_motor->SetVoltageRampRate( m_rampRate );
-
     // Set Jaguar PID parameters:
     m_P = SmartDashboard::GetNumber("Shooter P");
     m_I = SmartDashboard::GetNumber("Shooter I");
@@ -192,7 +185,7 @@ void Shooter::Run()
 {
     switch (m_injector->Get()) {
     case DoubleSolenoid::kReverse:
-	m_injectTime = (int)SmartDashboard::GetNumber("Shooter Injection Time");
+	m_injectTime = SmartDashboard::GetNumber("Shooter Injection Time");
 	if (++m_injectCounter * kPollInterval >= m_injectTime) {
 	    m_injector->Set(DoubleSolenoid::kForward);
 	}

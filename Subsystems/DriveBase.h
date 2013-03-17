@@ -22,7 +22,6 @@ private:
 	Command * m_defaultCommand;
 	bool m_started;
 
-
 public:
 	DriveBase( int leftMotorChannel,
 		   int rightMotorChannel,

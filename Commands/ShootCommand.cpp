@@ -25,13 +25,13 @@ void ShootCommand::Initialize()
     Robot::shooter()->SetAngle(m_targetDistance);
     switch (m_targetDistance) {
     case Shooter::kShort:
-	Robot::shooter()->SetSpeed(SPEED_SHORT);
+	Robot::shooter()->SetSpeed(Robot::theRobot().m_speed_short);
 	break;
     case Shooter::kMid:
-	Robot::shooter()->SetSpeed(SPEED_MID);
+	Robot::shooter()->SetSpeed(Robot::theRobot().m_speed_mid);
 	break;
     case Shooter::kLong:
-	Robot::shooter()->SetSpeed(SPEED_LONG);
+	Robot::shooter()->SetSpeed(Robot::theRobot().m_speed_long);
 	break;
     default:
 	break;

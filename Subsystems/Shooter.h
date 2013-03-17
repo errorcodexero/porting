@@ -36,7 +36,7 @@ public:
 	
 private:
     CANJaguar* m_motor;
-    double m_rampRate, m_P, m_I, m_D;
+    double m_P, m_I, m_D;
     double m_speed;
     double m_speedTolerance;
     double m_speedStable;

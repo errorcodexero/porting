@@ -11,6 +11,7 @@ ShootManual::ShootManual() :
     Command("ShootManual")
 {
     Requires(Robot::shooter());
+    m_learn = false;
 }
 
 void ShootManual::Initialize()
@@ -19,7 +20,10 @@ void ShootManual::Initialize()
 
     Robot::shooter()->SetAngle(Shooter::kUnknown);
     Robot::shooter()->SetSpeed(0.0);
+    Robot::shooter()->SetInjector(false);
     Robot::shooter()->Start();
+
+    m_learn = false;
 }
 
 void ShootManual::Execute()
@@ -30,15 +34,15 @@ void ShootManual::Execute()
     switch (Robot::oi()->GetTarget()) {
     case 0:
 	target = Shooter::kShort;
-	speed = SPEED_SHORT;
+	speed = Robot::theRobot().m_speed_short;
 	break;
     case 1:
 	target = Shooter::kMid;
-	speed = SPEED_MID;
+	speed = Robot::theRobot().m_speed_mid;
 	break;
     case 2:
 	target = Shooter::kLong;
-	speed = SPEED_LONG;
+	speed = Robot::theRobot().m_speed_long;
 	break;
     default:  // "can't happen"
 	target = Shooter::kUnknown;
@@ -51,6 +55,46 @@ void ShootManual::Execute()
 
     Robot::shooter()->SetAngle(target);
     Robot::shooter()->SetSpeed(speed);
+
+    if (Robot::oi()->GetLearn()) {
+	if (!m_learn) {
+	    printf("Shooter Learn\n");
+	    Preferences *pref = Preferences::GetInstance();
+	    switch (target) {
+	    case Shooter::kShort:
+		printf("saving %s = %g\n", KEY_SPEED_SHORT, speed);
+		pref->PutDouble(KEY_SPEED_SHORT, speed);
+		Robot::theRobot().m_speed_short = speed;
+		break;
+	    case Shooter::kMid:
+		printf("saving %s = %g\n", KEY_SPEED_MID, speed);
+		pref->PutDouble(KEY_SPEED_MID,   speed);
+		Robot::theRobot().m_speed_mid = speed;
+		break;
+	    case Shooter::kLong:
+		printf("saving %s = %g\n", KEY_SPEED_LONG, speed);
+		pref->PutDouble(KEY_SPEED_LONG,  speed);
+		Robot::theRobot().m_speed_long = speed;
+		break;
+	    default: // "can't happen"
+		break;
+	    }
+
+	    std::vector<std::string> keys = pref->GetKeys();
+	    for (std::vector<std::string>::iterator it = keys.begin(); it != keys.end(); it++)
+	    {
+		printf("Shooter Preferences key = %s\n", it->c_str());
+	    }
+
+	    pref->Save();
+	    m_learn = true;
+	}
+    } else {
+	if (m_learn) {
+	    printf("Shooter !Learn\n");
+	    m_learn = false;
+	}
+    }
 
     if (Robot::shooter()->IsReadyToShoot()) {
 	Robot::oi()->SetReadyLED(true);

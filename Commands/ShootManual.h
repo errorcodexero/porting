@@ -7,6 +7,9 @@
 #include <Commands/Command.h>
 
 class ShootManual: public Command {
+private:
+    bool m_learn;	// for debouncing
+
 public:
     ShootManual();
     virtual void Initialize();

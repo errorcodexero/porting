@@ -18,6 +18,9 @@
 // Operator Interface
 #include "OI.h"
 
+const char *KEY_SPEED_SHORT = "ShooterSpeedShort";
+const char *KEY_SPEED_MID = "ShooterSpeedMid";
+const char *KEY_SPEED_LONG = "ShooterSpeedLong";
 
 Robot::Robot()
 {
@@ -61,7 +64,15 @@ void Robot::RobotInit()
     m_autonomousCommand = new AutoCommand();
 
     // link operator controls to commands
+
     m_oi->Initialize();
+
+    // tune system parameters
+
+    Preferences *pref = Preferences::GetInstance();
+    m_speed_short = pref->GetDouble(KEY_SPEED_SHORT, DEFAULT_SPEED_SHORT);
+    m_speed_mid   = pref->GetDouble(KEY_SPEED_MID,   DEFAULT_SPEED_MID);
+    m_speed_long  = pref->GetDouble(KEY_SPEED_LONG,  DEFAULT_SPEED_LONG);
 
     // Now that everything else is set up, start the compressor
     m_compressor->Start();
