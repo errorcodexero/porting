@@ -37,6 +37,7 @@ public:
     static Preferences *GetInstance();
 
     std::vector<std::string> GetKeys();
+    std::map<std::string, std::string> GetValues();
     std::string GetString(const char *key, const char *defaultValue = "");
     int GetString(const char *key, char *value, int valueSize, const char *defaultValue = "");
     int GetInt(const char *key, int defaultValue = 0);

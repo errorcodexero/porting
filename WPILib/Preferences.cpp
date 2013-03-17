@@ -77,6 +77,15 @@ std::vector<std::string> Preferences::GetKeys()
 }
 
 /**
+ * Returns a vector of all the values
+ * @return a vector of the values
+ */
+std::map<std::string, std::string> Preferences::GetValues()
+{
+    return m_values;
+}
+
+/**
  * Returns the string at the given key.  If this table does not have a value
  * for that position, then the given defaultValue will be returned.
  * @param key the key
@@ -392,12 +401,10 @@ void Preferences::Put(const char *key, std::string value)
 	return;
     }
 
-    std::pair<StringMap::iterator, bool> ret =
-	m_values.insert(StringMap::value_type(key, value));
-    if (ret.second)
-	m_keys.push_back(key);
-    else
-	ret.first->second = value;
+    // Remove any existing value, then add new value at the end of the list
+    Remove(key);
+    m_values[std::string(key)] = value;
+    m_keys.push_back(key);
 
     NetworkTable::GetTable(kTableName)->PutString(key, value);
 }

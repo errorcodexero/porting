@@ -197,4 +197,6 @@ STATUS symFindByValue( SYMTAB_ID table, UINT value,
     return OK;
 }
 
+int Priv_SetWriteFileAllowed(UINT32 enable) { return 0; }
+
 }; // extern "C"

@@ -86,6 +86,13 @@ void ShootManual::Execute()
 		printf("Shooter Preferences key = %s\n", it->c_str());
 	    }
 
+	    std::map<std::string, std::string> values = pref->GetValues();
+	    for (std::map<std::string,std::string>::iterator it = values.begin(); it != values.end(); it++)
+	    {
+		printf("Shooter Preferences map = <%s,%s>\n",
+			it->first.c_str(), it->second.c_str());
+	    }
+
 	    pref->Save();
 	    m_learn = true;
 	}
