@@ -12,16 +12,18 @@ using namespace std;
 
 StringCache::StringCache(){
 }
+
 StringCache::~StringCache(){
 }
 
 std::string& StringCache::Get(const std::string& input){
-	map<std::string, std::string>::iterator itr = cache.find(input);
-	if(itr != cache.end()){
-	   return itr->second;
-	}
-	else{
-		cache[input] = Calc(input);
-		return cache[input];
-	}
+    Synchronized sync(LOCK);
+    map<std::string, std::string>::iterator itr = cache.find(input);
+    if(itr != cache.end()){
+       return itr->second;
+    }
+    else{
+	cache[input] = Calc(input);
+	return cache[input];
+    }
 }

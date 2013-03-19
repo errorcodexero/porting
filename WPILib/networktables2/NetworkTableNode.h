@@ -32,69 +32,83 @@ class NetworkTableNode;
 class NetworkTableNode : public TableListenerManager, public ClientConnectionListenerManager, public IRemote{
 
 protected:
-	AbstractNetworkTableEntryStore& entryStore;
-	NetworkTableNode(AbstractNetworkTableEntryStore& entryStore);
-	
+    AbstractNetworkTableEntryStore& entryStore;
+    NetworkTableNode(AbstractNetworkTableEntryStore& entryStore);
+    
 public:
-	/**
-	 * @return the entry store used by this node
-	 */
-	AbstractNetworkTableEntryStore& GetEntryStore();
-	virtual ~NetworkTableNode();
+    /**
+     * @return the entry store used by this node
+     */
+    AbstractNetworkTableEntryStore& GetEntryStore();
+    virtual ~NetworkTableNode();
 
-	
-	
-	void PutBoolean(std::string& name, bool value);
-	bool GetBoolean(std::string& name);
+    
+    
+    void PutBoolean(std::string& name, bool value);
+    bool GetBoolean(std::string& name);
 
-	void PutDouble(std::string& name, double value);
-	double GetDouble(std::string& name);
+    void PutDouble(std::string& name, double value);
+    double GetDouble(std::string& name);
 
-	void PutString(std::string& name, std::string& value);
-	std::string& GetString(std::string& name);
-        
-    void PutComplex(std::string& name, ComplexData& value);
-        
-	void retrieveValue(std::string& name, ComplexData& externalData);
-	
-	/**
-	 * Put a value with a specific network table type
-	 * @param name the name of the entry to associate with the given value
-	 * @param type the type of the entry
-	 * @param value the actual value of the entry
-	 */
-	void PutValue(std::string& name, NetworkTableEntryType* type, EntryValue value);
-	void PutValue(NetworkTableEntry* entry, EntryValue value);
-	
-	EntryValue GetValue(std::string& name);
-	
-	
-	/**
-	 * @param key the key to check for existence
-	 * @return true if the table has the given key
-	 */
-	bool ContainsKey(std::string& key);
+    void PutString(std::string& name, std::string& value);
+    std::string& GetString(std::string& name);
+    
+void PutComplex(std::string& name, ComplexData& value);
+    
+    void retrieveValue(std::string& name, ComplexData& externalData);
+    
+    /**
+     * Put a value with a specific network table type
+     * @param name the name of the entry to associate with the given value
+     * @param type the type of the entry
+     * @param value the actual value of the entry
+     */
+    void PutValue(std::string& name, NetworkTableEntryType* type, EntryValue value);
+    void PutValue(NetworkTableEntry* entry, EntryValue value);
+    
+    EntryValue GetValue(std::string& name);
+    
+// RobotPy specific
+bool GetValueAndType(std::string& name, EntryValue &value, TypeId &id)
+    { 
+	    Synchronized sync(entryStore.LOCK);
+	    NetworkTableEntry* entry = entryStore.GetEntry(name);
+	    if(entry==NULL)
+	return false;
+    
+	    value = entry->GetValue();
+    id = entry->GetType()->id;
+    return true;
+    }
+// End RobotPy specific
 
-	/**
-	 * close all networking activity related to this node
-	 */
-	virtual void Close() = 0;
-	
+    
+    /**
+     * @param key the key to check for existence
+     * @return true if the table has the given key
+     */
+    bool ContainsKey(std::string& key);
+
+    /**
+     * close all networking activity related to this node
+     */
+    virtual void Close() = 0;
+    
 private:
-	std::vector<IRemoteConnectionListener*> remoteListeners;
+    std::vector<IRemoteConnectionListener*> remoteListeners;
 public:
-	void AddConnectionListener(IRemoteConnectionListener* listener, bool immediateNotify);
-	void RemoveConnectionListener(IRemoteConnectionListener* listener);
-	void FireConnectedEvent();
-	void FireDisconnectedEvent();
-	
+    void AddConnectionListener(IRemoteConnectionListener* listener, bool immediateNotify);
+    void RemoveConnectionListener(IRemoteConnectionListener* listener);
+    void FireConnectedEvent();
+    void FireDisconnectedEvent();
+    
 
 private:
-	std::vector<ITableListener*> tableListeners;
+    std::vector<ITableListener*> tableListeners;
 public:
-	void AddTableListener(ITableListener* listener, bool immediateNotify);
-	void RemoveTableListener(ITableListener* listener);
-	void FireTableListeners(std::string& key, EntryValue value, bool isNew);
+    void AddTableListener(ITableListener* listener, bool immediateNotify);
+    void RemoveTableListener(ITableListener* listener);
+    void FireTableListeners(std::string& key, EntryValue value, bool isNew);
 };
 
 

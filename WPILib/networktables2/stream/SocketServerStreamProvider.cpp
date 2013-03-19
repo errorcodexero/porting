@@ -28,10 +28,10 @@
 #include <unistd.h>
 #ifdef WIN32
 #include <windows.h>
-#include <winsock.h>
-#include <winsock2.h>
-#include <wininet.h>
-#include <ws2tcpip.h>
+//#include <winsock.h>
+//#include <winsock2.h>
+//#include <wininet.h>
+//#include <ws2tcpip.h>
 #else
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -40,7 +40,7 @@
 #endif
 #endif
 
-#ifndef ERROR
+#ifndef _WRS_KERNEL
 #define ERROR -1
 #endif
 
@@ -52,75 +52,75 @@ typedef socklen_t addrlen_t;
 
 
 SocketServerStreamProvider::SocketServerStreamProvider(int port){
-	struct sockaddr_in serverAddr;
-	int sockAddrSize = sizeof(serverAddr);
-	memset(&serverAddr, 0, sockAddrSize);
+    struct sockaddr_in serverAddr;
+    int sockAddrSize = sizeof(serverAddr);
+    memset(&serverAddr, 0, sockAddrSize);
 
 #ifdef _WRS_KERNEL
-	serverAddr.sin_len = (u_char)sockAddrSize;
+    serverAddr.sin_len = (u_char)sockAddrSize;
 #endif
-	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(port);
-	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(port);
+    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == ERROR)
-	{
-		throw IOException("Error creating server socket", errno);
-	}
+    if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == ERROR)
+    {
+	throw IOException("Error creating server socket", errno);
+    }
 
-	// Set the TCP socket so that it can be reused if it is in the wait state.
-	int reuseAddr = 1;
-	setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&reuseAddr, sizeof(reuseAddr));
+    // Set the TCP socket so that it can be reused if it is in the wait state.
+    int reuseAddr = 1;
+    setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&reuseAddr, sizeof(reuseAddr));
 
-	// Bind socket to local address.
-	if (bind(serverSocket, (struct sockaddr *)&serverAddr, sockAddrSize) == ERROR)
-	{
-		::close(serverSocket);
-		throw IOException("Could not bind server socket", errno);
-	}
+    // Bind socket to local address.
+    if (bind(serverSocket, (struct sockaddr *)&serverAddr, sockAddrSize) == ERROR)
+    {
+	::close(serverSocket);
+	throw IOException("Could not bind server socket", errno);
+    }
 
-	if (listen(serverSocket, 1) == ERROR)
-	{
-		::close(serverSocket);
-		throw IOException("Could not listen on server socket", errno);
-	}
+    if (listen(serverSocket, 1) == ERROR)
+    {
+	::close(serverSocket);
+	throw IOException("Could not listen on server socket", errno);
+    }
 }
+
 SocketServerStreamProvider::~SocketServerStreamProvider(){
-	close();
+    close();
 }
-
 
 IOStream* SocketServerStreamProvider::accept(){
-	struct timeval timeout;
-	// Check for a shutdown once per second
-	timeout.tv_sec = 1;
-	timeout.tv_usec = 0;
-	while (true)
-	{
-		fd_set fdSet;
+    struct timeval timeout;
+    // Check for a shutdown once per second
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    while (true)
+    {
+	fd_set fdSet;
 
-		FD_ZERO(&fdSet);
-		FD_SET(serverSocket, &fdSet);
-		if (select(FD_SETSIZE, &fdSet, NULL, NULL, &timeout) > 0)
-		{
-			if (FD_ISSET(serverSocket, &fdSet))
-			{
-				struct sockaddr clientAddr = {0};
-				addrlen_t clientAddrSize = sizeof(clientAddr);
-				int connectedSocket = ::accept(serverSocket, &clientAddr, &clientAddrSize);
-				if (connectedSocket == ERROR)
-					return NULL;
-				
-				//int on = 1;
-				//setsockopt(connectedSocket, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof(on));
-				
-				return new FDIOStream(connectedSocket);
-			}
-		}
+	FD_ZERO(&fdSet);
+	FD_SET(serverSocket, &fdSet);
+	if (select(FD_SETSIZE, &fdSet, NULL, NULL, &timeout) > 0)
+	{
+	    if (FD_ISSET(serverSocket, &fdSet))
+	    {
+		struct sockaddr clientAddr = {0};
+		addrlen_t clientAddrSize = sizeof(clientAddr);
+		int connectedSocket = ::accept(serverSocket, &clientAddr, &clientAddrSize);
+		if (connectedSocket == ERROR)
+		    return NULL;
+		
+		//int on = 1;
+		//setsockopt(connectedSocket, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof(on));
+		
+		return new FDIOStream(connectedSocket);
+	    }
 	}
-	return NULL;
+    }
+    return NULL;
 }
 
 void SocketServerStreamProvider::close(){
-	::close(serverSocket);
+    ::close(serverSocket);
 }

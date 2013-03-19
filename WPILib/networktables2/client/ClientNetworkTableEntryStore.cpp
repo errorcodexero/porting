@@ -13,42 +13,43 @@
  * @param listenerManager
  */
 ClientNetworkTableEntryStore::ClientNetworkTableEntryStore(TableListenerManager& listenerManager): AbstractNetworkTableEntryStore(listenerManager) {}
+
 ClientNetworkTableEntryStore::~ClientNetworkTableEntryStore(){}
 
 bool ClientNetworkTableEntryStore::addEntry(NetworkTableEntry* newEntry){
-	{
-		Synchronized sync(LOCK);
-		NetworkTableEntry* entry = (NetworkTableEntry*)namedEntries[newEntry->name];
+    {
+	Synchronized sync(LOCK);
+	NetworkTableEntry* entry = (NetworkTableEntry*)namedEntries[newEntry->name];
 
-		if(entry!=NULL){
-			if(entry->GetId()!=newEntry->GetId()){
-				idEntries.erase(entry->GetId());
-				if(newEntry->GetId()!=NetworkTableEntry::UNKNOWN_ID){
-					entry->SetId(newEntry->GetId());
-					idEntries[newEntry->GetId()] = entry;
-				}
-			}
-			
-			entry->ForcePut(newEntry->GetSequenceNumber(), newEntry->GetType(), newEntry->GetValue());
+	if(entry!=NULL){
+	    if(entry->GetId()!=newEntry->GetId()){
+		idEntries.erase(entry->GetId());
+		if(newEntry->GetId()!=NetworkTableEntry::UNKNOWN_ID){
+		    entry->SetId(newEntry->GetId());
+		    idEntries[newEntry->GetId()] = entry;
 		}
-		else{
-			if(newEntry->GetId()!=NetworkTableEntry::UNKNOWN_ID)
-				idEntries[newEntry->GetId()] = newEntry;
-			namedEntries[newEntry->name] = newEntry;
-		}
+	    }
+
+	    entry->ForcePut(newEntry->GetSequenceNumber(), newEntry->GetType(), newEntry->GetValue());
 	}
-	return true;
+	else{
+	    if(newEntry->GetId()!=NetworkTableEntry::UNKNOWN_ID)
+		idEntries[newEntry->GetId()] = newEntry;
+	    namedEntries[newEntry->name] = newEntry;
+	}
+    }
+    return true;
 }
 
 bool ClientNetworkTableEntryStore::updateEntry(NetworkTableEntry* entry, SequenceNumber sequenceNumber, EntryValue value) {
-	{ 
-		Synchronized sync(LOCK);
-		entry->ForcePut(sequenceNumber, value);
-		if(entry->GetId()==NetworkTableEntry::UNKNOWN_ID){
-			return false;
-		}
-		return true;
+    {
+	Synchronized sync(LOCK);
+	entry->ForcePut(sequenceNumber, value);
+	if(entry->GetId()==NetworkTableEntry::UNKNOWN_ID){
+	    return false;
 	}
+	return true;
+    }
 }
 
 /**
@@ -57,15 +58,15 @@ bool ClientNetworkTableEntryStore::updateEntry(NetworkTableEntry* entry, Sequenc
  * @throws IOException
  */
 void ClientNetworkTableEntryStore::sendUnknownEntries(NetworkTableConnection& connection) {
-	{ 
-		Synchronized sync(LOCK);
-		std::map<std::string, NetworkTableEntry*>::iterator itr;
-		for(itr = namedEntries.begin(); itr != namedEntries.end(); itr++)
-		{
-			NetworkTableEntry* entry = (*itr).second;
-			if(entry && entry->GetId()==NetworkTableEntry::UNKNOWN_ID)
-				connection.sendEntryAssignment(*entry);
-		}
-		connection.flush();
+    {
+	Synchronized sync(LOCK);
+	std::map<std::string, NetworkTableEntry*>::iterator itr;
+	for(itr = namedEntries.begin(); itr != namedEntries.end(); itr++)
+	{
+	    NetworkTableEntry* entry = (*itr).second;
+	    if(entry && entry->GetId()==NetworkTableEntry::UNKNOWN_ID)
+		connection.sendEntryAssignment(*entry);
 	}
+	connection.flush();
+    }
 }

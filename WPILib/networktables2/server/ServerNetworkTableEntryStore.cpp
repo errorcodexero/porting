@@ -8,33 +8,34 @@
 #include "networktables2/server/ServerNetworkTableEntryStore.h"
 
 ServerNetworkTableEntryStore::ServerNetworkTableEntryStore(TableListenerManager& _listenerManager) :
-	AbstractNetworkTableEntryStore(_listenerManager)
+    AbstractNetworkTableEntryStore(_listenerManager)
 {
-	nextId = (EntryId)0;
+    nextId = (EntryId)0;
 }
+
 ServerNetworkTableEntryStore::~ServerNetworkTableEntryStore()
 {
 }
 
 bool ServerNetworkTableEntryStore::addEntry(NetworkTableEntry* newEntry)
 {
-	Synchronized sync(LOCK);
-	NetworkTableEntry* entry = namedEntries[newEntry->name];
-	
-	if (entry == NULL)
-	{
-		newEntry->SetId(nextId++);
-		idEntries[newEntry->GetId()] = newEntry;
-		namedEntries[newEntry->name] = newEntry;
-		return true;
-	}
-	return false;
+    Synchronized sync(LOCK);
+    NetworkTableEntry* entry = namedEntries[newEntry->name];
+    
+    if (entry == NULL)
+    {
+	newEntry->SetId(nextId++);
+	idEntries[newEntry->GetId()] = newEntry;
+	namedEntries[newEntry->name] = newEntry;
+	return true;
+    }
+    return false;
 }
 
 bool ServerNetworkTableEntryStore::updateEntry(NetworkTableEntry* entry, SequenceNumber sequenceNumber, EntryValue value)
 {
-	Synchronized sync(LOCK);
-	return entry->PutValue(sequenceNumber, value);
+    Synchronized sync(LOCK);
+    return entry->PutValue(sequenceNumber, value);
 }
 
 /**
@@ -44,13 +45,14 @@ bool ServerNetworkTableEntryStore::updateEntry(NetworkTableEntry* entry, Sequenc
  */
 void ServerNetworkTableEntryStore::sendServerHello(NetworkTableConnection& connection)
 {
-	Synchronized sync(LOCK);
-	std::map<std::string, NetworkTableEntry*>::iterator itr;
-	for (itr = namedEntries.begin(); itr != namedEntries.end(); itr++)
-	{
-		NetworkTableEntry* entry = itr->second;
-		if (entry) connection.sendEntryAssignment(*entry);
-	}
-	connection.sendServerHelloComplete();
-	connection.flush();
+    Synchronized sync(LOCK);
+    std::map<std::string, NetworkTableEntry*>::iterator itr;
+    for (itr = namedEntries.begin(); itr != namedEntries.end(); itr++)
+    {
+	NetworkTableEntry* entry = itr->second;
+	if (entry)
+	    connection.sendEntryAssignment(*entry);
+    }
+    connection.sendServerHelloComplete();
+    connection.flush();
 }

@@ -21,12 +21,13 @@ class ITableProvider;
  *
  */
 class ITableProvider {
-	/**
-	 * Get a table by name
-	 * @param name the name of the table
-	 * @return a Table with the given name
-	 */
-	virtual ITable* GetTable(std::string name) = 0;
+public:
+    /**
+     * Get a table by name
+     * @param name the name of the table
+     * @return a Table with the given name
+     */
+    virtual ITable* GetTable(std::string name) = 0;
 };
 
 #endif /* ITABLEPROVIDER_H_ */

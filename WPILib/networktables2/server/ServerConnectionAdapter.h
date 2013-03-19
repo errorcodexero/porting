@@ -30,76 +30,76 @@ class ServerConnectionAdapter;
  * @author Mitchell
  *
  */
-class ServerConnectionAdapter : ConnectionAdapter, IncomingEntryReceiver, FlushableOutgoingEntryReceiver{
+class ServerConnectionAdapter : public ConnectionAdapter, public IncomingEntryReceiver, public FlushableOutgoingEntryReceiver{
 private:
-	ServerNetworkTableEntryStore& entryStore;
-	IncomingEntryReceiver& transactionReceiver;
-	ServerAdapterManager& adapterListener;
+    ServerNetworkTableEntryStore& entryStore;
+    IncomingEntryReceiver& transactionReceiver;
+    ServerAdapterManager& adapterListener;
 public:
-	/**
-	 * the connection this adapter uses
-	 */
-	NetworkTableConnection connection;
+    /**
+     * the connection this adapter uses
+     */
+    NetworkTableConnection connection;
 private:
-	NTThread* readThread;
-	ConnectionMonitorThread monitorThread;
+    NTThread* readThread;
+    ConnectionMonitorThread monitorThread;
 private:
 
-	ServerConnectionState* connectionState;
+    ServerConnectionState* connectionState;
 
-	void gotoState(ServerConnectionState* newState);
+    void gotoState(ServerConnectionState* newState);
 
 public:
-	/**
-	 * Create a server connection adapter for a given stream
-	 * 
-	 * @param stream
-	 * @param transactionPool
-	 * @param entryStore
-	 * @param transactionReceiver
-	 * @param adapterListener
-	 * @param threadManager
-	 */
-	ServerConnectionAdapter(IOStream* stream, ServerNetworkTableEntryStore& entryStore, IncomingEntryReceiver& transactionReceiver, ServerAdapterManager& adapterListener, NetworkTableEntryTypeManager& typeManager, NTThreadManager& threadManager);
-	virtual ~ServerConnectionAdapter();
+    /**
+     * Create a server connection adapter for a given stream
+     * 
+     * @param stream
+     * @param transactionPool
+     * @param entryStore
+     * @param transactionReceiver
+     * @param adapterListener
+     * @param threadManager
+     */
+    ServerConnectionAdapter(IOStream* stream, ServerNetworkTableEntryStore& entryStore, IncomingEntryReceiver& transactionReceiver, ServerAdapterManager& adapterListener, NetworkTableEntryTypeManager& typeManager, NTThreadManager& threadManager);
+    virtual ~ServerConnectionAdapter();
 
-	void badMessage(BadMessageException& e);
-	
-	void ioException(IOException& e);
-	
-	
-	/**
-	 * stop the read thread and close the stream
-	 */
-	void shutdown(bool closeStream);
+    void badMessage(BadMessageException& e);
+    
+    void ioException(IOException& e);
+    
+    
+    /**
+     * stop the read thread and close the stream
+     */
+    void shutdown(bool closeStream);
 
-	void keepAlive();
+    void keepAlive();
 
-	void clientHello(ProtocolVersion protocolRevision);
+    void clientHello(ProtocolVersion protocolRevision);
 
-	void protocolVersionUnsupported(ProtocolVersion protocolRevision);
+    void protocolVersionUnsupported(ProtocolVersion protocolRevision);
 
-	void serverHelloComplete();
+    void serverHelloComplete();
 
-	void offerIncomingAssignment(NetworkTableEntry* entry);
+    void offerIncomingAssignment(NetworkTableEntry* entry);
 
-	void offerIncomingUpdate(NetworkTableEntry* entry, SequenceNumber sequenceNumber, EntryValue value);
+    void offerIncomingUpdate(NetworkTableEntry* entry, SequenceNumber sequenceNumber, EntryValue value);
 
-	NetworkTableEntry* GetEntry(EntryId id);
+    NetworkTableEntry* GetEntry(EntryId id);
 
-	void offerOutgoingAssignment(NetworkTableEntry* entry);
-	
-	void offerOutgoingUpdate(NetworkTableEntry* entry);
+    void offerOutgoingAssignment(NetworkTableEntry* entry);
+    
+    void offerOutgoingUpdate(NetworkTableEntry* entry);
 
 
-	void flush();
+    void flush();
 
-	/**
-	 * @return the state of the connection
-	 */
-	ServerConnectionState* getConnectionState();
+    /**
+     * @return the state of the connection
+     */
+    ServerConnectionState* getConnectionState();
 
-	void ensureAlive();
+    void ensureAlive();
 
 };
 

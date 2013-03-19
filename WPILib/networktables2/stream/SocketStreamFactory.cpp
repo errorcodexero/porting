@@ -14,8 +14,8 @@
 	#include <sys/types.h>
 	#include <unistd.h>
 	#ifdef WIN32
-	   #include <winsock.h>
-	   #include <winsock2.h>
+	   //#include <winsock.h>
+	   //#include <winsock2.h>
 	#else
 		#include <sys/socket.h>
 		#include <sys/un.h>
@@ -35,8 +35,8 @@ SocketStreamFactory::~SocketStreamFactory(){}
 
 IOStream* SocketStreamFactory::createStream(){
 #ifdef _WRS_KERNEL
-	//crio client not supported
-	return NULL;
+    //crio client not supported
+    return NULL;
 #else
     struct sockaddr_in serv_addr;
     struct hostent *server;
@@ -51,7 +51,7 @@ IOStream* SocketStreamFactory::createStream(){
         //fprintf(stderr,"ERROR, no such host\n");
         return NULL;
     }
-	memset(&serv_addr, 0, sizeof(serv_addr));
+    memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     memcpy(&serv_addr.sin_addr.s_addr, server->h_addr, server->h_length);
     serv_addr.sin_port = htons(port);
@@ -60,9 +60,9 @@ IOStream* SocketStreamFactory::createStream(){
     	return NULL;
     }//TODO close fd if an error occured
 
-	//int on = 1;
-	//setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof(on));
+    //int on = 1;
+    //setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof(on));
 
-	return new FDIOStream(sockfd);
+    return new FDIOStream(sockfd);
 #endif
 }

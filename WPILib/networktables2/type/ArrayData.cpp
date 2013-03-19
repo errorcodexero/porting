@@ -37,7 +37,7 @@ void ArrayData::remove(unsigned int index){
 	//if(index<0 || index>=size())
 	//	throw IndexOutOfBoundsException();//TODO bounds check
 	m_data_type.deleteElement(data[index]);
-	EntryValue nullValue = {0};
+	EntryValue nullValue = {{0}};
 	data[index] = nullValue;
 	if(index < size()-1){
 		memcpy(data+index, data+index+1, (size()-index-1) * sizeof(EntryValue));
@@ -58,7 +58,7 @@ void ArrayData::setSize(unsigned int newSize){
 		memcpy(newArray, data, m_size * sizeof(EntryValue));
 	  else
 	    m_size = 0;//ensure that the current size is actually 0 otherwise will end up with uninitialized values in the array
-	  EntryValue nullValue = {0};
+	  EntryValue nullValue = {{0}};
 	  for(unsigned int i = m_size; i<newSize; ++i)
 	    newArray[i] = nullValue;
 	}

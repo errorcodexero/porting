@@ -20,23 +20,24 @@ class PeriodicNTThread;
 
 
 class DefaultThreadManager : public NTThreadManager{
-	virtual NTThread* newBlockingPeriodicThread(PeriodicRunnable* r, const char* name);
+public:
+    virtual NTThread* newBlockingPeriodicThread(PeriodicRunnable* r, const char* name);
 };
 
 class PeriodicNTThread : public NTThread {
 private:
-	const char* name;
-	Task* thread;
-	PeriodicRunnable* r;
-	bool run;
-	int _taskMain();
-	static int taskMain(PeriodicNTThread* o);
+    const char* name;
+    Task* thread;
+    PeriodicRunnable* r;
+    bool run;
+    int _taskMain();
+    static int taskMain(PeriodicNTThread* o);
 public:
-	PeriodicNTThread(PeriodicRunnable* r, const char* name);
-	virtual ~PeriodicNTThread();
-	virtual void stop();
+    PeriodicNTThread(PeriodicRunnable* r, const char* name);
+    virtual ~PeriodicNTThread();
+    virtual void stop();
 #ifdef _VXWORKS_
-	virtual bool isRunning();
+    virtual bool isRunning();
 #endif
 };
 

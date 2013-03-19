@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include "Synchronized.h"
 
 using namespace std;
 
@@ -14,26 +15,27 @@ using namespace std;
  */
 class StringCache {
 private:
-	map<std::string, std::string> cache;
+    map<std::string, std::string> cache;
+    ReentrantSemaphore LOCK;
 
-	
-	/**
-	 * @param input
-	 * @return the value for a given input
-	 */
+    
+    /**
+     * @param input
+     * @return the value for a given input
+     */
 public:
-	StringCache();
-	virtual ~StringCache();
-	
-	
-	std::string& Get(const std::string& input);
-	
-	/**
-	 * Will only be called if a value has not already been calculated
-	 * @param input
-	 * @return the calculated value for a given input
-	 */
-	virtual std::string Calc(const std::string& input) = 0;
+    StringCache();
+    virtual ~StringCache();
+    
+    
+    std::string& Get(const std::string& input);
+    
+    /**
+     * Will only be called if a value has not already been calculated
+     * @param input
+     * @return the calculated value for a given input
+     */
+    virtual std::string Calc(const std::string& input) = 0;
 };
 
 #endif

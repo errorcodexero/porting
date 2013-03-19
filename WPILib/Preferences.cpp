@@ -378,7 +378,13 @@ std::string Preferences::Get(const char *key)
 	wpi_setWPIErrorWithContext(NullParameter, "key");
 	return std::string("");
     }
-    return m_values[std::string(key)];
+    StringMap::iterator ret = m_values.find(key);
+    if (ret != m_values.end())
+	return ret->second;
+
+    m_keys.push_back(key);
+    m_values.insert(StringMap::value_type(key, ""));
+    return "";
 }
 
 /**
@@ -427,13 +433,13 @@ void Preferences::ReadTaskRun()
     if (file != NULL)
     {
 	std::string buffer;
-	while (true)
+	while (!feof(file))
 	{
 	    char value;
 	    do
 	    {
 		value = fgetc(file);
-	    } while (value == ' ' || value == '\t');
+	    } while (!feof(file) && (value == ' ' || value == '\t'));
 
 	    if (value == '\n' || value == ';')
 	    {
@@ -465,17 +471,15 @@ void Preferences::ReadTaskRun()
 		    do
 		    {
 			value = fgetc(file);
-		    } while (value == ' ' || value == '\t');
+		    } while (!feof(file) && (value == ' ' || value == '\t'));
 		}
 		std::string name = buffer;
 		buffer.clear();
 
-		bool shouldBreak = false;
-
 		do
 		{
 		    value = fgetc(file);
-		} while (value == ' ' || value == '\t');
+		} while (!feof(file) && (value == ' ' || value == '\t'));
 
 		if (value == '"')
 		{
@@ -493,10 +497,8 @@ void Preferences::ReadTaskRun()
 			do
 			{
 			    value = fgetc(file);
-			} while (value == ' ' || value == '\t');
+			} while (!feof(file) && (value == ' ' || value == '\t'));
 		    }
-		    if (feof(file))
-			shouldBreak = true;
 		}
 
 		std::string value = buffer;
@@ -513,9 +515,6 @@ void Preferences::ReadTaskRun()
 			comment.clear();
 		    }
 		}
-
-		if (shouldBreak)
-		    break;
 	    }
 	}
     }

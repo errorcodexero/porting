@@ -27,38 +27,38 @@ class NetworkTableServer;
  */
 class NetworkTableServer : public NetworkTableNode, public ServerIncomingConnectionListener{
 private:
-	IOStreamProvider& streamProvider;
-	ServerConnectionList connectionList;
-	WriteManager writeManager;
-	ServerIncomingStreamMonitor incomingStreamMonitor;
-	TransactionDirtier continuingReceiver;
+    IOStreamProvider& streamProvider;
+    ServerConnectionList connectionList;
+    WriteManager writeManager;
+    ServerIncomingStreamMonitor incomingStreamMonitor;
+    TransactionDirtier continuingReceiver;
 
-  public:
-	/**
-	 * Create a NetworkTable Server
-	 * 
-	 * @param streamProvider
-	 * @param threadManager
-	 * @param transactionPool
-	 */
-	NetworkTableServer(IOStreamProvider& streamProvider, NetworkTableEntryTypeManager& typeManager, NTThreadManager& threadManager);
-	~NetworkTableServer();
-	/**
-	 * Create a NetworkTable Server
-	 * 
-	 * @param streamProvider
-	 */
-	NetworkTableServer(IOStreamProvider& streamProvider);
-	
-	void Close();
+public:
+    /**
+     * Create a NetworkTable Server
+     * 
+     * @param streamProvider
+     * @param threadManager
+     * @param transactionPool
+     */
+    NetworkTableServer(IOStreamProvider& streamProvider, NetworkTableEntryTypeManager& typeManager, NTThreadManager& threadManager);
+    ~NetworkTableServer();
+    /**
+     * Create a NetworkTable Server
+     * 
+     * @param streamProvider
+     */
+    //NetworkTableServer(IOStreamProvider& streamProvider);
+    
+    void Close();
 
-	void OnNewConnection(ServerConnectionAdapter& connectionAdapter);
+    void OnNewConnection(ServerConnectionAdapter& connectionAdapter);
 
-	
-	bool IsConnected();
+    
+    bool IsConnected();
 
-	
-	bool IsServer();
+    
+    bool IsServer();
 
 };
 
