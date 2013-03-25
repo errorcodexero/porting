@@ -5,7 +5,6 @@
 #include "TimedDrive.h"
 #include "Rotate.h"
 #include "AimTrim.h"
-#include "ClimbCommand.h"
 #include "TargetCommand.h"
 #include "SelectTarget.h"
 #include "ShootCommand.h"
@@ -41,20 +40,26 @@ OI::OI()
     m_pGamepadBack        = new JoystickButton(m_pStick, 7);
     m_pGamepadStart       = new JoystickButton(m_pStick, 8);
 
-    m_pClimber            = new DSAnalogInput(m_pEIO, 1);
-    m_pTip                = new DSAnalogInput(m_pEIO, 2);
+    // analog input 1 was 3-position momentary climber motor control
+    // analog input 2 was 3-position momentary climber tilt control
+
     m_pSpeedAdjust        = new DSAnalogInput(m_pEIO, 3);
     m_pShooterTarget      = new DSAnalogInput(m_pEIO, 4);
 
-    m_pDump               = new DSDigitalInput(m_pEIO, 1,
+    // digital input 1 was 2-position claw control
+    // now used for climber control
+    m_pClimber            = new DSDigitalInput(m_pEIO, 1,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    true);
+    // digital input 2 not used
     m_pCameraLight        = new DSDigitalInput(m_pEIO, 2,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    true);
+    // digital input 3 not used
     m_pCameraPosition     = new DSDigitalInput(m_pEIO, 3,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    true);
+
     m_pLearnButton        = new DSDigitalInput(m_pEIO, 4,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    false);	// active-low pushbutton
@@ -80,11 +85,9 @@ OI::~OI()
     delete m_pGamepadRightBumper;
     delete m_pGamepadBack;
     delete m_pGamepadStart;
-    delete m_pClimber;
-    delete m_pTip;
     delete m_pSpeedAdjust;
     delete m_pShooterTarget;
-    delete m_pDump;
+    delete m_pClimber;
     delete m_pCameraLight;
     delete m_pCameraPosition;
     delete m_pLearnButton;
@@ -167,9 +170,6 @@ void OI::Initialize()
 
     m_pTiltLong = new TiltCommand( Shooter::kLong );
     SmartDashboard::PutData("Tilt Long", m_pTiltLong);
-
-    m_pClimbCommand = new ClimbCommand();
-    SmartDashboard::PutData("Climb", m_pClimbCommand);
 
     // m_pBlinkyOn = new BlinkyOn();
     // SmartDashboard::PutData("Blinky On", m_pBlinkyOn);

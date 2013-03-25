@@ -29,26 +29,13 @@ class OI;
 
 #define	DIGITAL_PRESSURE_SWITCH		1
 
-// 2 - climber left bottom limit switch
-// 3 - climber left top limit switch
-// 4 - climber right bottom limit switch
-// 5 - climber right top limit switch
-// 7 - climber left middle limit switch
-// 8 - climber right middle limit switch
-//     limit switches are normally-open switches to ground
-//     so normally true, switch to false = at limit
+// 2-5 - not used
 
-#define DIGITAL_LIMIT_LEFT_BOTTOM	2	// verified
-#define DIGITAL_LIMIT_LEFT_TOP		3	// verified
-#define DIGITAL_LIMIT_RIGHT_BOTTOM	4	// verified
-#define DIGITAL_LIMIT_RIGHT_TOP		5	// verified
-
-#define DIGITAL_LIMIT_LEFT_MIDDLE	7
-#define DIGITAL_LIMIT_RIGHT_MIDDLE	8
-
-// 8 - shooter mid-range position
+// 6 - shooter mid-range position
 
 #define DIGITAL_SHOOTER_CENTER		6
+
+// 7-8 - not used
 
 ////////////////////////////////////////////////////////////////////
 // Analog Inputs:
@@ -56,6 +43,10 @@ class OI;
 //     + output is clockwise rotation
 
 #define ANALOG_GYRO			1
+
+// 2-7 - not used
+
+// 8 - battery (from analog bumper)
 
 ////////////////////////////////////////////////////////////////////
 // Relay (Spike) Outputs:
@@ -65,13 +56,9 @@ class OI;
 
 ////////////////////////////////////////////////////////////////////
 // Solenoid Outputs:
-// 1,2 - climber tilt
-//     1 = extend
-//     2 = retract
 //
 
-#define	SOLENOID_CLIMBER_EXTEND		1
-#define	SOLENOID_CLIMBER_RETRACT	2
+// 1,2 - not used
 
 // 3,4 - shooter position
 //     3 = extend (deploy for long range)
@@ -87,12 +74,14 @@ class OI;
 #define SOLENOID_SHOOTER_LOAD		5
 #define SOLENOID_SHOOTER_SHOOT		6
 
-// 7,8 - climber claw
-//     7 = extend (close)
-//     8 = retract (open)
+// 7   - climber
+//     true = extend
+//     false = retract
+//     retracts when robot is disabled
 
-#define	SOLENOID_CLIMBER_CLAW_CLOSE	7
-#define	SOLENOID_CLIMBER_CLAW_OPEN	8
+#define	SOLENOID_CLIMBER_EXTEND		7
+
+// 8   - not used
 
 ////////////////////////////////////////////////////////////////////
 // PWM Outputs:
@@ -110,12 +99,9 @@ class OI;
 #define PWM_DRIVE_RIGHT			5
 #define PWM_DRIVE_REAR			6
 
-// 7 - climber right
-// 8 - climber left
+// 7,8 - not used
 
-#define PWM_CLIMBER_RIGHT		7
-#define PWM_CLIMBER_LEFT		8
-
+////////////////////////////////////////////////////////////////////
 // CAN (CANJaguar) channels:
 // 6 - shooter motor
 

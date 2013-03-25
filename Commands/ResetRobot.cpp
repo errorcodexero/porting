@@ -15,9 +15,8 @@ ResetRobot::ResetRobot() :
     // eg. Requires(chassis);
     Requires(Robot::driveBase());
     Requires(Robot::shooter());
-#if 0
-    Requires(Robot::climber());
-#endif
+    // The climber is directly controlled by a hard switch;
+    //   don't mess with it here.
 }
 
 // Called just before this Command runs the first time
@@ -28,31 +27,20 @@ void ResetRobot::Initialize()
     Robot::shooter()->Stop();
     Robot::shooter()->SetAngle(Shooter::kShort);
     Robot::shooter()->SetInjector(true);
-#if 0
-    Robot::climber()->SetClaw(Climber::kOpen);
-    Robot::climber()->SetExtender(Climber::kRetracted);
-    Robot::climber()->SetHooks(Climber::kDown);
-#endif
+    // The climber is directly controlled by a hard switch;
+    //   don't mess with it here.
 }
 
 // Called repeatedly when this Command is scheduled to run
 void ResetRobot::Execute()
 {
-#if 0
-    Robot::climber()->SetHooks(Climber::kDown);
-#endif
+    ;
 }
 
 // Make this return true when this Command no longer needs to run execute()
 bool ResetRobot::IsFinished()
 {
-    bool finished =
-		     Robot::shooter()->IsInPosition()
-#if 0
-		  && Robot::climber()->HooksAtBottom()
-#endif
-		  ;
-
+    bool finished = Robot::shooter()->IsInPosition();
     if (finished) printf("RobotReset::IsFinished\n");
     return finished;
 }
@@ -69,7 +57,4 @@ void ResetRobot::Interrupted()
 {
     printf("ResetRobot::Interrupted\n");
     Robot::shooter()->Stop();
-#if 0
-    Robot::climber()->SetHooks(Climber::kStop);
-#endif
 }

@@ -95,12 +95,10 @@ private:
     JoystickButton* m_pGamepadBack;
     JoystickButton* m_pGamepadStart;
 
-    DSAnalogInput* m_pClimber;
-    DSAnalogInput* m_pTip;
     DSAnalogInput* m_pSpeedAdjust;
     DSAnalogInput* m_pShooterTarget;
 
-    DSDigitalInput* m_pDump;
+    DSDigitalInput* m_pClimber;
     DSDigitalInput* m_pCameraLight;
     DSDigitalInput* m_pCameraPosition;
     DSDigitalInput* m_pLearnButton;
@@ -150,9 +148,7 @@ public:
     Joystick* GetStick() { return m_pStick; }
     DriverStationEnhancedIO* GetEIO() { return m_pEIO; }
     DriverStationLCD* GetLCD() { return m_pLCD; }
-    int GetTip() { return m_pTip->GetDigital(2); }
-    bool GetDump() { return m_pDump->Get(); }
-    int GetClimber() { return m_pClimber->GetDigital(3); }
+    bool GetClimber() { return m_pClimber->Get(); }
     int GetTarget() { return m_pShooterTarget->GetDigital(3); }
     double GetSpeedAdjust() { return m_pSpeedAdjust->GetAnalog(); }
     void SetReadyLED( bool value ) { m_pReadyLED->Set(value); }

@@ -26,6 +26,7 @@ public:
     void HolonomicDrive_Cartesian(float x, float y, float rotation );
 
 private:
+    double m_lastSpeeds[kMaxNumberOfMotors];
     DISALLOW_COPY_AND_ASSIGN(RobotDrive3);
 };
 

@@ -457,10 +457,12 @@ do
 
   -- install dissectors
   local FRC_ROBOT_PORT = 1110
+  local FMS_ROBOT_PORT = 1115
   local FRC_DS_PORT = 1150
 
   local udp_dissector_table = DissectorTable.get("udp.port")
   udp_dissector_table:add(FRC_ROBOT_PORT, p_d2r)
+  udp_dissector_table:add(FMS_ROBOT_PORT, p_d2r)
   udp_dissector_table:add(FRC_DS_PORT, p_r2d)
 end
 

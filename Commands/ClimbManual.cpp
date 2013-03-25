@@ -7,9 +7,6 @@
 #include "Climber.h"
 #include "ClimbManual.h"
 
-#define	EXTEND_TIME	1.2
-#define	GRAB_TIME	1.2
-
 ClimbManual::ClimbManual() :
     Command("ClimbManual")
 {
@@ -23,38 +20,9 @@ void ClimbManual::Initialize()
 
 void ClimbManual::Execute()
 {
-    // The OI "tip" switch controls the extender.
-    switch (Robot::oi()->GetTip()) {
-    case 0:
-	Robot::climber()->SetExtender(Climber::kRetracted);
-	break;
-    case 1:
-	break;
-    case 2:
-	Robot::climber()->SetExtender(Climber::kExtended);
-	break;
+    if (Robot::theRobot().IsOperatorControl()) {
+	Robot::climber()->SetExtended( Robot::oi()->GetClimber() );
     }
-
-    // The OI "dump" switch controls the claw.
-    Robot::climber()->SetClaw(
-	Robot::oi()->GetDump() ? Climber::kOpen : Climber::kClosed
-    );
-
-    // The OI "climb" switch controls the hooks.
-    switch ( Robot::oi()->GetClimber() ) {
-    case 0:
-	Robot::climber()->SetHooks( Climber::kDown );
-	break;
-    case 1:
-	Robot::climber()->SetHooks( Climber::kStop );
-	break;
-    case 2:
-	Robot::climber()->SetHooks( Climber::kUp );
-	break;
-    }
-
-    // Hook position sensors control the DS LEDs
-    Robot::oi()->GetEIO()->SetLEDs( Robot::climber()->GetLimits() );
 }
 
 bool ClimbManual::IsFinished()

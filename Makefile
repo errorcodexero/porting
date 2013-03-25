@@ -15,7 +15,6 @@ SOURCES := \
 	Commands/BlinkyBreathe.cpp \
 	Commands/BlinkyOff.cpp \
 	Commands/BlinkyOn.cpp \
-	Commands/ClimbCommand.cpp \
 	Commands/ClimbManual.cpp \
 	Commands/DriveCommand.cpp \
 	Commands/ResetRobot.cpp \

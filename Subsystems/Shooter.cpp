@@ -233,7 +233,7 @@ void Shooter::ReportSpeed()
 	// 1000 is arbitrary, just to limit number of digits
 	//  displayed on the dashboard.
 	if (m_timeAtSpeed < 1000) m_timeAtSpeed++;
-	m_speedStable = (int) SmartDashboard::GetNumber("Shooter Stable Time");
+	m_speedStable = SmartDashboard::GetNumber("Shooter Stable Time");
 	m_isUpToSpeed = (m_timeAtSpeed * kReportInterval >= m_speedStable);
     } else {
 	m_timeAtSpeed = 0;
