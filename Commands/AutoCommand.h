@@ -54,9 +54,41 @@ private:
     int m_pattern;  // which autonomous mode pattern to run
     struct DrivePattern m_drivePattern[MAX_AUTO_SEQ];
 
+    class AutoSelect *m_autoSelectCmd;
+    class AutoSave *m_autoSaveCmd;
+
     void GetAutoPreferences();
     void GetDashboardSettings();
     void PutDashboardSettings();
+};
+
+// These two commands run in the background
+// to monitor and act on SmartDashboard updates to the drive pattern
+
+class AutoSelect : public Command {
+private:
+    AutoCommand *m_auto;
+public:
+    AutoSelect( AutoCommand *cmd );
+    virtual ~AutoSelect();
+    virtual void Initialize();
+    virtual void Execute();
+    virtual bool IsFinished();
+    virtual void End();
+    virtual void Interrupted();
+};
+
+class AutoSave : public Command {
+private:
+    AutoCommand *m_auto;
+public:
+    AutoSave( AutoCommand *cmd );
+    virtual ~AutoSave();
+    virtual void Initialize();
+    virtual void Execute();
+    virtual bool IsFinished();
+    virtual void End();
+    virtual void Interrupted();
 };
 
 #endif

@@ -313,12 +313,18 @@ AutoCommand::AutoCommand() :
 	AddSequential(m_step[i]);
     }
 
-    // get driving parameters
+    // get initial driving parameters
     GetAutoPreferences();
+    m_pattern = Robot::oi()->GetAuto();
 
-    // configure driving sequence
-    m_pattern = -1;  // special case for first-time initialization
-    SetDrivePattern( Robot::oi()->GetAuto() );
+    // set dashboard to configure driving sequence
+    PutDashboardSettings();
+
+    m_autoSelectCmd = new AutoSelect(this);
+    m_autoSelectCmd->Start();
+
+    m_autoSaveCmd = new AutoSave(this);;
+    SmartDashboard::PutData("AUTO SAVE", m_autoSaveCmd);
 }
 
 AutoCommand::~AutoCommand()
@@ -337,7 +343,9 @@ void AutoCommand::Initialize()
     m_shoot->SetTarget(3);
     m_shoot->SetNumDisks(3);
     
-    // configure TimedDrive steps to run selected pattern
+    // configure TimedDrive steps to run the selected pattern
+    // as currently displayed on the SmartDashboard
+    GetDashboardSettings();
     DriveStep *pStep = &m_drivePattern[m_pattern].step[0];
     for (int i = 0; i < MAX_AUTO_STEPS; i++) {
 	m_step[i]->Set( pStep->x, pStep->y, pStep->s, pStep->t );
@@ -347,6 +355,8 @@ void AutoCommand::Initialize()
 
 void AutoCommand::GetAutoPreferences()
 {
+    printf("AutoCommand::GetAutoPreferences\n");
+
     Preferences *pref = Preferences::GetInstance();
 
     // autonomous mode sequence 0 step 0
@@ -662,6 +672,8 @@ void AutoCommand::GetAutoPreferences()
 
 void AutoCommand::SaveAutoPreferences()
 {
+    printf("AutoCommand::SaveAutoPreferences\n");
+
     Preferences *pref = Preferences::GetInstance();
 
     // autonomous mode sequence 0 step 0
@@ -980,7 +992,9 @@ void AutoCommand::SaveAutoPreferences()
 void AutoCommand::SetDrivePattern( int newPattern )
 {
     if (newPattern != m_pattern) {
-	if (m_pattern != -1) GetDashboardSettings();
+	printf("AutoCommand::SetDrivePattern: pattern was %d changed to %d\n",
+	       m_pattern, newPattern);
+	GetDashboardSettings();
 	m_pattern = newPattern;
 	PutDashboardSettings();
     }
@@ -988,6 +1002,8 @@ void AutoCommand::SetDrivePattern( int newPattern )
 
 void AutoCommand::GetDashboardSettings()
 {
+    printf("AutoCommand::GetDashboardSettings\n");
+
     DrivePattern *dp = &m_drivePattern[ m_pattern ];
 
     dp->step[0].x = SmartDashboard::GetNumber(STEP0X);
@@ -1023,6 +1039,8 @@ void AutoCommand::GetDashboardSettings()
 
 void AutoCommand::PutDashboardSettings()
 {
+    printf("AutoCommand::PutDashboardSettings\n");
+
     DrivePattern *dp = &m_drivePattern[ m_pattern ];
 
     SmartDashboard::PutNumber(STEP0X, dp->step[0].x);
@@ -1077,3 +1095,18 @@ void AutoCommand::Interrupted()
     Robot::blinkyLight()->Set(0.0);
 }
 
+AutoSelect::AutoSelect( AutoCommand *cmd ) { m_auto = cmd; }
+AutoSelect:: ~AutoSelect() {}
+void AutoSelect::Initialize() {}
+void AutoSelect::Execute() { m_auto->SetDrivePattern(Robot::oi()->GetAuto()); }
+bool AutoSelect::IsFinished() { return true; }
+void AutoSelect::End() {}
+void AutoSelect::Interrupted() {}
+
+AutoSave::AutoSave( AutoCommand *cmd ) { m_auto = cmd; }
+AutoSave::~AutoSave() {}
+void AutoSave::Initialize() { m_auto->SaveAutoPreferences(); }
+void AutoSave::Execute() {}
+bool AutoSave::IsFinished() { return true; }
+void AutoSave::End() {}
+void AutoSave::Interrupted() {}

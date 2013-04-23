@@ -21,7 +21,11 @@ static const char *kTableName = "Preferences";
 /** The value of the save field */
 static const char *kSaveField = "~S A V E~";
 /** The file to save to */
+#ifdef _WRS_KERNEL
 static const char *kFileName = "/c/wpilib-preferences.ini";
+#else
+static const char *kFileName = "wpilib-preferences.ini";
+#endif
 /** The characters to put between a field and value */
 static const char *kValuePrefix = "=\"";
 /** The characters to put after the value */

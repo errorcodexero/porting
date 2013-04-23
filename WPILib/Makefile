@@ -3,7 +3,7 @@ CXX := g++
 CDEBUG :=
 CINCLUDES := -I./ -I../WPILib/ -I../stubs/ -I../v2lin/lib/
 CFLAGS := -Wall -Werror -g -O0 $(CINCLUDES) $(CDEBUG)
-CXXFLAGS := -Wall -Wno-deprecated -Wno-ctor-dtor-privacy -Werror -g -O0 $(CINCLUDES) $(CDEBUG)
+CXXFLAGS := -Wall -Wno-deprecated -Wno-ctor-dtor-privacy -Wno-delete-non-virtual-dtor -Werror -g -O0 $(CINCLUDES) $(CDEBUG)
 LDLIBS = -lpthread -ldl -lrt -lm
 
 SOURCES := \
