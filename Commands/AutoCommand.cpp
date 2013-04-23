@@ -1095,18 +1095,44 @@ void AutoCommand::Interrupted()
     Robot::blinkyLight()->Set(0.0);
 }
 
-AutoSelect::AutoSelect( AutoCommand *cmd ) { m_auto = cmd; }
+AutoSelect::AutoSelect( AutoCommand *cmd ) : Command("AutoSelect")
+{
+    m_auto = cmd;
+}
+
 AutoSelect:: ~AutoSelect() {}
+
 void AutoSelect::Initialize() {}
-void AutoSelect::Execute() { m_auto->SetDrivePattern(Robot::oi()->GetAuto()); }
+
+void AutoSelect::Execute()
+{
+    m_auto->SetDrivePattern(Robot::oi()->GetAuto());
+}
+
 bool AutoSelect::IsFinished() { return true; }
+
 void AutoSelect::End() {}
+
 void AutoSelect::Interrupted() {}
 
-AutoSave::AutoSave( AutoCommand *cmd ) { m_auto = cmd; }
+AutoSave::AutoSave( AutoCommand *cmd ) : Command("AutoSave")
+{
+    m_auto = cmd;
+}
+
 AutoSave::~AutoSave() {}
-void AutoSave::Initialize() { m_auto->SaveAutoPreferences(); }
+
+void AutoSave::Initialize()
+{
+    m_auto->GetDashboardSettings();
+    m_auto->SaveAutoPreferences();
+}
+
 void AutoSave::Execute() {}
+
 bool AutoSave::IsFinished() { return true; }
+
 void AutoSave::End() {}
+
 void AutoSave::Interrupted() {}
+

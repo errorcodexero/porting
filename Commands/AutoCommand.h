@@ -39,8 +39,11 @@ public:
     virtual bool IsFinished();
     virtual void End();
     virtual void Interrupted();
-    void SaveAutoPreferences();
     void SetDrivePattern( int pattern );
+    void GetDashboardSettings();
+    void PutDashboardSettings();
+    void GetAutoPreferences();
+    void SaveAutoPreferences();
 
 private:
     BlinkyBreathe *m_blinky;
@@ -56,10 +59,6 @@ private:
 
     class AutoSelect *m_autoSelectCmd;
     class AutoSave *m_autoSaveCmd;
-
-    void GetAutoPreferences();
-    void GetDashboardSettings();
-    void PutDashboardSettings();
 };
 
 // These two commands run in the background
