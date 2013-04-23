@@ -34,11 +34,10 @@ void DriveCommand::Execute()
 //  }
 //  then = now;
 
-    Joystick *joy = Robot::oi()->GetStick();
-    float throttle = (1.0 - joy->GetThrottle())/2.0;
-    float x = joy->GetX() * throttle;
-    float y = joy->GetY() * throttle;
-    float t = joy->GetTwist();
+    float throttle = (1.0 - Robot::oi()->GetThrottle())/2.0;
+    float x = Robot::oi()->GetX() * throttle;
+    float y = Robot::oi()->GetY() * throttle;
+    float t = Robot::oi()->GetTwist();
 //  printf("%g %g %g\n", x, y, t);
 
     Robot::driveBase()->Drive3(x, y, t);

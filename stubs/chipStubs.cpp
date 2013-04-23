@@ -131,10 +131,14 @@ private:
 
 tGlobal* tGlobal::create( tRioStatusCode *status )
 {
-    uint32_t guid[4];
-    snprintf((char *)guid, sizeof guid, "global");
+    static stubGlobal *singleton = NULL;
+    if (!singleton) {
+	uint32_t guid[4];
+	snprintf((char *)guid, sizeof guid, "global");
+	singleton = new stubGlobal(guid);
+    }
     *status = 0;
-    return new stubGlobal(guid);
+    return singleton;
 }
 
 }; // namespace nFRC_2012_1_6_4

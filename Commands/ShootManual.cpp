@@ -28,53 +28,69 @@ void ShootManual::Initialize()
 
 void ShootManual::Execute()
 {
-    Shooter::TargetDistance target;
+    Shooter::TargetDistance distance;
     double speed;
 
-    switch (Robot::oi()->GetTarget()) {
+    switch (Robot::oi()->GetTilt()) {
     case 0:
-	target = Shooter::kShort;
+	distance = Shooter::kShort;
 	speed = Robot::theRobot().m_speed_short;
 	break;
     case 1:
-	target = Shooter::kMid;
-	speed = Robot::theRobot().m_speed_mid;
+	distance = Shooter::kMid;
+	speed = (Robot::oi()->GetTarget() == 3)
+		? Robot::theRobot().m_speed_mid_3
+		: Robot::theRobot().m_speed_mid_2;
 	break;
     case 2:
-	target = Shooter::kLong;
-	speed = Robot::theRobot().m_speed_long;
+	distance = Shooter::kLong;
+	speed = (Robot::oi()->GetTarget() == 3)
+		? Robot::theRobot().m_speed_long_3
+		: Robot::theRobot().m_speed_long_2;
 	break;
     default:  // "can't happen"
-	target = Shooter::kUnknown;
+	distance = Shooter::kUnknown;
 	speed = 0.0;
 	break;
     }
 
-    // adjust base speed +/- 16.67%
-    speed *= (1.0 + (Robot::oi()->GetSpeedAdjust() - 0.5) / 3.0);
+    // adjust base speed +/- 10%
+    speed *= (1.0 + (Robot::oi()->GetSpeedAdjust() - 0.5) / 5.0);
 
-    Robot::shooter()->SetAngle(target);
+    Robot::shooter()->SetAngle(distance);
     Robot::shooter()->SetSpeed(speed);
 
     if (Robot::oi()->GetLearn()) {
 	if (!m_learn) {
 	    printf("Shooter Learn\n");
 	    Preferences *pref = Preferences::GetInstance();
-	    switch (target) {
+	    switch (distance) {
 	    case Shooter::kShort:
 		printf("saving %s = %g\n", KEY_SPEED_SHORT, speed);
 		pref->PutDouble(KEY_SPEED_SHORT, speed);
 		Robot::theRobot().m_speed_short = speed;
 		break;
 	    case Shooter::kMid:
-		printf("saving %s = %g\n", KEY_SPEED_MID, speed);
-		pref->PutDouble(KEY_SPEED_MID,   speed);
-		Robot::theRobot().m_speed_mid = speed;
+		if (Robot::oi()->GetTarget() == 3) {
+		    printf("saving %s = %g\n", KEY_SPEED_MID_3, speed);
+		    pref->PutDouble(KEY_SPEED_MID_3,   speed);
+		    Robot::theRobot().m_speed_mid_3 = speed;
+		} else {
+		    printf("saving %s = %g\n", KEY_SPEED_MID_2, speed);
+		    pref->PutDouble(KEY_SPEED_MID_2,   speed);
+		    Robot::theRobot().m_speed_mid_2 = speed;
+		}
 		break;
 	    case Shooter::kLong:
-		printf("saving %s = %g\n", KEY_SPEED_LONG, speed);
-		pref->PutDouble(KEY_SPEED_LONG,  speed);
-		Robot::theRobot().m_speed_long = speed;
+		if (Robot::oi()->GetTarget() == 3) {
+		    printf("saving %s = %g\n", KEY_SPEED_LONG_3, speed);
+		    pref->PutDouble(KEY_SPEED_LONG_3,  speed);
+		    Robot::theRobot().m_speed_long_3 = speed;
+		} else {
+		    printf("saving %s = %g\n", KEY_SPEED_LONG_2, speed);
+		    pref->PutDouble(KEY_SPEED_LONG_2,  speed);
+		    Robot::theRobot().m_speed_long_2 = speed;
+		}
 		break;
 	    default: // "can't happen"
 		break;
@@ -96,7 +112,7 @@ void ShootManual::Execute()
 	}
     }
 
-    if (Robot::shooter()->IsReadyToShoot()) {
+    if (Robot::shooter()->IsReadyToShoot() || Robot::oi()->GetOverride()) {
 	Robot::oi()->SetReadyLED(true);
 	if (Robot::oi()->GetLaunch()) {
 	    Robot::shooter()->Inject();
@@ -116,10 +132,12 @@ void ShootManual::End()
 {
     printf("ShootManual::End\n");
     Robot::shooter()->Stop();
+    Robot::oi()->SetReadyLED(false);
 }
 
 void ShootManual::Interrupted()
 {
     printf("ShootManual::Interrupted\n");
     Robot::shooter()->Stop();
+    Robot::oi()->SetReadyLED(false);
 }

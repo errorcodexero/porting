@@ -20,17 +20,6 @@ OI::OI()
     m_pLCD = DriverStationLCD::GetInstance();
 
     m_pStick = new Joystick(1);
-#if 1	// using gamepad rather than joystick
-    // left stick L/R 1  -> X
-    // left stick U/D 2  -> 
-    // Z buttons L/R 3   -> throttle
-    // right stick L/R 4 -> twist
-    // right stick U/D 5 -> Y
-    m_pStick->SetAxisChannel( Joystick::kXAxis, 1 );
-    m_pStick->SetAxisChannel( Joystick::kThrottleAxis, 3 );
-    m_pStick->SetAxisChannel( Joystick::kTwistAxis, 4 );
-    m_pStick->SetAxisChannel( Joystick::kYAxis, 5 );
-#endif
     m_pGamepadButtonA     = new JoystickButton(m_pStick, 1);
     m_pGamepadButtonB     = new JoystickButton(m_pStick, 2);
     m_pGamepadButtonX     = new JoystickButton(m_pStick, 3);
@@ -44,31 +33,39 @@ OI::OI()
     // analog input 2 was 3-position momentary climber tilt control
 
     m_pSpeedAdjust        = new DSAnalogInput(m_pEIO, 3);
-    m_pShooterTarget      = new DSAnalogInput(m_pEIO, 4);
+    m_pShooterTilt        = new DSAnalogInput(m_pEIO, 4);
+    m_pAutoSelect         = new DSAnalogInput(m_pEIO, 5);
+    m_pShooterTarget      = new DSAnalogInput(m_pEIO, 6);
 
-    // digital input 1 was 2-position claw control
-    // now used for climber control
+    // digital inputs
     m_pClimber            = new DSDigitalInput(m_pEIO, 1,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    true);
-    // digital input 2 not used
-    m_pCameraLight        = new DSDigitalInput(m_pEIO, 2,
-				    DriverStationEnhancedIO::kInputPullUp,
-				    true);
-    // digital input 3 not used
-    m_pCameraPosition     = new DSDigitalInput(m_pEIO, 3,
-				    DriverStationEnhancedIO::kInputPullUp,
-				    true);
 
-    m_pLearnButton        = new DSDigitalInput(m_pEIO, 4,
+    // digital input 2 not connected/not used
+    m_pLightsOn           = new DSDigitalInput(m_pEIO, 2,
+				    DriverStationEnhancedIO::kInputPullUp,
+				    true);	// active-high toggle
+
+    m_pDriverSelect       = new DSDigitalInput(m_pEIO, 3,
+				    DriverStationEnhancedIO::kInputPullUp,
+				    true);	// active-high toggle
+
+    m_pShooterOverride    = new DSDigitalInput(m_pEIO, 4,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    false);	// active-low pushbutton
-    m_pManualOverride     = new DSDigitalInput(m_pEIO, 5,
+
+    m_pShooterOn          = new DSDigitalInput(m_pEIO, 5,
 				    DriverStationEnhancedIO::kInputPullUp,
-				    true);
+				    true);	// active-high toggle
+
     m_pLaunch             = new DSDigitalInput(m_pEIO, 6,
 				    DriverStationEnhancedIO::kInputPullDown,
 				    true);	// active-high pushbutton
+
+    m_pLearn        = new DSDigitalInput(m_pEIO, 7,
+				    DriverStationEnhancedIO::kInputPullUp,
+				    false);	// active-low pushbutton
 
     m_pReadyLED           = new DSDigitalOutput(m_pEIO, 16);
 }
@@ -87,11 +84,14 @@ OI::~OI()
     delete m_pGamepadStart;
     delete m_pSpeedAdjust;
     delete m_pShooterTarget;
+    delete m_pShooterTilt;
+    delete m_pAutoSelect;
     delete m_pClimber;
-    delete m_pCameraLight;
-    delete m_pCameraPosition;
-    delete m_pLearnButton;
-    delete m_pManualOverride;
+    delete m_pLightsOn;
+    delete m_pDriverSelect;
+    delete m_pLearn;
+    delete m_pShooterOverride;
+    delete m_pShooterOn;
     delete m_pLaunch;
     delete m_pReadyLED;
 
@@ -132,10 +132,10 @@ void OI::Initialize()
     m_pSelectTargetMid = new SelectTarget("mid");
     m_pGamepadButtonY->WhenPressed(m_pSelectTargetMid);
 
-    m_pNudgeLeft = new TimedDrive( 0.0, 0.0, -.35, 0.20 );
+    m_pNudgeLeft = new TimedDrive( 0.0, 0.0, -.20, 0.20 );
     m_pGamepadLeftBumper->WhenPressed(m_pNudgeLeft);
 
-    m_pNudgeRight = new TimedDrive( 0.0, 0.0, .35, 0.20 );
+    m_pNudgeRight = new TimedDrive( 0.0, 0.0, .20, 0.20 );
     m_pGamepadRightBumper->WhenPressed(m_pNudgeRight);
 
     m_pTrimLeft = new AimTrim(true);
@@ -160,7 +160,7 @@ void OI::Initialize()
     SmartDashboard::PutData("Shoot Long", m_pShootLong);
 
     m_pShootManual = new ShootManual();
-    m_pManualOverride->WhileHeld(m_pShootManual);
+    m_pShooterOn->WhileHeld(m_pShootManual);
 
     m_pTiltShort = new TiltCommand( Shooter::kShort );
     SmartDashboard::PutData("Tilt Short", m_pTiltShort);
@@ -173,7 +173,7 @@ void OI::Initialize()
 
     // m_pBlinkyOn = new BlinkyOn();
     // SmartDashboard::PutData("Blinky On", m_pBlinkyOn);
-    // m_pCameraLight->WhileHeld(m_pBlinkyOn);
+    // m_pLightsOn->WhileHeld(m_pBlinkyOn);
 
     m_pResetRobot = new ResetRobot();
     SmartDashboard::PutData("Reset Robot", m_pResetRobot);

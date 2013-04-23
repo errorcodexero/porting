@@ -7,14 +7,30 @@
 #include "ShootCommand.h"
 
 ShootCommand::ShootCommand( Shooter::TargetDistance targetDistance,
-			    int num_disks ) :
+			    int targetSelect, int num_disks ) :
     Command("ShootCommand")
 {
     Requires(Robot::shooter());
     m_targetDistance = targetDistance;
+    m_target = targetSelect;
     m_numDisks = num_disks;
     m_launched = 0;
     SmartDashboard::PutNumber("ShootCommand Launched", (double) m_launched);
+}
+
+void ShootCommand::SetDistance( Shooter::TargetDistance distance )
+{
+    m_targetDistance = distance;
+}
+
+void ShootCommand::SetTarget( int target )
+{
+    m_target = target;
+}
+
+void ShootCommand::SetNumDisks( int numDisks )
+{
+    m_numDisks = numDisks;
 }
 
 void ShootCommand::Initialize()
@@ -28,10 +44,14 @@ void ShootCommand::Initialize()
 	Robot::shooter()->SetSpeed(Robot::theRobot().m_speed_short);
 	break;
     case Shooter::kMid:
-	Robot::shooter()->SetSpeed(Robot::theRobot().m_speed_mid);
+	Robot::shooter()->SetSpeed( (m_target == 3)
+				    ? Robot::theRobot().m_speed_mid_3
+				    : Robot::theRobot().m_speed_mid_2 );
 	break;
     case Shooter::kLong:
-	Robot::shooter()->SetSpeed(Robot::theRobot().m_speed_long);
+	Robot::shooter()->SetSpeed( (m_target == 3)
+				    ? Robot::theRobot().m_speed_long_3
+				    : Robot::theRobot().m_speed_long_2 );
 	break;
     default:
 	break;

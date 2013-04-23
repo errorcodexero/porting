@@ -10,12 +10,18 @@
 class ShootCommand: public Command {
 private:
     Shooter::TargetDistance m_targetDistance;
+    int m_target;
     int m_numDisks;
     int m_launched;
 
 public:
     ShootCommand( Shooter::TargetDistance targetDistance = Shooter::kUnknown,
-    		  int num_disks = 45 );
+		  int targetSelect = 2,	// 3 pt. goal
+    		  int num_disks = 45 ); // all of 'em
+
+    void SetDistance( Shooter::TargetDistance );
+    void SetTarget( int );
+    void SetNumDisks( int );
     int GetLaunched();
     virtual void Initialize();
     virtual void Execute();

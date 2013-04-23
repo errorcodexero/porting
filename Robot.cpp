@@ -18,9 +18,13 @@
 // Operator Interface
 #include "OI.h"
 
-const char *KEY_SPEED_SHORT = "ShooterSpeedShort";
-const char *KEY_SPEED_MID = "ShooterSpeedMid";
-const char *KEY_SPEED_LONG = "ShooterSpeedLong";
+// constant strings used for preferences file entries
+const char KEY_SPEED_SHORT[]  = "ShooterSpeedShort";
+const char KEY_SPEED_MID_2[]  = "ShooterSpeedMid2";
+const char KEY_SPEED_MID_3[]  = "ShooterSpeedMid3";
+const char KEY_SPEED_LONG_2[] = "ShooterSpeedLong2";
+const char KEY_SPEED_LONG_3[] = "ShooterSpeedLong3";
+
 
 Robot::Robot()
 {
@@ -65,9 +69,11 @@ void Robot::RobotInit()
     // tune system parameters
 
     Preferences *pref = Preferences::GetInstance();
-    m_speed_short = pref->GetDouble(KEY_SPEED_SHORT, DEFAULT_SPEED_SHORT);
-    m_speed_mid   = pref->GetDouble(KEY_SPEED_MID,   DEFAULT_SPEED_MID);
-    m_speed_long  = pref->GetDouble(KEY_SPEED_LONG,  DEFAULT_SPEED_LONG);
+    m_speed_short  = pref->GetDouble(KEY_SPEED_SHORT,  DEFAULT_SPEED_SHORT);
+    m_speed_mid_2  = pref->GetDouble(KEY_SPEED_MID_2,  DEFAULT_SPEED_MID_2);
+    m_speed_mid_3  = pref->GetDouble(KEY_SPEED_MID_3,  DEFAULT_SPEED_MID_3);
+    m_speed_long_2 = pref->GetDouble(KEY_SPEED_LONG_2, DEFAULT_SPEED_LONG_2);
+    m_speed_long_3 = pref->GetDouble(KEY_SPEED_LONG_3, DEFAULT_SPEED_LONG_3);
 
     // Now that everything else is set up, start the compressor
     m_compressor->Start();

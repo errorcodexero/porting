@@ -109,14 +109,20 @@ class OI;
 
 ////////////////////////////////////////////////////////////////////
 
-extern const char *KEY_SPEED_SHORT;
-#define	DEFAULT_SPEED_SHORT 1600 // shooting at tower from base of tower
+extern const char KEY_SPEED_SHORT[];
+#define	DEFAULT_SPEED_SHORT  1600 // shooting at tower from base of tower
 
-extern const char *KEY_SPEED_MID;
-#define	DEFAULT_SPEED_MID   2500 // shooting at high goal from back of tower
+extern const char KEY_SPEED_MID_2[];
+#define	DEFAULT_SPEED_MID_2  2300 // shooting at 2 pt. goal from back of tower
 
-extern const char *KEY_SPEED_LONG;
-#define	DEFAULT_SPEED_LONG  3200 // shooting at high goal from feeder station
+extern const char KEY_SPEED_MID_3[];
+#define	DEFAULT_SPEED_MID_3  2500 // shooting at 3 pt. goal from back of tower
+
+extern const char KEY_SPEED_LONG_2[];
+#define	DEFAULT_SPEED_LONG_2 3000 // shooting at 2 pt. goal from feeder station
+
+extern const char KEY_SPEED_LONG_3[];
+#define	DEFAULT_SPEED_LONG_3 3200 // shooting at 3 pt. goal from feeder station
 
 ////////////////////////////////////////////////////////////////////
 
@@ -153,15 +159,17 @@ private:
     Climber* m_climber;
     Shooter* m_shooter;
     BlinkyLight* m_blinkyLight;
-    
+
 public:
     // commands
     AutoCommand* m_autonomousCommand;
 
-    // shared variables
+    // shooter speed
     double m_speed_short;
-    double m_speed_mid;
-    double m_speed_long;
+    double m_speed_mid_2;
+    double m_speed_mid_3;
+    double m_speed_long_2;
+    double m_speed_long_3;
 
 public:
     // singleton accessor
