@@ -257,6 +257,8 @@ static const char AUTO9STEP5S[] = "AUTO9STEP5S";
 
 // constant strings used for dashboard entries
 
+static const string PATTERN = "AUTO PATTERN";
+
 static const char STEP0X[] = "STEP 0 X";
 static const char STEP0Y[] = "STEP 0 Y";
 static const char STEP0T[] = "STEP 0 T";
@@ -321,9 +323,11 @@ AutoCommand::AutoCommand() :
     PutDashboardSettings();
 
     m_autoSelectCmd = new AutoSelect(this);
+    m_autoSelectCmd->SetRunWhenDisabled(true);
     m_autoSelectCmd->Start();
 
     m_autoSaveCmd = new AutoSave(this);;
+    m_autoSaveCmd->SetRunWhenDisabled(true);
     SmartDashboard::PutData("AUTO SAVE", m_autoSaveCmd);
 }
 
@@ -1041,6 +1045,8 @@ void AutoCommand::PutDashboardSettings()
 {
     printf("AutoCommand::PutDashboardSettings\n");
 
+    SmartDashboard::PutNumber(PATTERN, m_pattern);
+
     DrivePattern *dp = &m_drivePattern[ m_pattern ];
 
     SmartDashboard::PutNumber(STEP0X, dp->step[0].x);
@@ -1102,14 +1108,17 @@ AutoSelect::AutoSelect( AutoCommand *cmd ) : Command("AutoSelect")
 
 AutoSelect:: ~AutoSelect() {}
 
-void AutoSelect::Initialize() {}
+void AutoSelect::Initialize()
+{
+    printf("AutoSelect::Initialize\n");
+}
 
 void AutoSelect::Execute()
 {
     m_auto->SetDrivePattern(Robot::oi()->GetAuto());
 }
 
-bool AutoSelect::IsFinished() { return true; }
+bool AutoSelect::IsFinished() { return false; }
 
 void AutoSelect::End() {}
 
@@ -1124,6 +1133,7 @@ AutoSave::~AutoSave() {}
 
 void AutoSave::Initialize()
 {
+    printf("AutoSave::Initialize\n");
     m_auto->GetDashboardSettings();
     m_auto->SaveAutoPreferences();
 }
