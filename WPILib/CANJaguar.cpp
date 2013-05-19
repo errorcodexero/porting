@@ -14,12 +14,24 @@
 #include <stdio.h>
 #include "LiveWindow/LiveWindow.h"
 
+#ifdef _WRS_KERNEL
+
+// assume big-endian host
+
 #define swap16(x) ( (((x)>>8) &0x00FF) \
                   | (((x)<<8) &0xFF00) )
 #define swap32(x) ( (((x)>>24)&0x000000FF) \
                   | (((x)>>8) &0x0000FF00) \
                   | (((x)<<8) &0x00FF0000) \
                   | (((x)<<24)&0xFF000000) )
+
+#else
+
+#include <endian.h>
+#define swap16(x) htole16(x)
+#define swap32(x) htole32(x)
+
+#endif
 
 #define kFullMessageIDMask (CAN_MSGID_API_M | CAN_MSGID_MFR_M | CAN_MSGID_DTYPE_M)
 

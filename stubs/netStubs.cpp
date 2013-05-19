@@ -10,6 +10,7 @@
 #include "DriverStation.h"
 #include "NetworkCommunication/FRCComm.h"
 #include "NetworkCommunication/UsageReporting.h"
+#include "CAN/can_proto.h"
 
 uint8_t fakeMAC[] = { 0x00, 0x80, 0x2f, 0x11, 0xd8, 0x2a };
 char commVersion[] = "06300800";
@@ -1579,12 +1580,90 @@ UINT32 report(
 
 }; // namespace UsageReporting
 
+static UINT32 replyMessageID = 0;
+static UINT8 replyData[8];
+static UINT8 replyDataSize = 0;
+
 extern "C" void FRC_NetworkCommunication_JaguarCANDriver_sendMessage(
     UINT32 messageID,
     const UINT8 *data,
     UINT8 dataSize,
     INT32 *status )
 {
+    messageID &= ~0x80000000;
+    switch (messageID & ~0x3f) {
+    case CAN_MSGID_API_SYNC:
+	// ignore this message
+	break;
+
+    case CAN_MSGID_API_FIRMVER:
+	replyMessageID = messageID;
+	*(UINT32 *)replyData = htole32(101);
+	replyDataSize = sizeof (UINT32);
+	break;
+
+    case LM_API_SPD_PC:
+    case LM_API_SPD_IC:
+    case LM_API_SPD_DC:
+    case LM_API_POS_PC:
+    case LM_API_POS_IC:
+    case LM_API_POS_DC:
+    case LM_API_ICTRL_PC:
+    case LM_API_ICTRL_IC:
+    case LM_API_ICTRL_DC:
+    case LM_API_VOLT_T_EN:
+    case LM_API_SPD_T_EN:
+    case LM_API_POS_T_EN:
+    case LM_API_ICTRL_T_EN:
+    case LM_API_VCOMP_T_EN:
+    case LM_API_VOLT_DIS:
+    case LM_API_SPD_DIS:
+    case LM_API_POS_DIS:
+    case LM_API_ICTRL_DIS:
+    case LM_API_VCOMP_DIS:
+    case LM_API_STATUS_POWER:
+    case LM_API_VOLT_SET_RAMP:
+    case LM_API_VCOMP_IN_RAMP:
+    case LM_API_CFG_BRAKE_COAST:
+    case LM_API_CFG_ENC_LINES:
+    case LM_API_CFG_POT_TURNS:
+    case LM_API_CFG_LIMIT_FWD:
+    case LM_API_CFG_LIMIT_REV:
+    case LM_API_CFG_LIMIT_MODE:
+    case LM_API_CFG_MAX_VOUT:
+    case LM_API_CFG_FAULT_TIME:
+    case LM_API_VOLT_T_SET:
+    case LM_API_SPD_T_SET:
+    case LM_API_POS_T_SET:
+    case LM_API_ICTRL_T_SET:
+    case LM_API_VCOMP_T_SET:
+    case LM_API_SPD_REF:
+    case LM_API_POS_REF:
+	replyMessageID = LM_API_ACK | (messageID & 0x3f);
+	memcpy(replyData, data, dataSize);
+	replyDataSize = dataSize;
+	break;
+
+    case LM_API_VOLT_SET:
+    case LM_API_ICTRL_SET:
+    case LM_API_VCOMP_SET:
+	replyMessageID = messageID;
+	memset(replyData, 0, sizeof replyData);
+	replyDataSize = sizeof(INT16);
+	break;
+
+    case LM_API_SPD_SET:
+    case LM_API_POS_SET:
+	replyMessageID = messageID;
+	memset(replyData, 0, sizeof replyData);
+	replyDataSize = sizeof(INT32);
+	break;
+
+    default:
+	replyMessageID = 0;
+	replyDataSize = 0;
+	break;
+    }
     *status = 0;
 }
 
@@ -1595,7 +1674,11 @@ extern "C" void FRC_NetworkCommunication_JaguarCANDriver_receiveMessage(
     UINT32 timeoutMs,
     INT32 *status )
 {
-    if (messageID) *messageID = 0;
-    if (dataSize) *dataSize = 0;
-    *status = 0;
+    if (messageID && replyMessageID == (*messageID & ~0x80000000)) {
+	if (dataSize) *dataSize = replyDataSize;
+	if (data) memcpy(data, replyData, replyDataSize);
+	*status = 0;
+    } else {
+	*status = -1;
+    }
 }
