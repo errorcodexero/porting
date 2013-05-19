@@ -90,13 +90,24 @@ void DriveBase::Start()
 {
     if (!m_started) {
 printf("DriveBase::Start\n");
+	// set the watchdog timers to something long enough to
+	// avoid panic in the presence of short-term network dropouts
+	m_drive3->SetExpiration(2.0);
+	dynamic_cast<MotorSafety*>(m_rear)->SetExpiration(2.0);
+	dynamic_cast<MotorSafety*>(m_right)->SetExpiration(2.0);
+	dynamic_cast<MotorSafety*>(m_left)->SetExpiration(2.0);
+
 	// set all motors to 0.0 in order to feed their watchdogs
 	m_drive3->SetLeftRightMotorOutputs(0.0, 0.0);
+
 	// now enable the watchdogs
 	m_drive3->SetSafetyEnabled(true);
+#if 0 // we don't really need watchdogs on the individual motors
 	dynamic_cast<MotorSafety*>(m_rear)->SetSafetyEnabled(true);
 	dynamic_cast<MotorSafety*>(m_right)->SetSafetyEnabled(true);
 	dynamic_cast<MotorSafety*>(m_left)->SetSafetyEnabled(true);
+#endif
+
 	// remember that we're started
 	m_started = true;
     }
@@ -107,10 +118,10 @@ void DriveBase::Drive3( float x, float y, float twist )
     if (!m_started) Start();
 
     // Reduce the sensitivity to the "twist" control.
-    // Add gyro compensation (adjust the "500" for best PID response).
+    // Add gyro compensation (adjust the "200" for best PID response).
     // Also reverse the direction, since our drive base is a mirror
     // image of what RobotDrive3 expects.
-    twist = -( twist / 2. - m_gyro->GetRate() / 500. );
+    twist = -( twist - m_gyro->GetRate() / 200. );
 
     // limit the twist range to avoid normalization problems
     if (twist < -1.0) twist = -1.0;

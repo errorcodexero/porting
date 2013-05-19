@@ -34,40 +34,89 @@ OI::OI()
 
     m_pSpeedAdjust        = new DSAnalogInput(m_pEIO, 3);
     m_pShooterTilt        = new DSAnalogInput(m_pEIO, 4);
+#ifdef PRACTICE_OI
+    m_pAutoSelect         = new DSAnalogInput(m_pEIO, 1);
+#else // COMPETITION_OI
     m_pAutoSelect         = new DSAnalogInput(m_pEIO, 5);
+#endif
     m_pShooterTarget      = new DSAnalogInput(m_pEIO, 6);
 
     // digital inputs
+#ifdef PRACTICE_OI
     m_pClimber            = new DSDigitalInput(m_pEIO, 1,
 				    DriverStationEnhancedIO::kInputPullUp,
-				    true);
+				    false);	// active-low toggle
+#else // COMPETITION_OI
+    m_pClimber            = new DSDigitalInput(m_pEIO, 1,
+				    DriverStationEnhancedIO::kInputPullUp,
+				    true);	// active-high toggle
+#endif
 
     // digital input 2 not connected/not used
+#ifdef PRACTICE_OI
+    m_pLightsOn           = new DSDigitalInput(m_pEIO, 2,
+				    DriverStationEnhancedIO::kInputPullUp,
+				    false);	// active-low toggle
+#else // COMPETITION_OI
     m_pLightsOn           = new DSDigitalInput(m_pEIO, 2,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    true);	// active-high toggle
+#endif
 
+#ifdef PRACTICE_OI
+    m_pDriverSelect       = new DSDigitalInput(m_pEIO, 3,
+				    DriverStationEnhancedIO::kInputPullUp,
+				    false);	// active-low toggle
+#else // COMPETITION_OI
     m_pDriverSelect       = new DSDigitalInput(m_pEIO, 3,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    true);	// active-high toggle
+#endif
 
+#ifdef PRACTICE_OI
+    m_pShooterOverride    = new DSDigitalInput(m_pEIO, 13,
+				    DriverStationEnhancedIO::kInputPullUp,
+				    false);	// active-low pushbutton
+#else // COMPETITION_OI
     m_pShooterOverride    = new DSDigitalInput(m_pEIO, 4,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    false);	// active-low pushbutton
+#endif
 
+#ifdef PRACTICE_OI
+    m_pShooterOn          = new DSDigitalInput(m_pEIO, 5,
+				    DriverStationEnhancedIO::kInputPullUp,
+				    false);	// active-low toggle
+#else // COMPETITION_OI
     m_pShooterOn          = new DSDigitalInput(m_pEIO, 5,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    true);	// active-high toggle
+#endif
 
+#ifdef PRACTICE_OI
+    m_pLaunch             = new DSDigitalInput(m_pEIO, 16,
+				    DriverStationEnhancedIO::kInputPullUp,
+				    false);	// active-low pushbutton
+#else // COMPETITION_OI
     m_pLaunch             = new DSDigitalInput(m_pEIO, 6,
 				    DriverStationEnhancedIO::kInputPullDown,
 				    true);	// active-high pushbutton
+#endif
 
+#ifdef PRACTICE_OI
+    m_pLearn              = new DSDigitalInput(m_pEIO, 12,
+				    DriverStationEnhancedIO::kInputPullUp,
+				    false);	// active-low pushbutton
+#else // COMPETITION_OI
     m_pLearn              = new DSDigitalInput(m_pEIO, 7,
 				    DriverStationEnhancedIO::kInputPullUp,
 				    false);	// active-low pushbutton
+#endif
 
+#ifdef PRACTICE_OI
+#else // COMPETITION_OI
     m_pReadyLED           = new DSDigitalOutput(m_pEIO, 16);
+#endif
 }
 
 OI::~OI()
@@ -93,7 +142,10 @@ OI::~OI()
     delete m_pShooterOverride;
     delete m_pShooterOn;
     delete m_pLaunch;
+#ifdef PRACTICE_OI
+#else // COMPETITION_OI
     delete m_pReadyLED;
+#endif
 
     // initialized in Initialize()
     if (m_pNudgeLeft) delete m_pNudgeLeft;

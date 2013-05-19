@@ -334,7 +334,7 @@ AutoCommand::AutoCommand() :
 AutoCommand::~AutoCommand()
 {
     // TBD: This should remove command instances from scheduler
-    // then delete them.  But WPILib doesn't support that.
+    // then delete them.  But WPILib doesn'twist support that.
 }
 
 void AutoCommand::Initialize()
@@ -352,7 +352,7 @@ void AutoCommand::Initialize()
     GetDashboardSettings();
     DriveStep *pStep = &m_drivePattern[m_pattern].step[0];
     for (int i = 0; i < MAX_AUTO_STEPS; i++) {
-	m_step[i]->Set( pStep->x, pStep->y, pStep->s, pStep->t );
+	m_step[i]->Set( pStep->x, pStep->y, pStep->twist, pStep->secs );
 	++pStep;
     }
 }
@@ -366,312 +366,312 @@ void AutoCommand::GetAutoPreferences()
     // autonomous mode sequence 0 step 0
     m_drivePattern[0].step[0].x = pref->GetDouble(AUTO0STEP0X, 0.0);
     m_drivePattern[0].step[0].y = pref->GetDouble(AUTO0STEP0Y, 0.0);
-    m_drivePattern[0].step[0].t = pref->GetDouble(AUTO0STEP0T, 0.0);
-    m_drivePattern[0].step[0].s = pref->GetDouble(AUTO0STEP0S, 0.0);
+    m_drivePattern[0].step[0].twist = pref->GetDouble(AUTO0STEP0T, 0.0);
+    m_drivePattern[0].step[0].secs = pref->GetDouble(AUTO0STEP0S, 0.0);
     // autonomous mode sequence 0 step 1
     m_drivePattern[0].step[1].x = pref->GetDouble(AUTO0STEP1X, 0.0);
     m_drivePattern[0].step[1].y = pref->GetDouble(AUTO0STEP1Y, 0.0);
-    m_drivePattern[0].step[1].t = pref->GetDouble(AUTO0STEP1T, 0.0);
-    m_drivePattern[0].step[1].s = pref->GetDouble(AUTO0STEP1S, 0.0);
+    m_drivePattern[0].step[1].twist = pref->GetDouble(AUTO0STEP1T, 0.0);
+    m_drivePattern[0].step[1].secs = pref->GetDouble(AUTO0STEP1S, 0.0);
     // autonomous mode sequence 0 step 2
     m_drivePattern[0].step[2].x = pref->GetDouble(AUTO0STEP2X, 0.0);
     m_drivePattern[0].step[2].y = pref->GetDouble(AUTO0STEP2Y, 0.0);
-    m_drivePattern[0].step[2].t = pref->GetDouble(AUTO0STEP2T, 0.0);
-    m_drivePattern[0].step[2].s = pref->GetDouble(AUTO0STEP2S, 0.0);
+    m_drivePattern[0].step[2].twist = pref->GetDouble(AUTO0STEP2T, 0.0);
+    m_drivePattern[0].step[2].secs = pref->GetDouble(AUTO0STEP2S, 0.0);
     // autonomous mode sequence 0 step 3
     m_drivePattern[0].step[3].x = pref->GetDouble(AUTO0STEP3X, 0.0);
     m_drivePattern[0].step[3].y = pref->GetDouble(AUTO0STEP3Y, 0.0);
-    m_drivePattern[0].step[3].t = pref->GetDouble(AUTO0STEP3T, 0.0);
-    m_drivePattern[0].step[3].s = pref->GetDouble(AUTO0STEP3S, 0.0);
+    m_drivePattern[0].step[3].twist = pref->GetDouble(AUTO0STEP3T, 0.0);
+    m_drivePattern[0].step[3].secs = pref->GetDouble(AUTO0STEP3S, 0.0);
     // autonomous mode sequence 0 step 0
     m_drivePattern[0].step[4].x = pref->GetDouble(AUTO0STEP4X, 0.0);
     m_drivePattern[0].step[4].y = pref->GetDouble(AUTO0STEP4Y, 0.0);
-    m_drivePattern[0].step[4].t = pref->GetDouble(AUTO0STEP4T, 0.0);
-    m_drivePattern[0].step[4].s = pref->GetDouble(AUTO0STEP4S, 0.0);
+    m_drivePattern[0].step[4].twist = pref->GetDouble(AUTO0STEP4T, 0.0);
+    m_drivePattern[0].step[4].secs = pref->GetDouble(AUTO0STEP4S, 0.0);
     // autonomous mode sequence 0 step 5
     m_drivePattern[0].step[5].x = pref->GetDouble(AUTO0STEP5X, 0.0);
     m_drivePattern[0].step[5].y = pref->GetDouble(AUTO0STEP5Y, 0.0);
-    m_drivePattern[0].step[5].t = pref->GetDouble(AUTO0STEP5T, 0.0);
-    m_drivePattern[0].step[5].s = pref->GetDouble(AUTO0STEP5S, 0.0);
+    m_drivePattern[0].step[5].twist = pref->GetDouble(AUTO0STEP5T, 0.0);
+    m_drivePattern[0].step[5].secs = pref->GetDouble(AUTO0STEP5S, 0.0);
 
     // autonomous mode sequence 1 step 0
     m_drivePattern[1].step[0].x = pref->GetDouble(AUTO1STEP0X, 0.0);
     m_drivePattern[1].step[0].y = pref->GetDouble(AUTO1STEP0Y, 0.0);
-    m_drivePattern[1].step[0].t = pref->GetDouble(AUTO1STEP0T, 0.0);
-    m_drivePattern[1].step[0].s = pref->GetDouble(AUTO1STEP0S, 0.0);
+    m_drivePattern[1].step[0].twist = pref->GetDouble(AUTO1STEP0T, 0.0);
+    m_drivePattern[1].step[0].secs = pref->GetDouble(AUTO1STEP0S, 0.0);
     // autonomous mode sequence 1 step 1
     m_drivePattern[1].step[1].x = pref->GetDouble(AUTO1STEP1X, 0.0);
     m_drivePattern[1].step[1].y = pref->GetDouble(AUTO1STEP1Y, 0.0);
-    m_drivePattern[1].step[1].t = pref->GetDouble(AUTO1STEP1T, 0.0);
-    m_drivePattern[1].step[1].s = pref->GetDouble(AUTO1STEP1S, 0.0);
+    m_drivePattern[1].step[1].twist = pref->GetDouble(AUTO1STEP1T, 0.0);
+    m_drivePattern[1].step[1].secs = pref->GetDouble(AUTO1STEP1S, 0.0);
     // autonomous mode sequence 1 step 2
     m_drivePattern[1].step[2].x = pref->GetDouble(AUTO1STEP2X, 0.0);
     m_drivePattern[1].step[2].y = pref->GetDouble(AUTO1STEP2Y, 0.0);
-    m_drivePattern[1].step[2].t = pref->GetDouble(AUTO1STEP2T, 0.0);
-    m_drivePattern[1].step[2].s = pref->GetDouble(AUTO1STEP2S, 0.0);
+    m_drivePattern[1].step[2].twist = pref->GetDouble(AUTO1STEP2T, 0.0);
+    m_drivePattern[1].step[2].secs = pref->GetDouble(AUTO1STEP2S, 0.0);
     // autonomous mode sequence 1 step 3
     m_drivePattern[1].step[3].x = pref->GetDouble(AUTO1STEP3X, 0.0);
     m_drivePattern[1].step[3].y = pref->GetDouble(AUTO1STEP3Y, 0.0);
-    m_drivePattern[1].step[3].t = pref->GetDouble(AUTO1STEP3T, 0.0);
-    m_drivePattern[1].step[3].s = pref->GetDouble(AUTO1STEP3S, 0.0);
+    m_drivePattern[1].step[3].twist = pref->GetDouble(AUTO1STEP3T, 0.0);
+    m_drivePattern[1].step[3].secs = pref->GetDouble(AUTO1STEP3S, 0.0);
     // autonomous mode sequence 1 step 4
     m_drivePattern[1].step[4].x = pref->GetDouble(AUTO1STEP4X, 0.0);
     m_drivePattern[1].step[4].y = pref->GetDouble(AUTO1STEP4Y, 0.0);
-    m_drivePattern[1].step[4].t = pref->GetDouble(AUTO1STEP4T, 0.0);
-    m_drivePattern[1].step[4].s = pref->GetDouble(AUTO1STEP4S, 0.0);
+    m_drivePattern[1].step[4].twist = pref->GetDouble(AUTO1STEP4T, 0.0);
+    m_drivePattern[1].step[4].secs = pref->GetDouble(AUTO1STEP4S, 0.0);
     // autonomous mode sequence 1 step 5
     m_drivePattern[1].step[5].x = pref->GetDouble(AUTO1STEP5X, 0.0);
     m_drivePattern[1].step[5].y = pref->GetDouble(AUTO1STEP5Y, 0.0);
-    m_drivePattern[1].step[5].t = pref->GetDouble(AUTO1STEP5T, 0.0);
-    m_drivePattern[1].step[5].s = pref->GetDouble(AUTO1STEP5S, 0.0);
+    m_drivePattern[1].step[5].twist = pref->GetDouble(AUTO1STEP5T, 0.0);
+    m_drivePattern[1].step[5].secs = pref->GetDouble(AUTO1STEP5S, 0.0);
 
     // autonomous mode sequence 2 step 0
     m_drivePattern[2].step[0].x = pref->GetDouble(AUTO2STEP0X, 0.0);
     m_drivePattern[2].step[0].y = pref->GetDouble(AUTO2STEP0Y, 0.0);
-    m_drivePattern[2].step[0].t = pref->GetDouble(AUTO2STEP0T, 0.0);
-    m_drivePattern[2].step[0].s = pref->GetDouble(AUTO2STEP0S, 0.0);
+    m_drivePattern[2].step[0].twist = pref->GetDouble(AUTO2STEP0T, 0.0);
+    m_drivePattern[2].step[0].secs = pref->GetDouble(AUTO2STEP0S, 0.0);
     // autonomous mode sequence 2 step 1
     m_drivePattern[2].step[1].x = pref->GetDouble(AUTO2STEP1X, 0.0);
     m_drivePattern[2].step[1].y = pref->GetDouble(AUTO2STEP1Y, 0.0);
-    m_drivePattern[2].step[1].t = pref->GetDouble(AUTO2STEP1T, 0.0);
-    m_drivePattern[2].step[1].s = pref->GetDouble(AUTO2STEP1S, 0.0);
+    m_drivePattern[2].step[1].twist = pref->GetDouble(AUTO2STEP1T, 0.0);
+    m_drivePattern[2].step[1].secs = pref->GetDouble(AUTO2STEP1S, 0.0);
     // autonomous mode sequence 2 step 2
     m_drivePattern[2].step[2].x = pref->GetDouble(AUTO2STEP2X, 0.0);
     m_drivePattern[2].step[2].y = pref->GetDouble(AUTO2STEP2Y, 0.0);
-    m_drivePattern[2].step[2].t = pref->GetDouble(AUTO2STEP2T, 0.0);
-    m_drivePattern[2].step[2].s = pref->GetDouble(AUTO2STEP2S, 0.0);
+    m_drivePattern[2].step[2].twist = pref->GetDouble(AUTO2STEP2T, 0.0);
+    m_drivePattern[2].step[2].secs = pref->GetDouble(AUTO2STEP2S, 0.0);
     // autonomous mode sequence 2 step 3
     m_drivePattern[2].step[3].x = pref->GetDouble(AUTO2STEP3X, 0.0);
     m_drivePattern[2].step[3].y = pref->GetDouble(AUTO2STEP3Y, 0.0);
-    m_drivePattern[2].step[3].t = pref->GetDouble(AUTO2STEP3T, 0.0);
-    m_drivePattern[2].step[3].s = pref->GetDouble(AUTO2STEP3S, 0.0);
+    m_drivePattern[2].step[3].twist = pref->GetDouble(AUTO2STEP3T, 0.0);
+    m_drivePattern[2].step[3].secs = pref->GetDouble(AUTO2STEP3S, 0.0);
     // autonomous mode sequence 2 step 4
     m_drivePattern[2].step[4].x = pref->GetDouble(AUTO2STEP4X, 0.0);
     m_drivePattern[2].step[4].y = pref->GetDouble(AUTO2STEP4Y, 0.0);
-    m_drivePattern[2].step[4].t = pref->GetDouble(AUTO2STEP4T, 0.0);
-    m_drivePattern[2].step[4].s = pref->GetDouble(AUTO2STEP4S, 0.0);
+    m_drivePattern[2].step[4].twist = pref->GetDouble(AUTO2STEP4T, 0.0);
+    m_drivePattern[2].step[4].secs = pref->GetDouble(AUTO2STEP4S, 0.0);
     // autonomous mode sequence 2 step 5
     m_drivePattern[2].step[5].x = pref->GetDouble(AUTO2STEP5X, 0.0);
     m_drivePattern[2].step[5].y = pref->GetDouble(AUTO2STEP5Y, 0.0);
-    m_drivePattern[2].step[5].t = pref->GetDouble(AUTO2STEP5T, 0.0);
-    m_drivePattern[2].step[5].s = pref->GetDouble(AUTO2STEP5S, 0.0);
+    m_drivePattern[2].step[5].twist = pref->GetDouble(AUTO2STEP5T, 0.0);
+    m_drivePattern[2].step[5].secs = pref->GetDouble(AUTO2STEP5S, 0.0);
 
     // autonomous mode sequence 3 step 0
     m_drivePattern[3].step[0].x = pref->GetDouble(AUTO3STEP0X, 0.0);
     m_drivePattern[3].step[0].y = pref->GetDouble(AUTO3STEP0Y, 0.0);
-    m_drivePattern[3].step[0].t = pref->GetDouble(AUTO3STEP0T, 0.0);
-    m_drivePattern[3].step[0].s = pref->GetDouble(AUTO3STEP0S, 0.0);
+    m_drivePattern[3].step[0].twist = pref->GetDouble(AUTO3STEP0T, 0.0);
+    m_drivePattern[3].step[0].secs = pref->GetDouble(AUTO3STEP0S, 0.0);
     // autonomous mode sequence 3 step 1
     m_drivePattern[3].step[1].x = pref->GetDouble(AUTO3STEP1X, 0.0);
     m_drivePattern[3].step[1].y = pref->GetDouble(AUTO3STEP1Y, 0.0);
-    m_drivePattern[3].step[1].t = pref->GetDouble(AUTO3STEP1T, 0.0);
-    m_drivePattern[3].step[1].s = pref->GetDouble(AUTO3STEP1S, 0.0);
+    m_drivePattern[3].step[1].twist = pref->GetDouble(AUTO3STEP1T, 0.0);
+    m_drivePattern[3].step[1].secs = pref->GetDouble(AUTO3STEP1S, 0.0);
     // autonomous mode sequence 3 step 2
     m_drivePattern[3].step[2].x = pref->GetDouble(AUTO3STEP2X, 0.0);
     m_drivePattern[3].step[2].y = pref->GetDouble(AUTO3STEP2Y, 0.0);
-    m_drivePattern[3].step[2].t = pref->GetDouble(AUTO3STEP2T, 0.0);
-    m_drivePattern[3].step[2].s = pref->GetDouble(AUTO3STEP2S, 0.0);
+    m_drivePattern[3].step[2].twist = pref->GetDouble(AUTO3STEP2T, 0.0);
+    m_drivePattern[3].step[2].secs = pref->GetDouble(AUTO3STEP2S, 0.0);
     // autonomous mode sequence 3 step 3
     m_drivePattern[3].step[3].x = pref->GetDouble(AUTO3STEP3X, 0.0);
     m_drivePattern[3].step[3].y = pref->GetDouble(AUTO3STEP3Y, 0.0);
-    m_drivePattern[3].step[3].t = pref->GetDouble(AUTO3STEP3T, 0.0);
-    m_drivePattern[3].step[3].s = pref->GetDouble(AUTO3STEP3S, 0.0);
+    m_drivePattern[3].step[3].twist = pref->GetDouble(AUTO3STEP3T, 0.0);
+    m_drivePattern[3].step[3].secs = pref->GetDouble(AUTO3STEP3S, 0.0);
     // autonomous mode sequence 3 step 4
     m_drivePattern[3].step[4].x = pref->GetDouble(AUTO3STEP4X, 0.0);
     m_drivePattern[3].step[4].y = pref->GetDouble(AUTO3STEP4Y, 0.0);
-    m_drivePattern[3].step[4].t = pref->GetDouble(AUTO3STEP4T, 0.0);
-    m_drivePattern[3].step[4].s = pref->GetDouble(AUTO3STEP4S, 0.0);
+    m_drivePattern[3].step[4].twist = pref->GetDouble(AUTO3STEP4T, 0.0);
+    m_drivePattern[3].step[4].secs = pref->GetDouble(AUTO3STEP4S, 0.0);
     // autonomous mode sequence 3 step 5
     m_drivePattern[3].step[5].x = pref->GetDouble(AUTO3STEP5X, 0.0);
     m_drivePattern[3].step[5].y = pref->GetDouble(AUTO3STEP5Y, 0.0);
-    m_drivePattern[3].step[5].t = pref->GetDouble(AUTO3STEP5T, 0.0);
-    m_drivePattern[3].step[5].s = pref->GetDouble(AUTO3STEP5S, 0.0);
+    m_drivePattern[3].step[5].twist = pref->GetDouble(AUTO3STEP5T, 0.0);
+    m_drivePattern[3].step[5].secs = pref->GetDouble(AUTO3STEP5S, 0.0);
 
     // autonomous mode sequence 4 step 0
     m_drivePattern[4].step[0].x = pref->GetDouble(AUTO4STEP0X, 0.0);
     m_drivePattern[4].step[0].y = pref->GetDouble(AUTO4STEP0Y, 0.0);
-    m_drivePattern[4].step[0].t = pref->GetDouble(AUTO4STEP0T, 0.0);
-    m_drivePattern[4].step[0].s = pref->GetDouble(AUTO4STEP0S, 0.0);
+    m_drivePattern[4].step[0].twist = pref->GetDouble(AUTO4STEP0T, 0.0);
+    m_drivePattern[4].step[0].secs = pref->GetDouble(AUTO4STEP0S, 0.0);
     // autonomous mode sequence 4 step 1
     m_drivePattern[4].step[1].x = pref->GetDouble(AUTO4STEP1X, 0.0);
     m_drivePattern[4].step[1].y = pref->GetDouble(AUTO4STEP1Y, 0.0);
-    m_drivePattern[4].step[1].t = pref->GetDouble(AUTO4STEP1T, 0.0);
-    m_drivePattern[4].step[1].s = pref->GetDouble(AUTO4STEP1S, 0.0);
+    m_drivePattern[4].step[1].twist = pref->GetDouble(AUTO4STEP1T, 0.0);
+    m_drivePattern[4].step[1].secs = pref->GetDouble(AUTO4STEP1S, 0.0);
     // autonomous mode sequence 4 step 2
     m_drivePattern[4].step[2].x = pref->GetDouble(AUTO4STEP2X, 0.0);
     m_drivePattern[4].step[2].y = pref->GetDouble(AUTO4STEP2Y, 0.0);
-    m_drivePattern[4].step[2].t = pref->GetDouble(AUTO4STEP2T, 0.0);
-    m_drivePattern[4].step[2].s = pref->GetDouble(AUTO4STEP2S, 0.0);
+    m_drivePattern[4].step[2].twist = pref->GetDouble(AUTO4STEP2T, 0.0);
+    m_drivePattern[4].step[2].secs = pref->GetDouble(AUTO4STEP2S, 0.0);
     // autonomous mode sequence 4 step 3
     m_drivePattern[4].step[3].x = pref->GetDouble(AUTO4STEP3X, 0.0);
     m_drivePattern[4].step[3].y = pref->GetDouble(AUTO4STEP3Y, 0.0);
-    m_drivePattern[4].step[3].t = pref->GetDouble(AUTO4STEP3T, 0.0);
-    m_drivePattern[4].step[3].s = pref->GetDouble(AUTO4STEP3S, 0.0);
+    m_drivePattern[4].step[3].twist = pref->GetDouble(AUTO4STEP3T, 0.0);
+    m_drivePattern[4].step[3].secs = pref->GetDouble(AUTO4STEP3S, 0.0);
     // autonomous mode sequence 4 step 4
     m_drivePattern[4].step[4].x = pref->GetDouble(AUTO4STEP4X, 0.0);
     m_drivePattern[4].step[4].y = pref->GetDouble(AUTO4STEP4Y, 0.0);
-    m_drivePattern[4].step[4].t = pref->GetDouble(AUTO4STEP4T, 0.0);
-    m_drivePattern[4].step[4].s = pref->GetDouble(AUTO4STEP4S, 0.0);
+    m_drivePattern[4].step[4].twist = pref->GetDouble(AUTO4STEP4T, 0.0);
+    m_drivePattern[4].step[4].secs = pref->GetDouble(AUTO4STEP4S, 0.0);
     // autonomous mode sequence 4 step 5
     m_drivePattern[4].step[5].x = pref->GetDouble(AUTO4STEP5X, 0.0);
     m_drivePattern[4].step[5].y = pref->GetDouble(AUTO4STEP5Y, 0.0);
-    m_drivePattern[4].step[5].t = pref->GetDouble(AUTO4STEP5T, 0.0);
-    m_drivePattern[4].step[5].s = pref->GetDouble(AUTO4STEP5S, 0.0);
+    m_drivePattern[4].step[5].twist = pref->GetDouble(AUTO4STEP5T, 0.0);
+    m_drivePattern[4].step[5].secs = pref->GetDouble(AUTO4STEP5S, 0.0);
 
     // autonomous mode sequence 5 step 0
     m_drivePattern[5].step[0].x = pref->GetDouble(AUTO5STEP0X, 0.0);
     m_drivePattern[5].step[0].y = pref->GetDouble(AUTO5STEP0Y, 0.0);
-    m_drivePattern[5].step[0].t = pref->GetDouble(AUTO5STEP0T, 0.0);
-    m_drivePattern[5].step[0].s = pref->GetDouble(AUTO5STEP0S, 0.0);
+    m_drivePattern[5].step[0].twist = pref->GetDouble(AUTO5STEP0T, 0.0);
+    m_drivePattern[5].step[0].secs = pref->GetDouble(AUTO5STEP0S, 0.0);
     // autonomous mode sequence 5 step 1
     m_drivePattern[5].step[1].x = pref->GetDouble(AUTO5STEP1X, 0.0);
     m_drivePattern[5].step[1].y = pref->GetDouble(AUTO5STEP1Y, 0.0);
-    m_drivePattern[5].step[1].t = pref->GetDouble(AUTO5STEP1T, 0.0);
-    m_drivePattern[5].step[1].s = pref->GetDouble(AUTO5STEP1S, 0.0);
+    m_drivePattern[5].step[1].twist = pref->GetDouble(AUTO5STEP1T, 0.0);
+    m_drivePattern[5].step[1].secs = pref->GetDouble(AUTO5STEP1S, 0.0);
     // autonomous mode sequence 5 step 2
     m_drivePattern[5].step[2].x = pref->GetDouble(AUTO5STEP2X, 0.0);
     m_drivePattern[5].step[2].y = pref->GetDouble(AUTO5STEP2Y, 0.0);
-    m_drivePattern[5].step[2].t = pref->GetDouble(AUTO5STEP2T, 0.0);
-    m_drivePattern[5].step[2].s = pref->GetDouble(AUTO5STEP2S, 0.0);
+    m_drivePattern[5].step[2].twist = pref->GetDouble(AUTO5STEP2T, 0.0);
+    m_drivePattern[5].step[2].secs = pref->GetDouble(AUTO5STEP2S, 0.0);
     // autonomous mode sequence 5 step 3
     m_drivePattern[5].step[3].x = pref->GetDouble(AUTO5STEP3X, 0.0);
     m_drivePattern[5].step[3].y = pref->GetDouble(AUTO5STEP3Y, 0.0);
-    m_drivePattern[5].step[3].t = pref->GetDouble(AUTO5STEP3T, 0.0);
-    m_drivePattern[5].step[3].s = pref->GetDouble(AUTO5STEP3S, 0.0);
+    m_drivePattern[5].step[3].twist = pref->GetDouble(AUTO5STEP3T, 0.0);
+    m_drivePattern[5].step[3].secs = pref->GetDouble(AUTO5STEP3S, 0.0);
     // autonomous mode sequence 5 step 4
     m_drivePattern[5].step[4].x = pref->GetDouble(AUTO5STEP4X, 0.0);
     m_drivePattern[5].step[4].y = pref->GetDouble(AUTO5STEP4Y, 0.0);
-    m_drivePattern[5].step[4].t = pref->GetDouble(AUTO5STEP4T, 0.0);
-    m_drivePattern[5].step[4].s = pref->GetDouble(AUTO5STEP4S, 0.0);
+    m_drivePattern[5].step[4].twist = pref->GetDouble(AUTO5STEP4T, 0.0);
+    m_drivePattern[5].step[4].secs = pref->GetDouble(AUTO5STEP4S, 0.0);
     // autonomous mode sequence 5 step 5
     m_drivePattern[5].step[5].x = pref->GetDouble(AUTO5STEP5X, 0.0);
     m_drivePattern[5].step[5].y = pref->GetDouble(AUTO5STEP5Y, 0.0);
-    m_drivePattern[5].step[5].t = pref->GetDouble(AUTO5STEP5T, 0.0);
-    m_drivePattern[5].step[5].s = pref->GetDouble(AUTO5STEP5S, 0.0);
+    m_drivePattern[5].step[5].twist = pref->GetDouble(AUTO5STEP5T, 0.0);
+    m_drivePattern[5].step[5].secs = pref->GetDouble(AUTO5STEP5S, 0.0);
 
     // autonomous mode sequence 6 step 0
     m_drivePattern[6].step[0].x = pref->GetDouble(AUTO6STEP0X, 0.0);
     m_drivePattern[6].step[0].y = pref->GetDouble(AUTO6STEP0Y, 0.0);
-    m_drivePattern[6].step[0].t = pref->GetDouble(AUTO6STEP0T, 0.0);
-    m_drivePattern[6].step[0].s = pref->GetDouble(AUTO6STEP0S, 0.0);
+    m_drivePattern[6].step[0].twist = pref->GetDouble(AUTO6STEP0T, 0.0);
+    m_drivePattern[6].step[0].secs = pref->GetDouble(AUTO6STEP0S, 0.0);
     // autonomous mode sequence 6 step 1
     m_drivePattern[6].step[1].x = pref->GetDouble(AUTO6STEP1X, 0.0);
     m_drivePattern[6].step[1].y = pref->GetDouble(AUTO6STEP1Y, 0.0);
-    m_drivePattern[6].step[1].t = pref->GetDouble(AUTO6STEP1T, 0.0);
-    m_drivePattern[6].step[1].s = pref->GetDouble(AUTO6STEP1S, 0.0);
+    m_drivePattern[6].step[1].twist = pref->GetDouble(AUTO6STEP1T, 0.0);
+    m_drivePattern[6].step[1].secs = pref->GetDouble(AUTO6STEP1S, 0.0);
     // autonomous mode sequence 6 step 2
     m_drivePattern[6].step[2].x = pref->GetDouble(AUTO6STEP2X, 0.0);
     m_drivePattern[6].step[2].y = pref->GetDouble(AUTO6STEP2Y, 0.0);
-    m_drivePattern[6].step[2].t = pref->GetDouble(AUTO6STEP2T, 0.0);
-    m_drivePattern[6].step[2].s = pref->GetDouble(AUTO6STEP2S, 0.0);
+    m_drivePattern[6].step[2].twist = pref->GetDouble(AUTO6STEP2T, 0.0);
+    m_drivePattern[6].step[2].secs = pref->GetDouble(AUTO6STEP2S, 0.0);
     // autonomous mode sequence 6 step 3
     m_drivePattern[6].step[3].x = pref->GetDouble(AUTO6STEP3X, 0.0);
     m_drivePattern[6].step[3].y = pref->GetDouble(AUTO6STEP3Y, 0.0);
-    m_drivePattern[6].step[3].t = pref->GetDouble(AUTO6STEP3T, 0.0);
-    m_drivePattern[6].step[3].s = pref->GetDouble(AUTO6STEP3S, 0.0);
+    m_drivePattern[6].step[3].twist = pref->GetDouble(AUTO6STEP3T, 0.0);
+    m_drivePattern[6].step[3].secs = pref->GetDouble(AUTO6STEP3S, 0.0);
     // autonomous mode sequence 6 step 4
     m_drivePattern[6].step[4].x = pref->GetDouble(AUTO6STEP4X, 0.0);
     m_drivePattern[6].step[4].y = pref->GetDouble(AUTO6STEP4Y, 0.0);
-    m_drivePattern[6].step[4].t = pref->GetDouble(AUTO6STEP4T, 0.0);
-    m_drivePattern[6].step[4].s = pref->GetDouble(AUTO6STEP4S, 0.0);
+    m_drivePattern[6].step[4].twist = pref->GetDouble(AUTO6STEP4T, 0.0);
+    m_drivePattern[6].step[4].secs = pref->GetDouble(AUTO6STEP4S, 0.0);
     // autonomous mode sequence 6 step 5
     m_drivePattern[6].step[5].x = pref->GetDouble(AUTO6STEP5X, 0.0);
     m_drivePattern[6].step[5].y = pref->GetDouble(AUTO6STEP5Y, 0.0);
-    m_drivePattern[6].step[5].t = pref->GetDouble(AUTO6STEP5T, 0.0);
-    m_drivePattern[6].step[5].s = pref->GetDouble(AUTO6STEP5S, 0.0);
+    m_drivePattern[6].step[5].twist = pref->GetDouble(AUTO6STEP5T, 0.0);
+    m_drivePattern[6].step[5].secs = pref->GetDouble(AUTO6STEP5S, 0.0);
 
     // autonomous mode sequence 7 step 0
     m_drivePattern[7].step[0].x = pref->GetDouble(AUTO7STEP0X, 0.0);
     m_drivePattern[7].step[0].y = pref->GetDouble(AUTO7STEP0Y, 0.0);
-    m_drivePattern[7].step[0].t = pref->GetDouble(AUTO7STEP0T, 0.0);
-    m_drivePattern[7].step[0].s = pref->GetDouble(AUTO7STEP0S, 0.0);
+    m_drivePattern[7].step[0].twist = pref->GetDouble(AUTO7STEP0T, 0.0);
+    m_drivePattern[7].step[0].secs = pref->GetDouble(AUTO7STEP0S, 0.0);
     // autonomous mode sequence 7 step 1
     m_drivePattern[7].step[1].x = pref->GetDouble(AUTO7STEP1X, 0.0);
     m_drivePattern[7].step[1].y = pref->GetDouble(AUTO7STEP1Y, 0.0);
-    m_drivePattern[7].step[1].t = pref->GetDouble(AUTO7STEP1T, 0.0);
-    m_drivePattern[7].step[1].s = pref->GetDouble(AUTO7STEP1S, 0.0);
+    m_drivePattern[7].step[1].twist = pref->GetDouble(AUTO7STEP1T, 0.0);
+    m_drivePattern[7].step[1].secs = pref->GetDouble(AUTO7STEP1S, 0.0);
     // autonomous mode sequence 7 step 2
     m_drivePattern[7].step[2].x = pref->GetDouble(AUTO7STEP2X, 0.0);
     m_drivePattern[7].step[2].y = pref->GetDouble(AUTO7STEP2Y, 0.0);
-    m_drivePattern[7].step[2].t = pref->GetDouble(AUTO7STEP2T, 0.0);
-    m_drivePattern[7].step[2].s = pref->GetDouble(AUTO7STEP2S, 0.0);
+    m_drivePattern[7].step[2].twist = pref->GetDouble(AUTO7STEP2T, 0.0);
+    m_drivePattern[7].step[2].secs = pref->GetDouble(AUTO7STEP2S, 0.0);
     // autonomous mode sequence 7 step 3
     m_drivePattern[7].step[3].x = pref->GetDouble(AUTO7STEP3X, 0.0);
     m_drivePattern[7].step[3].y = pref->GetDouble(AUTO7STEP3Y, 0.0);
-    m_drivePattern[7].step[3].t = pref->GetDouble(AUTO7STEP3T, 0.0);
-    m_drivePattern[7].step[3].s = pref->GetDouble(AUTO7STEP3S, 0.0);
+    m_drivePattern[7].step[3].twist = pref->GetDouble(AUTO7STEP3T, 0.0);
+    m_drivePattern[7].step[3].secs = pref->GetDouble(AUTO7STEP3S, 0.0);
     // autonomous mode sequence 7 step 4
     m_drivePattern[7].step[4].x = pref->GetDouble(AUTO7STEP4X, 0.0);
     m_drivePattern[7].step[4].y = pref->GetDouble(AUTO7STEP4Y, 0.0);
-    m_drivePattern[7].step[4].t = pref->GetDouble(AUTO7STEP4T, 0.0);
-    m_drivePattern[7].step[4].s = pref->GetDouble(AUTO7STEP4S, 0.0);
+    m_drivePattern[7].step[4].twist = pref->GetDouble(AUTO7STEP4T, 0.0);
+    m_drivePattern[7].step[4].secs = pref->GetDouble(AUTO7STEP4S, 0.0);
     // autonomous mode sequence 7 step 5
     m_drivePattern[7].step[5].x = pref->GetDouble(AUTO7STEP5X, 0.0);
     m_drivePattern[7].step[5].y = pref->GetDouble(AUTO7STEP5Y, 0.0);
-    m_drivePattern[7].step[5].t = pref->GetDouble(AUTO7STEP5T, 0.0);
-    m_drivePattern[7].step[5].s = pref->GetDouble(AUTO7STEP5S, 0.0);
+    m_drivePattern[7].step[5].twist = pref->GetDouble(AUTO7STEP5T, 0.0);
+    m_drivePattern[7].step[5].secs = pref->GetDouble(AUTO7STEP5S, 0.0);
 
     // autonomous mode sequence 8 step 0
     m_drivePattern[8].step[0].x = pref->GetDouble(AUTO8STEP0X, 0.0);
     m_drivePattern[8].step[0].y = pref->GetDouble(AUTO8STEP0Y, 0.0);
-    m_drivePattern[8].step[0].t = pref->GetDouble(AUTO8STEP0T, 0.0);
-    m_drivePattern[8].step[0].s = pref->GetDouble(AUTO8STEP0S, 0.0);
+    m_drivePattern[8].step[0].twist = pref->GetDouble(AUTO8STEP0T, 0.0);
+    m_drivePattern[8].step[0].secs = pref->GetDouble(AUTO8STEP0S, 0.0);
     // autonomous mode sequence 8 step 1
     m_drivePattern[8].step[1].x = pref->GetDouble(AUTO8STEP1X, 0.0);
     m_drivePattern[8].step[1].y = pref->GetDouble(AUTO8STEP1Y, 0.0);
-    m_drivePattern[8].step[1].t = pref->GetDouble(AUTO8STEP1T, 0.0);
-    m_drivePattern[8].step[1].s = pref->GetDouble(AUTO8STEP1S, 0.0);
+    m_drivePattern[8].step[1].twist = pref->GetDouble(AUTO8STEP1T, 0.0);
+    m_drivePattern[8].step[1].secs = pref->GetDouble(AUTO8STEP1S, 0.0);
     // autonomous mode sequence 8 step 2
     m_drivePattern[8].step[2].x = pref->GetDouble(AUTO8STEP2X, 0.0);
     m_drivePattern[8].step[2].y = pref->GetDouble(AUTO8STEP2Y, 0.0);
-    m_drivePattern[8].step[2].t = pref->GetDouble(AUTO8STEP2T, 0.0);
-    m_drivePattern[8].step[2].s = pref->GetDouble(AUTO8STEP2S, 0.0);
+    m_drivePattern[8].step[2].twist = pref->GetDouble(AUTO8STEP2T, 0.0);
+    m_drivePattern[8].step[2].secs = pref->GetDouble(AUTO8STEP2S, 0.0);
     // autonomous mode sequence 8 step 3
     m_drivePattern[8].step[3].x = pref->GetDouble(AUTO8STEP3X, 0.0);
     m_drivePattern[8].step[3].y = pref->GetDouble(AUTO8STEP3Y, 0.0);
-    m_drivePattern[8].step[3].t = pref->GetDouble(AUTO8STEP3T, 0.0);
-    m_drivePattern[8].step[3].s = pref->GetDouble(AUTO8STEP3S, 0.0);
+    m_drivePattern[8].step[3].twist = pref->GetDouble(AUTO8STEP3T, 0.0);
+    m_drivePattern[8].step[3].secs = pref->GetDouble(AUTO8STEP3S, 0.0);
     // autonomous mode sequence 8 step 4
     m_drivePattern[8].step[4].x = pref->GetDouble(AUTO8STEP4X, 0.0);
     m_drivePattern[8].step[4].y = pref->GetDouble(AUTO8STEP4Y, 0.0);
-    m_drivePattern[8].step[4].t = pref->GetDouble(AUTO8STEP4T, 0.0);
-    m_drivePattern[8].step[4].s = pref->GetDouble(AUTO8STEP4S, 0.0);
+    m_drivePattern[8].step[4].twist = pref->GetDouble(AUTO8STEP4T, 0.0);
+    m_drivePattern[8].step[4].secs = pref->GetDouble(AUTO8STEP4S, 0.0);
     // autonomous mode sequence 8 step 5
     m_drivePattern[8].step[5].x = pref->GetDouble(AUTO8STEP5X, 0.0);
     m_drivePattern[8].step[5].y = pref->GetDouble(AUTO8STEP5Y, 0.0);
-    m_drivePattern[8].step[5].t = pref->GetDouble(AUTO8STEP5T, 0.0);
-    m_drivePattern[8].step[5].s = pref->GetDouble(AUTO8STEP5S, 0.0);
+    m_drivePattern[8].step[5].twist = pref->GetDouble(AUTO8STEP5T, 0.0);
+    m_drivePattern[8].step[5].secs = pref->GetDouble(AUTO8STEP5S, 0.0);
 
     // autonomous mode sequence 9 step 0
     m_drivePattern[9].step[0].x = pref->GetDouble(AUTO9STEP0X, 0.0);
     m_drivePattern[9].step[0].y = pref->GetDouble(AUTO9STEP0Y, 0.0);
-    m_drivePattern[9].step[0].t = pref->GetDouble(AUTO9STEP0T, 0.0);
-    m_drivePattern[9].step[0].s = pref->GetDouble(AUTO9STEP0S, 0.0);
+    m_drivePattern[9].step[0].twist = pref->GetDouble(AUTO9STEP0T, 0.0);
+    m_drivePattern[9].step[0].secs = pref->GetDouble(AUTO9STEP0S, 0.0);
     // autonomous mode sequence 9 step 1
     m_drivePattern[9].step[1].x = pref->GetDouble(AUTO9STEP1X, 0.0);
     m_drivePattern[9].step[1].y = pref->GetDouble(AUTO9STEP1Y, 0.0);
-    m_drivePattern[9].step[1].t = pref->GetDouble(AUTO9STEP1T, 0.0);
-    m_drivePattern[9].step[1].s = pref->GetDouble(AUTO9STEP1S, 0.0);
+    m_drivePattern[9].step[1].twist = pref->GetDouble(AUTO9STEP1T, 0.0);
+    m_drivePattern[9].step[1].secs = pref->GetDouble(AUTO9STEP1S, 0.0);
     // autonomous mode sequence 9 step 2
     m_drivePattern[9].step[2].x = pref->GetDouble(AUTO9STEP2X, 0.0);
     m_drivePattern[9].step[2].y = pref->GetDouble(AUTO9STEP2Y, 0.0);
-    m_drivePattern[9].step[2].t = pref->GetDouble(AUTO9STEP2T, 0.0);
-    m_drivePattern[9].step[2].s = pref->GetDouble(AUTO9STEP2S, 0.0);
+    m_drivePattern[9].step[2].twist = pref->GetDouble(AUTO9STEP2T, 0.0);
+    m_drivePattern[9].step[2].secs = pref->GetDouble(AUTO9STEP2S, 0.0);
     // autonomous mode sequence 9 step 3
     m_drivePattern[9].step[3].x = pref->GetDouble(AUTO9STEP3X, 0.0);
     m_drivePattern[9].step[3].y = pref->GetDouble(AUTO9STEP3Y, 0.0);
-    m_drivePattern[9].step[3].t = pref->GetDouble(AUTO9STEP3T, 0.0);
-    m_drivePattern[9].step[3].s = pref->GetDouble(AUTO9STEP3S, 0.0);
+    m_drivePattern[9].step[3].twist = pref->GetDouble(AUTO9STEP3T, 0.0);
+    m_drivePattern[9].step[3].secs = pref->GetDouble(AUTO9STEP3S, 0.0);
     // autonomous mode sequence 9 step 4
     m_drivePattern[9].step[4].x = pref->GetDouble(AUTO9STEP4X, 0.0);
     m_drivePattern[9].step[4].y = pref->GetDouble(AUTO9STEP4Y, 0.0);
-    m_drivePattern[9].step[4].t = pref->GetDouble(AUTO9STEP4T, 0.0);
-    m_drivePattern[9].step[4].s = pref->GetDouble(AUTO9STEP4S, 0.0);
+    m_drivePattern[9].step[4].twist = pref->GetDouble(AUTO9STEP4T, 0.0);
+    m_drivePattern[9].step[4].secs = pref->GetDouble(AUTO9STEP4S, 0.0);
     // autonomous mode sequence 9 step 5
     m_drivePattern[9].step[5].x = pref->GetDouble(AUTO9STEP5X, 0.0);
     m_drivePattern[9].step[5].y = pref->GetDouble(AUTO9STEP5Y, 0.0);
-    m_drivePattern[9].step[5].t = pref->GetDouble(AUTO9STEP5T, 0.0);
-    m_drivePattern[9].step[5].s = pref->GetDouble(AUTO9STEP5S, 0.0);
+    m_drivePattern[9].step[5].twist = pref->GetDouble(AUTO9STEP5T, 0.0);
+    m_drivePattern[9].step[5].secs = pref->GetDouble(AUTO9STEP5S, 0.0);
 }
 
 void AutoCommand::SaveAutoPreferences()
@@ -683,312 +683,312 @@ void AutoCommand::SaveAutoPreferences()
     // autonomous mode sequence 0 step 0
     pref->PutDouble(AUTO0STEP0X, m_drivePattern[0].step[0].x);
     pref->PutDouble(AUTO0STEP0Y, m_drivePattern[0].step[0].y);
-    pref->PutDouble(AUTO0STEP0T, m_drivePattern[0].step[0].t);
-    pref->PutDouble(AUTO0STEP0S, m_drivePattern[0].step[0].s);
+    pref->PutDouble(AUTO0STEP0T, m_drivePattern[0].step[0].twist);
+    pref->PutDouble(AUTO0STEP0S, m_drivePattern[0].step[0].secs);
     // autonomous mode sequence 0 step 1
     pref->PutDouble(AUTO0STEP1X, m_drivePattern[0].step[1].x);
     pref->PutDouble(AUTO0STEP1Y, m_drivePattern[0].step[1].y);
-    pref->PutDouble(AUTO0STEP1T, m_drivePattern[0].step[1].t);
-    pref->PutDouble(AUTO0STEP1S, m_drivePattern[0].step[1].s);
+    pref->PutDouble(AUTO0STEP1T, m_drivePattern[0].step[1].twist);
+    pref->PutDouble(AUTO0STEP1S, m_drivePattern[0].step[1].secs);
     // autonomous mode sequence 0 step 2
     pref->PutDouble(AUTO0STEP2X, m_drivePattern[0].step[2].x);
     pref->PutDouble(AUTO0STEP2Y, m_drivePattern[0].step[2].y);
-    pref->PutDouble(AUTO0STEP2T, m_drivePattern[0].step[2].t);
-    pref->PutDouble(AUTO0STEP2S, m_drivePattern[0].step[2].s);
+    pref->PutDouble(AUTO0STEP2T, m_drivePattern[0].step[2].twist);
+    pref->PutDouble(AUTO0STEP2S, m_drivePattern[0].step[2].secs);
     // autonomous mode sequence 0 step 3
     pref->PutDouble(AUTO0STEP3X, m_drivePattern[0].step[3].x);
     pref->PutDouble(AUTO0STEP3Y, m_drivePattern[0].step[3].y);
-    pref->PutDouble(AUTO0STEP3T, m_drivePattern[0].step[3].t);
-    pref->PutDouble(AUTO0STEP3S, m_drivePattern[0].step[3].s);
+    pref->PutDouble(AUTO0STEP3T, m_drivePattern[0].step[3].twist);
+    pref->PutDouble(AUTO0STEP3S, m_drivePattern[0].step[3].secs);
     // autonomous mode sequence 0 step 0
     pref->PutDouble(AUTO0STEP4X, m_drivePattern[0].step[4].x);
     pref->PutDouble(AUTO0STEP4Y, m_drivePattern[0].step[4].y);
-    pref->PutDouble(AUTO0STEP4T, m_drivePattern[0].step[4].t);
-    pref->PutDouble(AUTO0STEP4S, m_drivePattern[0].step[4].s);
+    pref->PutDouble(AUTO0STEP4T, m_drivePattern[0].step[4].twist);
+    pref->PutDouble(AUTO0STEP4S, m_drivePattern[0].step[4].secs);
     // autonomous mode sequence 0 step 5
     pref->PutDouble(AUTO0STEP5X, m_drivePattern[0].step[5].x);
     pref->PutDouble(AUTO0STEP5Y, m_drivePattern[0].step[5].y);
-    pref->PutDouble(AUTO0STEP5T, m_drivePattern[0].step[5].t);
-    pref->PutDouble(AUTO0STEP5S, m_drivePattern[0].step[5].s);
+    pref->PutDouble(AUTO0STEP5T, m_drivePattern[0].step[5].twist);
+    pref->PutDouble(AUTO0STEP5S, m_drivePattern[0].step[5].secs);
 
     // autonomous mode sequence 1 step 0
     pref->PutDouble(AUTO1STEP0X, m_drivePattern[1].step[0].x);
     pref->PutDouble(AUTO1STEP0Y, m_drivePattern[1].step[0].y);
-    pref->PutDouble(AUTO1STEP0T, m_drivePattern[1].step[0].t);
-    pref->PutDouble(AUTO1STEP0S, m_drivePattern[1].step[0].s);
+    pref->PutDouble(AUTO1STEP0T, m_drivePattern[1].step[0].twist);
+    pref->PutDouble(AUTO1STEP0S, m_drivePattern[1].step[0].secs);
     // autonomous mode sequence 1 step 1
     pref->PutDouble(AUTO1STEP1X, m_drivePattern[1].step[1].x);
     pref->PutDouble(AUTO1STEP1Y, m_drivePattern[1].step[1].y);
-    pref->PutDouble(AUTO1STEP1T, m_drivePattern[1].step[1].t);
-    pref->PutDouble(AUTO1STEP1S, m_drivePattern[1].step[1].s);
+    pref->PutDouble(AUTO1STEP1T, m_drivePattern[1].step[1].twist);
+    pref->PutDouble(AUTO1STEP1S, m_drivePattern[1].step[1].secs);
     // autonomous mode sequence 1 step 2
     pref->PutDouble(AUTO1STEP2X, m_drivePattern[1].step[2].x);
     pref->PutDouble(AUTO1STEP2Y, m_drivePattern[1].step[2].y);
-    pref->PutDouble(AUTO1STEP2T, m_drivePattern[1].step[2].t);
-    pref->PutDouble(AUTO1STEP2S, m_drivePattern[1].step[2].s);
+    pref->PutDouble(AUTO1STEP2T, m_drivePattern[1].step[2].twist);
+    pref->PutDouble(AUTO1STEP2S, m_drivePattern[1].step[2].secs);
     // autonomous mode sequence 1 step 3
     pref->PutDouble(AUTO1STEP3X, m_drivePattern[1].step[3].x);
     pref->PutDouble(AUTO1STEP3Y, m_drivePattern[1].step[3].y);
-    pref->PutDouble(AUTO1STEP3T, m_drivePattern[1].step[3].t);
-    pref->PutDouble(AUTO1STEP3S, m_drivePattern[1].step[3].s);
+    pref->PutDouble(AUTO1STEP3T, m_drivePattern[1].step[3].twist);
+    pref->PutDouble(AUTO1STEP3S, m_drivePattern[1].step[3].secs);
     // autonomous mode sequence 1 step 4
     pref->PutDouble(AUTO1STEP4X, m_drivePattern[1].step[4].x);
     pref->PutDouble(AUTO1STEP4Y, m_drivePattern[1].step[4].y);
-    pref->PutDouble(AUTO1STEP4T, m_drivePattern[1].step[4].t);
-    pref->PutDouble(AUTO1STEP4S, m_drivePattern[1].step[4].s);
+    pref->PutDouble(AUTO1STEP4T, m_drivePattern[1].step[4].twist);
+    pref->PutDouble(AUTO1STEP4S, m_drivePattern[1].step[4].secs);
     // autonomous mode sequence 1 step 5
     pref->PutDouble(AUTO1STEP5X, m_drivePattern[1].step[5].x);
     pref->PutDouble(AUTO1STEP5Y, m_drivePattern[1].step[5].y);
-    pref->PutDouble(AUTO1STEP5T, m_drivePattern[1].step[5].t);
-    pref->PutDouble(AUTO1STEP5S, m_drivePattern[1].step[5].s);
+    pref->PutDouble(AUTO1STEP5T, m_drivePattern[1].step[5].twist);
+    pref->PutDouble(AUTO1STEP5S, m_drivePattern[1].step[5].secs);
 
     // autonomous mode sequence 2 step 0
     pref->PutDouble(AUTO2STEP0X, m_drivePattern[2].step[0].x);
     pref->PutDouble(AUTO2STEP0Y, m_drivePattern[2].step[0].y);
-    pref->PutDouble(AUTO2STEP0T, m_drivePattern[2].step[0].t);
-    pref->PutDouble(AUTO2STEP0S, m_drivePattern[2].step[0].s);
+    pref->PutDouble(AUTO2STEP0T, m_drivePattern[2].step[0].twist);
+    pref->PutDouble(AUTO2STEP0S, m_drivePattern[2].step[0].secs);
     // autonomous mode sequence 2 step 1
     pref->PutDouble(AUTO2STEP1X, m_drivePattern[2].step[1].x);
     pref->PutDouble(AUTO2STEP1Y, m_drivePattern[2].step[1].y);
-    pref->PutDouble(AUTO2STEP1T, m_drivePattern[2].step[1].t);
-    pref->PutDouble(AUTO2STEP1S, m_drivePattern[2].step[1].s);
+    pref->PutDouble(AUTO2STEP1T, m_drivePattern[2].step[1].twist);
+    pref->PutDouble(AUTO2STEP1S, m_drivePattern[2].step[1].secs);
     // autonomous mode sequence 2 step 2
     pref->PutDouble(AUTO2STEP2X, m_drivePattern[2].step[2].x);
     pref->PutDouble(AUTO2STEP2Y, m_drivePattern[2].step[2].y);
-    pref->PutDouble(AUTO2STEP2T, m_drivePattern[2].step[2].t);
-    pref->PutDouble(AUTO2STEP2S, m_drivePattern[2].step[2].s);
+    pref->PutDouble(AUTO2STEP2T, m_drivePattern[2].step[2].twist);
+    pref->PutDouble(AUTO2STEP2S, m_drivePattern[2].step[2].secs);
     // autonomous mode sequence 2 step 3
     pref->PutDouble(AUTO2STEP3X, m_drivePattern[2].step[3].x);
     pref->PutDouble(AUTO2STEP3Y, m_drivePattern[2].step[3].y);
-    pref->PutDouble(AUTO2STEP3T, m_drivePattern[2].step[3].t);
-    pref->PutDouble(AUTO2STEP3S, m_drivePattern[2].step[3].s);
+    pref->PutDouble(AUTO2STEP3T, m_drivePattern[2].step[3].twist);
+    pref->PutDouble(AUTO2STEP3S, m_drivePattern[2].step[3].secs);
     // autonomous mode sequence 2 step 4
     pref->PutDouble(AUTO2STEP4X, m_drivePattern[2].step[4].x);
     pref->PutDouble(AUTO2STEP4Y, m_drivePattern[2].step[4].y);
-    pref->PutDouble(AUTO2STEP4T, m_drivePattern[2].step[4].t);
-    pref->PutDouble(AUTO2STEP4S, m_drivePattern[2].step[4].s);
+    pref->PutDouble(AUTO2STEP4T, m_drivePattern[2].step[4].twist);
+    pref->PutDouble(AUTO2STEP4S, m_drivePattern[2].step[4].secs);
     // autonomous mode sequence 2 step 5
     pref->PutDouble(AUTO2STEP5X, m_drivePattern[2].step[5].x);
     pref->PutDouble(AUTO2STEP5Y, m_drivePattern[2].step[5].y);
-    pref->PutDouble(AUTO2STEP5T, m_drivePattern[2].step[5].t);
-    pref->PutDouble(AUTO2STEP5S, m_drivePattern[2].step[5].s);
+    pref->PutDouble(AUTO2STEP5T, m_drivePattern[2].step[5].twist);
+    pref->PutDouble(AUTO2STEP5S, m_drivePattern[2].step[5].secs);
 
     // autonomous mode sequence 3 step 0
     pref->PutDouble(AUTO3STEP0X, m_drivePattern[3].step[0].x);
     pref->PutDouble(AUTO3STEP0Y, m_drivePattern[3].step[0].y);
-    pref->PutDouble(AUTO3STEP0T, m_drivePattern[3].step[0].t);
-    pref->PutDouble(AUTO3STEP0S, m_drivePattern[3].step[0].s);
+    pref->PutDouble(AUTO3STEP0T, m_drivePattern[3].step[0].twist);
+    pref->PutDouble(AUTO3STEP0S, m_drivePattern[3].step[0].secs);
     // autonomous mode sequence 3 step 1
     pref->PutDouble(AUTO3STEP1X, m_drivePattern[3].step[1].x);
     pref->PutDouble(AUTO3STEP1Y, m_drivePattern[3].step[1].y);
-    pref->PutDouble(AUTO3STEP1T, m_drivePattern[3].step[1].t);
-    pref->PutDouble(AUTO3STEP1S, m_drivePattern[3].step[1].s);
+    pref->PutDouble(AUTO3STEP1T, m_drivePattern[3].step[1].twist);
+    pref->PutDouble(AUTO3STEP1S, m_drivePattern[3].step[1].secs);
     // autonomous mode sequence 3 step 2
     pref->PutDouble(AUTO3STEP2X, m_drivePattern[3].step[2].x);
     pref->PutDouble(AUTO3STEP2Y, m_drivePattern[3].step[2].y);
-    pref->PutDouble(AUTO3STEP2T, m_drivePattern[3].step[2].t);
-    pref->PutDouble(AUTO3STEP2S, m_drivePattern[3].step[2].s);
+    pref->PutDouble(AUTO3STEP2T, m_drivePattern[3].step[2].twist);
+    pref->PutDouble(AUTO3STEP2S, m_drivePattern[3].step[2].secs);
     // autonomous mode sequence 3 step 3
     pref->PutDouble(AUTO3STEP3X, m_drivePattern[3].step[3].x);
     pref->PutDouble(AUTO3STEP3Y, m_drivePattern[3].step[3].y);
-    pref->PutDouble(AUTO3STEP3T, m_drivePattern[3].step[3].t);
-    pref->PutDouble(AUTO3STEP3S, m_drivePattern[3].step[3].s);
+    pref->PutDouble(AUTO3STEP3T, m_drivePattern[3].step[3].twist);
+    pref->PutDouble(AUTO3STEP3S, m_drivePattern[3].step[3].secs);
     // autonomous mode sequence 3 step 4
     pref->PutDouble(AUTO3STEP4X, m_drivePattern[3].step[4].x);
     pref->PutDouble(AUTO3STEP4Y, m_drivePattern[3].step[4].y);
-    pref->PutDouble(AUTO3STEP4T, m_drivePattern[3].step[4].t);
-    pref->PutDouble(AUTO3STEP4S, m_drivePattern[3].step[4].s);
+    pref->PutDouble(AUTO3STEP4T, m_drivePattern[3].step[4].twist);
+    pref->PutDouble(AUTO3STEP4S, m_drivePattern[3].step[4].secs);
     // autonomous mode sequence 3 step 5
     pref->PutDouble(AUTO3STEP5X, m_drivePattern[3].step[5].x);
     pref->PutDouble(AUTO3STEP5Y, m_drivePattern[3].step[5].y);
-    pref->PutDouble(AUTO3STEP5T, m_drivePattern[3].step[5].t);
-    pref->PutDouble(AUTO3STEP5S, m_drivePattern[3].step[5].s);
+    pref->PutDouble(AUTO3STEP5T, m_drivePattern[3].step[5].twist);
+    pref->PutDouble(AUTO3STEP5S, m_drivePattern[3].step[5].secs);
 
     // autonomous mode sequence 4 step 0
     pref->PutDouble(AUTO4STEP0X, m_drivePattern[4].step[0].x);
     pref->PutDouble(AUTO4STEP0Y, m_drivePattern[4].step[0].y);
-    pref->PutDouble(AUTO4STEP0T, m_drivePattern[4].step[0].t);
-    pref->PutDouble(AUTO4STEP0S, m_drivePattern[4].step[0].s);
+    pref->PutDouble(AUTO4STEP0T, m_drivePattern[4].step[0].twist);
+    pref->PutDouble(AUTO4STEP0S, m_drivePattern[4].step[0].secs);
     // autonomous mode sequence 4 step 1
     pref->PutDouble(AUTO4STEP1X, m_drivePattern[4].step[1].x);
     pref->PutDouble(AUTO4STEP1Y, m_drivePattern[4].step[1].y);
-    pref->PutDouble(AUTO4STEP1T, m_drivePattern[4].step[1].t);
-    pref->PutDouble(AUTO4STEP1S, m_drivePattern[4].step[1].s);
+    pref->PutDouble(AUTO4STEP1T, m_drivePattern[4].step[1].twist);
+    pref->PutDouble(AUTO4STEP1S, m_drivePattern[4].step[1].secs);
     // autonomous mode sequence 4 step 2
     pref->PutDouble(AUTO4STEP2X, m_drivePattern[4].step[2].x);
     pref->PutDouble(AUTO4STEP2Y, m_drivePattern[4].step[2].y);
-    pref->PutDouble(AUTO4STEP2T, m_drivePattern[4].step[2].t);
-    pref->PutDouble(AUTO4STEP2S, m_drivePattern[4].step[2].s);
+    pref->PutDouble(AUTO4STEP2T, m_drivePattern[4].step[2].twist);
+    pref->PutDouble(AUTO4STEP2S, m_drivePattern[4].step[2].secs);
     // autonomous mode sequence 4 step 3
     pref->PutDouble(AUTO4STEP3X, m_drivePattern[4].step[3].x);
     pref->PutDouble(AUTO4STEP3Y, m_drivePattern[4].step[3].y);
-    pref->PutDouble(AUTO4STEP3T, m_drivePattern[4].step[3].t);
-    pref->PutDouble(AUTO4STEP3S, m_drivePattern[4].step[3].s);
+    pref->PutDouble(AUTO4STEP3T, m_drivePattern[4].step[3].twist);
+    pref->PutDouble(AUTO4STEP3S, m_drivePattern[4].step[3].secs);
     // autonomous mode sequence 4 step 4
     pref->PutDouble(AUTO4STEP4X, m_drivePattern[4].step[4].x);
     pref->PutDouble(AUTO4STEP4Y, m_drivePattern[4].step[4].y);
-    pref->PutDouble(AUTO4STEP4T, m_drivePattern[4].step[4].t);
-    pref->PutDouble(AUTO4STEP4S, m_drivePattern[4].step[4].s);
+    pref->PutDouble(AUTO4STEP4T, m_drivePattern[4].step[4].twist);
+    pref->PutDouble(AUTO4STEP4S, m_drivePattern[4].step[4].secs);
     // autonomous mode sequence 4 step 5
     pref->PutDouble(AUTO4STEP5X, m_drivePattern[4].step[5].x);
     pref->PutDouble(AUTO4STEP5Y, m_drivePattern[4].step[5].y);
-    pref->PutDouble(AUTO4STEP5T, m_drivePattern[4].step[5].t);
-    pref->PutDouble(AUTO4STEP5S, m_drivePattern[4].step[5].s);
+    pref->PutDouble(AUTO4STEP5T, m_drivePattern[4].step[5].twist);
+    pref->PutDouble(AUTO4STEP5S, m_drivePattern[4].step[5].secs);
 
     // autonomous mode sequence 5 step 0
     pref->PutDouble(AUTO5STEP0X, m_drivePattern[5].step[0].x);
     pref->PutDouble(AUTO5STEP0Y, m_drivePattern[5].step[0].y);
-    pref->PutDouble(AUTO5STEP0T, m_drivePattern[5].step[0].t);
-    pref->PutDouble(AUTO5STEP0S, m_drivePattern[5].step[0].s);
+    pref->PutDouble(AUTO5STEP0T, m_drivePattern[5].step[0].twist);
+    pref->PutDouble(AUTO5STEP0S, m_drivePattern[5].step[0].secs);
     // autonomous mode sequence 5 step 1
     pref->PutDouble(AUTO5STEP1X, m_drivePattern[5].step[1].x);
     pref->PutDouble(AUTO5STEP1Y, m_drivePattern[5].step[1].y);
-    pref->PutDouble(AUTO5STEP1T, m_drivePattern[5].step[1].t);
-    pref->PutDouble(AUTO5STEP1S, m_drivePattern[5].step[1].s);
+    pref->PutDouble(AUTO5STEP1T, m_drivePattern[5].step[1].twist);
+    pref->PutDouble(AUTO5STEP1S, m_drivePattern[5].step[1].secs);
     // autonomous mode sequence 5 step 2
     pref->PutDouble(AUTO5STEP2X, m_drivePattern[5].step[2].x);
     pref->PutDouble(AUTO5STEP2Y, m_drivePattern[5].step[2].y);
-    pref->PutDouble(AUTO5STEP2T, m_drivePattern[5].step[2].t);
-    pref->PutDouble(AUTO5STEP2S, m_drivePattern[5].step[2].s);
+    pref->PutDouble(AUTO5STEP2T, m_drivePattern[5].step[2].twist);
+    pref->PutDouble(AUTO5STEP2S, m_drivePattern[5].step[2].secs);
     // autonomous mode sequence 5 step 3
     pref->PutDouble(AUTO5STEP3X, m_drivePattern[5].step[3].x);
     pref->PutDouble(AUTO5STEP3Y, m_drivePattern[5].step[3].y);
-    pref->PutDouble(AUTO5STEP3T, m_drivePattern[5].step[3].t);
-    pref->PutDouble(AUTO5STEP3S, m_drivePattern[5].step[3].s);
+    pref->PutDouble(AUTO5STEP3T, m_drivePattern[5].step[3].twist);
+    pref->PutDouble(AUTO5STEP3S, m_drivePattern[5].step[3].secs);
     // autonomous mode sequence 5 step 4
     pref->PutDouble(AUTO5STEP4X, m_drivePattern[5].step[4].x);
     pref->PutDouble(AUTO5STEP4Y, m_drivePattern[5].step[4].y);
-    pref->PutDouble(AUTO5STEP4T, m_drivePattern[5].step[4].t);
-    pref->PutDouble(AUTO5STEP4S, m_drivePattern[5].step[4].s);
+    pref->PutDouble(AUTO5STEP4T, m_drivePattern[5].step[4].twist);
+    pref->PutDouble(AUTO5STEP4S, m_drivePattern[5].step[4].secs);
     // autonomous mode sequence 5 step 5
     pref->PutDouble(AUTO5STEP5X, m_drivePattern[5].step[5].x);
     pref->PutDouble(AUTO5STEP5Y, m_drivePattern[5].step[5].y);
-    pref->PutDouble(AUTO5STEP5T, m_drivePattern[5].step[5].t);
-    pref->PutDouble(AUTO5STEP5S, m_drivePattern[5].step[5].s);
+    pref->PutDouble(AUTO5STEP5T, m_drivePattern[5].step[5].twist);
+    pref->PutDouble(AUTO5STEP5S, m_drivePattern[5].step[5].secs);
 
     // autonomous mode sequence 6 step 0
     pref->PutDouble(AUTO6STEP0X, m_drivePattern[6].step[0].x);
     pref->PutDouble(AUTO6STEP0Y, m_drivePattern[6].step[0].y);
-    pref->PutDouble(AUTO6STEP0T, m_drivePattern[6].step[0].t);
-    pref->PutDouble(AUTO6STEP0S, m_drivePattern[6].step[0].s);
+    pref->PutDouble(AUTO6STEP0T, m_drivePattern[6].step[0].twist);
+    pref->PutDouble(AUTO6STEP0S, m_drivePattern[6].step[0].secs);
     // autonomous mode sequence 6 step 1
     pref->PutDouble(AUTO6STEP1X, m_drivePattern[6].step[1].x);
     pref->PutDouble(AUTO6STEP1Y, m_drivePattern[6].step[1].y);
-    pref->PutDouble(AUTO6STEP1T, m_drivePattern[6].step[1].t);
-    pref->PutDouble(AUTO6STEP1S, m_drivePattern[6].step[1].s);
+    pref->PutDouble(AUTO6STEP1T, m_drivePattern[6].step[1].twist);
+    pref->PutDouble(AUTO6STEP1S, m_drivePattern[6].step[1].secs);
     // autonomous mode sequence 6 step 2
     pref->PutDouble(AUTO6STEP2X, m_drivePattern[6].step[2].x);
     pref->PutDouble(AUTO6STEP2Y, m_drivePattern[6].step[2].y);
-    pref->PutDouble(AUTO6STEP2T, m_drivePattern[6].step[2].t);
-    pref->PutDouble(AUTO6STEP2S, m_drivePattern[6].step[2].s);
+    pref->PutDouble(AUTO6STEP2T, m_drivePattern[6].step[2].twist);
+    pref->PutDouble(AUTO6STEP2S, m_drivePattern[6].step[2].secs);
     // autonomous mode sequence 6 step 3
     pref->PutDouble(AUTO6STEP3X, m_drivePattern[6].step[3].x);
     pref->PutDouble(AUTO6STEP3Y, m_drivePattern[6].step[3].y);
-    pref->PutDouble(AUTO6STEP3T, m_drivePattern[6].step[3].t);
-    pref->PutDouble(AUTO6STEP3S, m_drivePattern[6].step[3].s);
+    pref->PutDouble(AUTO6STEP3T, m_drivePattern[6].step[3].twist);
+    pref->PutDouble(AUTO6STEP3S, m_drivePattern[6].step[3].secs);
     // autonomous mode sequence 6 step 4
     pref->PutDouble(AUTO6STEP4X, m_drivePattern[6].step[4].x);
     pref->PutDouble(AUTO6STEP4Y, m_drivePattern[6].step[4].y);
-    pref->PutDouble(AUTO6STEP4T, m_drivePattern[6].step[4].t);
-    pref->PutDouble(AUTO6STEP4S, m_drivePattern[6].step[4].s);
+    pref->PutDouble(AUTO6STEP4T, m_drivePattern[6].step[4].twist);
+    pref->PutDouble(AUTO6STEP4S, m_drivePattern[6].step[4].secs);
     // autonomous mode sequence 6 step 5
     pref->PutDouble(AUTO6STEP5X, m_drivePattern[6].step[5].x);
     pref->PutDouble(AUTO6STEP5Y, m_drivePattern[6].step[5].y);
-    pref->PutDouble(AUTO6STEP5T, m_drivePattern[6].step[5].t);
-    pref->PutDouble(AUTO6STEP5S, m_drivePattern[6].step[5].s);
+    pref->PutDouble(AUTO6STEP5T, m_drivePattern[6].step[5].twist);
+    pref->PutDouble(AUTO6STEP5S, m_drivePattern[6].step[5].secs);
 
     // autonomous mode sequence 7 step 0
     pref->PutDouble(AUTO7STEP0X, m_drivePattern[7].step[0].x);
     pref->PutDouble(AUTO7STEP0Y, m_drivePattern[7].step[0].y);
-    pref->PutDouble(AUTO7STEP0T, m_drivePattern[7].step[0].t);
-    pref->PutDouble(AUTO7STEP0S, m_drivePattern[7].step[0].s);
+    pref->PutDouble(AUTO7STEP0T, m_drivePattern[7].step[0].twist);
+    pref->PutDouble(AUTO7STEP0S, m_drivePattern[7].step[0].secs);
     // autonomous mode sequence 7 step 1
     pref->PutDouble(AUTO7STEP1X, m_drivePattern[7].step[1].x);
     pref->PutDouble(AUTO7STEP1Y, m_drivePattern[7].step[1].y);
-    pref->PutDouble(AUTO7STEP1T, m_drivePattern[7].step[1].t);
-    pref->PutDouble(AUTO7STEP1S, m_drivePattern[7].step[1].s);
+    pref->PutDouble(AUTO7STEP1T, m_drivePattern[7].step[1].twist);
+    pref->PutDouble(AUTO7STEP1S, m_drivePattern[7].step[1].secs);
     // autonomous mode sequence 7 step 2
     pref->PutDouble(AUTO7STEP2X, m_drivePattern[7].step[2].x);
     pref->PutDouble(AUTO7STEP2Y, m_drivePattern[7].step[2].y);
-    pref->PutDouble(AUTO7STEP2T, m_drivePattern[7].step[2].t);
-    pref->PutDouble(AUTO7STEP2S, m_drivePattern[7].step[2].s);
+    pref->PutDouble(AUTO7STEP2T, m_drivePattern[7].step[2].twist);
+    pref->PutDouble(AUTO7STEP2S, m_drivePattern[7].step[2].secs);
     // autonomous mode sequence 7 step 3
     pref->PutDouble(AUTO7STEP3X, m_drivePattern[7].step[3].x);
     pref->PutDouble(AUTO7STEP3Y, m_drivePattern[7].step[3].y);
-    pref->PutDouble(AUTO7STEP3T, m_drivePattern[7].step[3].t);
-    pref->PutDouble(AUTO7STEP3S, m_drivePattern[7].step[3].s);
+    pref->PutDouble(AUTO7STEP3T, m_drivePattern[7].step[3].twist);
+    pref->PutDouble(AUTO7STEP3S, m_drivePattern[7].step[3].secs);
     // autonomous mode sequence 7 step 4
     pref->PutDouble(AUTO7STEP4X, m_drivePattern[7].step[4].x);
     pref->PutDouble(AUTO7STEP4Y, m_drivePattern[7].step[4].y);
-    pref->PutDouble(AUTO7STEP4T, m_drivePattern[7].step[4].t);
-    pref->PutDouble(AUTO7STEP4S, m_drivePattern[7].step[4].s);
+    pref->PutDouble(AUTO7STEP4T, m_drivePattern[7].step[4].twist);
+    pref->PutDouble(AUTO7STEP4S, m_drivePattern[7].step[4].secs);
     // autonomous mode sequence 7 step 5
     pref->PutDouble(AUTO7STEP5X, m_drivePattern[7].step[5].x);
     pref->PutDouble(AUTO7STEP5Y, m_drivePattern[7].step[5].y);
-    pref->PutDouble(AUTO7STEP5T, m_drivePattern[7].step[5].t);
-    pref->PutDouble(AUTO7STEP5S, m_drivePattern[7].step[5].s);
+    pref->PutDouble(AUTO7STEP5T, m_drivePattern[7].step[5].twist);
+    pref->PutDouble(AUTO7STEP5S, m_drivePattern[7].step[5].secs);
 
     // autonomous mode sequence 8 step 0
     pref->PutDouble(AUTO8STEP0X, m_drivePattern[8].step[0].x);
     pref->PutDouble(AUTO8STEP0Y, m_drivePattern[8].step[0].y);
-    pref->PutDouble(AUTO8STEP0T, m_drivePattern[8].step[0].t);
-    pref->PutDouble(AUTO8STEP0S, m_drivePattern[8].step[0].s);
+    pref->PutDouble(AUTO8STEP0T, m_drivePattern[8].step[0].twist);
+    pref->PutDouble(AUTO8STEP0S, m_drivePattern[8].step[0].secs);
     // autonomous mode sequence 8 step 1
     pref->PutDouble(AUTO8STEP1X, m_drivePattern[8].step[1].x);
     pref->PutDouble(AUTO8STEP1Y, m_drivePattern[8].step[1].y);
-    pref->PutDouble(AUTO8STEP1T, m_drivePattern[8].step[1].t);
-    pref->PutDouble(AUTO8STEP1S, m_drivePattern[8].step[1].s);
+    pref->PutDouble(AUTO8STEP1T, m_drivePattern[8].step[1].twist);
+    pref->PutDouble(AUTO8STEP1S, m_drivePattern[8].step[1].secs);
     // autonomous mode sequence 8 step 2
     pref->PutDouble(AUTO8STEP2X, m_drivePattern[8].step[2].x);
     pref->PutDouble(AUTO8STEP2Y, m_drivePattern[8].step[2].y);
-    pref->PutDouble(AUTO8STEP2T, m_drivePattern[8].step[2].t);
-    pref->PutDouble(AUTO8STEP2S, m_drivePattern[8].step[2].s);
+    pref->PutDouble(AUTO8STEP2T, m_drivePattern[8].step[2].twist);
+    pref->PutDouble(AUTO8STEP2S, m_drivePattern[8].step[2].secs);
     // autonomous mode sequence 8 step 3
     pref->PutDouble(AUTO8STEP3X, m_drivePattern[8].step[3].x);
     pref->PutDouble(AUTO8STEP3Y, m_drivePattern[8].step[3].y);
-    pref->PutDouble(AUTO8STEP3T, m_drivePattern[8].step[3].t);
-    pref->PutDouble(AUTO8STEP3S, m_drivePattern[8].step[3].s);
+    pref->PutDouble(AUTO8STEP3T, m_drivePattern[8].step[3].twist);
+    pref->PutDouble(AUTO8STEP3S, m_drivePattern[8].step[3].secs);
     // autonomous mode sequence 8 step 4
     pref->PutDouble(AUTO8STEP4X, m_drivePattern[8].step[4].x);
     pref->PutDouble(AUTO8STEP4Y, m_drivePattern[8].step[4].y);
-    pref->PutDouble(AUTO8STEP4T, m_drivePattern[8].step[4].t);
-    pref->PutDouble(AUTO8STEP4S, m_drivePattern[8].step[4].s);
+    pref->PutDouble(AUTO8STEP4T, m_drivePattern[8].step[4].twist);
+    pref->PutDouble(AUTO8STEP4S, m_drivePattern[8].step[4].secs);
     // autonomous mode sequence 8 step 5
     pref->PutDouble(AUTO8STEP5X, m_drivePattern[8].step[5].x);
     pref->PutDouble(AUTO8STEP5Y, m_drivePattern[8].step[5].y);
-    pref->PutDouble(AUTO8STEP5T, m_drivePattern[8].step[5].t);
-    pref->PutDouble(AUTO8STEP5S, m_drivePattern[8].step[5].s);
+    pref->PutDouble(AUTO8STEP5T, m_drivePattern[8].step[5].twist);
+    pref->PutDouble(AUTO8STEP5S, m_drivePattern[8].step[5].secs);
 
     // autonomous mode sequence 9 step 0
     pref->PutDouble(AUTO9STEP0X, m_drivePattern[9].step[0].x);
     pref->PutDouble(AUTO9STEP0Y, m_drivePattern[9].step[0].y);
-    pref->PutDouble(AUTO9STEP0T, m_drivePattern[9].step[0].t);
-    pref->PutDouble(AUTO9STEP0S, m_drivePattern[9].step[0].s);
+    pref->PutDouble(AUTO9STEP0T, m_drivePattern[9].step[0].twist);
+    pref->PutDouble(AUTO9STEP0S, m_drivePattern[9].step[0].secs);
     // autonomous mode sequence 9 step 1
     pref->PutDouble(AUTO9STEP1X, m_drivePattern[9].step[1].x);
     pref->PutDouble(AUTO9STEP1Y, m_drivePattern[9].step[1].y);
-    pref->PutDouble(AUTO9STEP1T, m_drivePattern[9].step[1].t);
-    pref->PutDouble(AUTO9STEP1S, m_drivePattern[9].step[1].s);
+    pref->PutDouble(AUTO9STEP1T, m_drivePattern[9].step[1].twist);
+    pref->PutDouble(AUTO9STEP1S, m_drivePattern[9].step[1].secs);
     // autonomous mode sequence 9 step 2
     pref->PutDouble(AUTO9STEP2X, m_drivePattern[9].step[2].x);
     pref->PutDouble(AUTO9STEP2Y, m_drivePattern[9].step[2].y);
-    pref->PutDouble(AUTO9STEP2T, m_drivePattern[9].step[2].t);
-    pref->PutDouble(AUTO9STEP2S, m_drivePattern[9].step[2].s);
+    pref->PutDouble(AUTO9STEP2T, m_drivePattern[9].step[2].twist);
+    pref->PutDouble(AUTO9STEP2S, m_drivePattern[9].step[2].secs);
     // autonomous mode sequence 9 step 3
     pref->PutDouble(AUTO9STEP3X, m_drivePattern[9].step[3].x);
     pref->PutDouble(AUTO9STEP3Y, m_drivePattern[9].step[3].y);
-    pref->PutDouble(AUTO9STEP3T, m_drivePattern[9].step[3].t);
-    pref->PutDouble(AUTO9STEP3S, m_drivePattern[9].step[3].s);
+    pref->PutDouble(AUTO9STEP3T, m_drivePattern[9].step[3].twist);
+    pref->PutDouble(AUTO9STEP3S, m_drivePattern[9].step[3].secs);
     // autonomous mode sequence 9 step 4
     pref->PutDouble(AUTO9STEP4X, m_drivePattern[9].step[4].x);
     pref->PutDouble(AUTO9STEP4Y, m_drivePattern[9].step[4].y);
-    pref->PutDouble(AUTO9STEP4T, m_drivePattern[9].step[4].t);
-    pref->PutDouble(AUTO9STEP4S, m_drivePattern[9].step[4].s);
+    pref->PutDouble(AUTO9STEP4T, m_drivePattern[9].step[4].twist);
+    pref->PutDouble(AUTO9STEP4S, m_drivePattern[9].step[4].secs);
     // autonomous mode sequence 9 step 5
     pref->PutDouble(AUTO9STEP5X, m_drivePattern[9].step[5].x);
     pref->PutDouble(AUTO9STEP5Y, m_drivePattern[9].step[5].y);
-    pref->PutDouble(AUTO9STEP5T, m_drivePattern[9].step[5].t);
-    pref->PutDouble(AUTO9STEP5S, m_drivePattern[9].step[5].s);
+    pref->PutDouble(AUTO9STEP5T, m_drivePattern[9].step[5].twist);
+    pref->PutDouble(AUTO9STEP5S, m_drivePattern[9].step[5].secs);
 
     pref->Save();
 }
@@ -1012,33 +1012,33 @@ void AutoCommand::GetDashboardSettings()
 
     dp->step[0].x = SmartDashboard::GetNumber(STEP0X);
     dp->step[0].y = SmartDashboard::GetNumber(STEP0Y);
-    dp->step[0].t = SmartDashboard::GetNumber(STEP0T);
-    dp->step[0].s = SmartDashboard::GetNumber(STEP0S);
+    dp->step[0].twist = SmartDashboard::GetNumber(STEP0T);
+    dp->step[0].secs = SmartDashboard::GetNumber(STEP0S);
 
     dp->step[1].x = SmartDashboard::GetNumber(STEP1X);
     dp->step[1].y = SmartDashboard::GetNumber(STEP1Y);
-    dp->step[1].t = SmartDashboard::GetNumber(STEP1T);
-    dp->step[1].s = SmartDashboard::GetNumber(STEP1S);
+    dp->step[1].twist = SmartDashboard::GetNumber(STEP1T);
+    dp->step[1].secs = SmartDashboard::GetNumber(STEP1S);
 
     dp->step[2].x = SmartDashboard::GetNumber(STEP2X);
     dp->step[2].y = SmartDashboard::GetNumber(STEP2Y);
-    dp->step[2].t = SmartDashboard::GetNumber(STEP2T);
-    dp->step[2].s = SmartDashboard::GetNumber(STEP2S);
+    dp->step[2].twist = SmartDashboard::GetNumber(STEP2T);
+    dp->step[2].secs = SmartDashboard::GetNumber(STEP2S);
 
     dp->step[3].x = SmartDashboard::GetNumber(STEP3X);
     dp->step[3].y = SmartDashboard::GetNumber(STEP3Y);
-    dp->step[3].t = SmartDashboard::GetNumber(STEP3T);
-    dp->step[3].s = SmartDashboard::GetNumber(STEP3S);
+    dp->step[3].twist = SmartDashboard::GetNumber(STEP3T);
+    dp->step[3].secs = SmartDashboard::GetNumber(STEP3S);
 
     dp->step[4].x = SmartDashboard::GetNumber(STEP4X);
     dp->step[4].y = SmartDashboard::GetNumber(STEP4Y);
-    dp->step[4].t = SmartDashboard::GetNumber(STEP4T);
-    dp->step[4].s = SmartDashboard::GetNumber(STEP4S);
+    dp->step[4].twist = SmartDashboard::GetNumber(STEP4T);
+    dp->step[4].secs = SmartDashboard::GetNumber(STEP4S);
 
     dp->step[5].x = SmartDashboard::GetNumber(STEP5X);
     dp->step[5].y = SmartDashboard::GetNumber(STEP5Y);
-    dp->step[5].t = SmartDashboard::GetNumber(STEP5T);
-    dp->step[5].s = SmartDashboard::GetNumber(STEP5S);
+    dp->step[5].twist = SmartDashboard::GetNumber(STEP5T);
+    dp->step[5].secs = SmartDashboard::GetNumber(STEP5S);
 }
 
 void AutoCommand::PutDashboardSettings()
@@ -1051,33 +1051,33 @@ void AutoCommand::PutDashboardSettings()
 
     SmartDashboard::PutNumber(STEP0X, dp->step[0].x);
     SmartDashboard::PutNumber(STEP0Y, dp->step[0].y);
-    SmartDashboard::PutNumber(STEP0T, dp->step[0].t);
-    SmartDashboard::PutNumber(STEP0S, dp->step[0].s);
+    SmartDashboard::PutNumber(STEP0T, dp->step[0].twist);
+    SmartDashboard::PutNumber(STEP0S, dp->step[0].secs);
 
     SmartDashboard::PutNumber(STEP1X, dp->step[1].x);
     SmartDashboard::PutNumber(STEP1Y, dp->step[1].y);
-    SmartDashboard::PutNumber(STEP1T, dp->step[1].t);
-    SmartDashboard::PutNumber(STEP1S, dp->step[1].s);
+    SmartDashboard::PutNumber(STEP1T, dp->step[1].twist);
+    SmartDashboard::PutNumber(STEP1S, dp->step[1].secs);
 
     SmartDashboard::PutNumber(STEP2X, dp->step[2].x);
     SmartDashboard::PutNumber(STEP2Y, dp->step[2].y);
-    SmartDashboard::PutNumber(STEP2T, dp->step[2].t);
-    SmartDashboard::PutNumber(STEP2S, dp->step[2].s);
+    SmartDashboard::PutNumber(STEP2T, dp->step[2].twist);
+    SmartDashboard::PutNumber(STEP2S, dp->step[2].secs);
 
     SmartDashboard::PutNumber(STEP3X, dp->step[3].x);
     SmartDashboard::PutNumber(STEP3Y, dp->step[3].y);
-    SmartDashboard::PutNumber(STEP3T, dp->step[3].t);
-    SmartDashboard::PutNumber(STEP3S, dp->step[3].s);
+    SmartDashboard::PutNumber(STEP3T, dp->step[3].twist);
+    SmartDashboard::PutNumber(STEP3S, dp->step[3].secs);
 
     SmartDashboard::PutNumber(STEP4X, dp->step[4].x);
     SmartDashboard::PutNumber(STEP4Y, dp->step[4].y);
-    SmartDashboard::PutNumber(STEP4T, dp->step[4].t);
-    SmartDashboard::PutNumber(STEP4S, dp->step[4].s);
+    SmartDashboard::PutNumber(STEP4T, dp->step[4].twist);
+    SmartDashboard::PutNumber(STEP4S, dp->step[4].secs);
 
     SmartDashboard::PutNumber(STEP5X, dp->step[5].x);
     SmartDashboard::PutNumber(STEP5Y, dp->step[5].y);
-    SmartDashboard::PutNumber(STEP5T, dp->step[5].t);
-    SmartDashboard::PutNumber(STEP5S, dp->step[5].s);
+    SmartDashboard::PutNumber(STEP5T, dp->step[5].twist);
+    SmartDashboard::PutNumber(STEP5S, dp->step[5].secs);
 }
 
 void AutoCommand::Execute()

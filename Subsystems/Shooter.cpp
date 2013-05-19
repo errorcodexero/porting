@@ -7,6 +7,8 @@
 const double Shooter::kPollInterval = 0.034;
 const double Shooter::kReportInterval = 0.300;
 
+#define SYNC_GROUP 0x40
+
 // Constructor
 Shooter::Shooter( int motorChannel, int positionerChannel, int switchChannel,
 			int injectorChannel )
@@ -15,8 +17,12 @@ Shooter::Shooter( int motorChannel, int positionerChannel, int switchChannel,
     LiveWindow *lw = LiveWindow::GetInstance();
 
     m_motor = new CANJaguar( motorChannel );
-    lw->AddActuator("Shooter", "Motor", m_motor);
+    lw->AddActuator("Shooter", "Motor1", m_motor);
     m_motor->SetSafetyEnabled(false);	// motor safety off while configuring
+
+    m_motor2 = new CANJaguar( motorChannel+1 );
+    lw->AddActuator("Shooter", "Motor2", m_motor2);
+    m_motor2->SetSafetyEnabled(false);	// motor safety off while configuring
 
     m_P = 1.000;
     SmartDashboard::PutNumber("Shooter P", m_P);
@@ -33,7 +39,7 @@ Shooter::Shooter( int motorChannel, int positionerChannel, int switchChannel,
     SmartDashboard::PutNumber("Shooter Voltage", 0.0);
     SmartDashboard::PutNumber("Shooter RPM", 0.0);
 
-    m_speedTolerance = 4.0;  // +/- 4% speed tolerance
+    m_speedTolerance = 0.25;  // +/- 0.25% speed tolerance
     SmartDashboard::PutNumber("Shooter Tolerance (%)", m_speedTolerance);
 
     m_speedStable = 0.9; // must remain in tolerance at least this long
@@ -76,6 +82,7 @@ Shooter::~Shooter()
     delete m_notifier;
     delete m_positioner;
     delete m_motor;
+    delete m_motor2;
 }
 
 Shooter::TargetDistance Shooter::GetAngle()
@@ -125,28 +132,37 @@ void Shooter::Start()
 
     // Set control mode
     m_motor->ChangeControlMode( CANJaguar::kSpeed );
+    m_motor2->ChangeControlMode( CANJaguar::kSpeed );
 
     // Set encoder as reference device for speed controller mode:
     m_motor->SetSpeedReference( CANJaguar::kSpeedRef_Encoder );
+    m_motor2->SetSpeedReference( CANJaguar::kSpeedRef_Encoder );
 
     // Set codes per revolution parameter:
     m_motor->ConfigEncoderCodesPerRev( 1 );
+    m_motor2->ConfigEncoderCodesPerRev( 1 );
 
     // Set Jaguar PID parameters:
     m_P = SmartDashboard::GetNumber("Shooter P");
     m_I = SmartDashboard::GetNumber("Shooter I");
     m_D = SmartDashboard::GetNumber("Shooter D");
     m_motor->SetPID( m_P, m_I, m_D );
+    m_motor2->SetPID( m_P, m_I, m_D );
 
     // Enable Jaguar control:
     m_motor->EnableControl();
+    m_motor2->EnableControl();
 
-    // Increase motor safety timer to match status reporting interval
+    // Increase motor safety timer to something suitably long
     // Poke the motor speed to reset the watchdog, then enable the watchdog
     m_speed = SmartDashboard::GetNumber("Shooter Speed");
-    m_motor->Set(m_speed);
-    m_motor->SetExpiration(kReportInterval);
+    m_motor->SetExpiration(2.0);
+    m_motor2->SetExpiration(2.0);
+    m_motor->Set(m_speed, SYNC_GROUP);
+    m_motor2->Set(m_speed, SYNC_GROUP);
+    CANJaguar::UpdateSyncGroup(SYNC_GROUP);
     m_motor->SetSafetyEnabled(true);
+    m_motor2->SetSafetyEnabled(true);
 
     // Start run timer
     m_report = 0;
@@ -160,9 +176,13 @@ void Shooter::Stop()
     // stop timer
     m_notifier->Stop();
 
-    // stop motor
+    // stop motors
     m_motor->StopMotor();
+    m_motor2->StopMotor();
     m_motor->SetSafetyEnabled(false);
+    m_motor2->SetSafetyEnabled(false);
+    SmartDashboard::PutNumber("Shooter Voltage", 0.0);
+    SmartDashboard::PutNumber("Shooter RPM", 0.0);
 
     // stop positioner
     m_positioner->Stop();
@@ -203,7 +223,10 @@ void Shooter::Run()
     }
 
     m_speed = SmartDashboard::GetNumber("Shooter Speed");
-    m_motor->Set(m_speed, 0);
+    m_motor->Set(m_speed, SYNC_GROUP);
+    m_motor2->Set(m_speed, SYNC_GROUP);
+    CANJaguar::UpdateSyncGroup(SYNC_GROUP);
+
     if (++m_report * kPollInterval >= kReportInterval) {
 	ReportSpeed();
 
