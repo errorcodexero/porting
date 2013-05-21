@@ -26,8 +26,8 @@ static Resource *allocated = NULL;
  */
 void PWM::InitPWM(UINT8 moduleNumber, UINT32 channel)
 {
-    m_table = NULL;
     char buf[64];
+    m_table = NULL;
     Resource::CreateResourceObject(&allocated, tDIO::kNumSystems * kPwmChannels);
     if (!CheckPWMModule(moduleNumber))
     {
@@ -37,12 +37,12 @@ void PWM::InitPWM(UINT8 moduleNumber, UINT32 channel)
     }
     if (!CheckPWMChannel(channel))
     {
-	snprintf(buf, 64, "PWM Channel %lu", channel);
+	snprintf(buf, 64, "PWM Channel %u", (uint)channel);
 	wpi_setWPIErrorWithContext(ChannelIndexOutOfRange, buf);
 	return;
     }
 
-    snprintf(buf, 64, "PWM %lu (Module: %d)", channel, moduleNumber);
+    snprintf(buf, 64, "PWM %u (Module: %u)", (uint)channel, (uint)moduleNumber);
     if (allocated->Allocate((moduleNumber - 1) * kPwmChannels + channel - 1, buf) == ~0ul)
     {
 	CloneError(allocated);

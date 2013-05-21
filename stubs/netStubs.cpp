@@ -220,21 +220,23 @@ public:
 	{
 	    struct
 	    {
-// This uses __BYTE_ORDER as a stand-in for "__BITFIELD_PACKING_ORDER"
+// This uses __BYTE_ORDER__ as a stand-in for "__BITFIELD_PACKING_ORDER__"
 // (which is not defined).  It gives the intended result for gcc/g++ on
 // PPC and x86 architectures but may not be correct for other compilers
 // or even gcc with other processors.
 
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
-		UINT8 quad_index_enable : 2;
-		UINT8 comparator_enable : 2;
-		UINT8 pwm_enable : 4;
-#else // __BYTE_ORDER == __BIG_ENDIAN
+#if (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 		// Bits are inverted from cypress fw because of big-endian!
 		UINT8 pwm_enable : 4;
 		UINT8 comparator_enable : 2;
 		UINT8 quad_index_enable : 2;
-#endif // __BYTE_ORDER
+#elif (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+		UINT8 quad_index_enable : 2;
+		UINT8 comparator_enable : 2;
+		UINT8 pwm_enable : 4;
+#else
+#error __BYTE_ORDER__ must be __ORDER_BIG_ENDIAN__ or __ORDER_LITTLE_ENDIAN__
+#endif // __BYTE_ORDER__
 	    };
 	    UINT8 enables;
 	};
@@ -370,7 +372,18 @@ private:
 // PPC and x86 architectures but may not be correct for other compilers
 // or even gcc with other processors.
 
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+#if (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+		struct {
+			UINT8 reset : 1;
+			UINT8 notEStop : 1;
+			UINT8 enabled : 1;
+			UINT8 autonomous : 1;
+			UINT8 fmsAttached : 1;
+			UINT8 resync : 1;
+			UINT8 test : 1;
+			UINT8 checkVersions : 1;
+		};
+#elif (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 		struct {
 			UINT8 checkVersions : 1;
 			UINT8 test : 1;
@@ -382,16 +395,7 @@ private:
 			UINT8 reset : 1;
 		};
 #else
-		struct {
-			UINT8 reset : 1;
-			UINT8 notEStop : 1;
-			UINT8 enabled : 1;
-			UINT8 autonomous : 1;
-			UINT8 fmsAttached : 1;
-			UINT8 resync : 1;
-			UINT8 test : 1;
-			UINT8 checkVersions : 1;
-		};
+#error __BYTE_ORDER__ must be __ORDER_BIG_ENDIAN__ or __ORDER_LITTLE_ENDIAN__
 #endif
 	};
 
@@ -660,9 +664,9 @@ STATUS FNC::Recv()
 #endif
 
 	// unpack the cRIO and FPGA checksums (?)
-#if (BYTE_ORDER == BIG_ENDIAN)
+#if (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 # define ntohll(x) ((uint64_t)(x))
-#else
+#elif (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 # define ntohll(x) \
 	((uint64_t)((((uint64_t)(x) & 0x00000000000000ffLLU) << 56) | \
 		    (((uint64_t)(x) & 0x000000000000ff00LLU) << 40) | \
@@ -672,6 +676,8 @@ STATUS FNC::Recv()
 		    (((uint64_t)(x) & 0x0000ff0000000000LLU) >> 24) | \
 		    (((uint64_t)(x) & 0x00ff000000000000LLU) >> 40) | \
 		    (((uint64_t)(x) & 0xff00000000000000LLU) >> 56)))
+#else
+#error __BYTE_ORDER__ must be __ORDER_BIG_ENDIAN__ or __ORDER_LITTLE_ENDIAN__
 #endif
 
 	m_recvData.cRIOChecksum		= ntohll(m_recvPkt.ctrl.cRIOChecksum);

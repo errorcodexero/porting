@@ -14,9 +14,7 @@
 #include <stdio.h>
 #include "LiveWindow/LiveWindow.h"
 
-#ifdef _WRS_KERNEL
-
-// assume big-endian host
+#if (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 
 #define swap16(x) ( (((x)>>8) &0x00FF) \
                   | (((x)<<8) &0xFF00) )
@@ -25,12 +23,13 @@
                   | (((x)<<8) &0x00FF0000) \
                   | (((x)<<24)&0xFF000000) )
 
+#elif (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+
+#define swap16(x) (x)
+#define swap32(x) (x)
+
 #else
-
-#include <endian.h>
-#define swap16(x) htole16(x)
-#define swap32(x) htole32(x)
-
+#error __BYTE_ORDER__ must be __ORDER_BIG_ENDIAN__ or __ORDER_LITTLE_ENDIAN__
 #endif
 
 #define kFullMessageIDMask (CAN_MSGID_API_M | CAN_MSGID_MFR_M | CAN_MSGID_DTYPE_M)

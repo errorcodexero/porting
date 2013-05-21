@@ -216,11 +216,11 @@ bool wpi_assert_impl(bool conditionValue,
 	// If an error message was specified, include it
 	// Build error string
 	if(message != NULL) {
-	    sprintf(error, "Assertion failed: \"%s\", \"%s\" failed in %s() in %s at line %lu\n",
-			     message, conditionText, funcName, fileName, lineNumber);
+	    sprintf(error, "Assertion failed: \"%s\", \"%s\" failed in %s() in %s at line %u\n",
+			     message, conditionText, funcName, fileName, (uint)lineNumber);
 	} else {
-	    sprintf(error, "Assertion failed: \"%s\" in %s() in %s at line %lu\n",
-			     conditionText, funcName, fileName, lineNumber);
+	    sprintf(error, "Assertion failed: \"%s\" in %s() in %s at line %u\n",
+			     conditionText, funcName, fileName, (uint)lineNumber);
 	}
 
 	// Print to console and send to remote dashboard
@@ -254,11 +254,11 @@ void wpi_assertEqual_common_impl(int valueA,
     // If an error message was specified, include it
     // Build error string
     if(message != NULL) {
-	sprintf(error, "Assertion failed: \"%s\", \"%d\" %s \"%d\" in %s() in %s at line %lu\n",
-			 message, valueA, equalityType, valueB, funcName, fileName, lineNumber);
+	sprintf(error, "Assertion failed: \"%s\", \"%d\" %s \"%d\" in %s() in %s at line %u\n",
+			 message, valueA, equalityType, valueB, funcName, fileName, (uint)lineNumber);
     } else {
-	sprintf(error, "Assertion failed: \"%d\" %s \"%d\" in %s() in %s at line %lu\n",
-			 valueA, equalityType, valueB, funcName, fileName, lineNumber);
+	sprintf(error, "Assertion failed: \"%d\" %s \"%d\" in %s() in %s at line %u\n",
+			 valueA, equalityType, valueB, funcName, fileName, (uint)lineNumber);
     }
 
     // Print to console and send to remote dashboard

@@ -100,7 +100,7 @@ bool SafePWM::IsSafetyEnabled()
 
 void SafePWM::GetDescription(char *desc)
 {
-    sprintf(desc, "PWM %lu on module %lu", GetChannel(), GetModuleNumber());
+    sprintf(desc, "PWM %u on module %u", (uint)GetChannel(), (uint)GetModuleNumber());
 }
 
 /**
