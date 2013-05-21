@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <wrxml>
-    <properties platform="VxWorks" platform_name="vxworks-6.3" root="0" type="DownloadableKernelModuleProject"/>
+    <properties platform="VxWorks" platform_name="vxworks-6.3" root="1" type="DownloadableKernelModuleProject"/>
     <attributes>
         <mapAttribute>
             <listAttribute key="BLD::Info|GlobalMacros">
@@ -72,7 +72,7 @@
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC603gnu">
-                <stringAttribute value="-I.."/>
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>

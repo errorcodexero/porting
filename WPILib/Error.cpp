@@ -82,13 +82,13 @@ void Error::Report()
     // Build error strings
     if (m_code != -1)
     {
-	snprintf(error, 256, "%s: status = %ld (0x%08lX) %s ...in %s() in %s at line %u\n",
-		m_code < 0 ? "ERROR" : "WARNING", (INT32)m_code, (UINT32)m_code,
-		m_message.c_str(), m_function.c_str(), m_filename.c_str(), (uint)m_lineNumber);
-	sprintf(error_with_code,"<Code>%ld %s", (INT32)m_code, error);
+	snprintf(error, 256, "%s: status = %d (0x%08X) %s ...in %s() in %s at line %u\n",
+		m_code < 0 ? "ERROR" : "WARNING", (int)m_code, (u_int)m_code,
+		m_message.c_str(), m_function.c_str(), m_filename.c_str(), (u_int)m_lineNumber);
+	sprintf(error_with_code,"<Code>%d %s", (int)m_code, error);
     } else {
 	snprintf(error, 256, "ERROR: %s ...in %s() in %s at line %u\n", m_message.c_str(),
-		m_function.c_str(), m_filename.c_str(), (uint)m_lineNumber);
+		m_function.c_str(), m_filename.c_str(), (u_int)m_lineNumber);
 	strcpy(error_with_code, error);
     }
     // TODO: Add logging to disk

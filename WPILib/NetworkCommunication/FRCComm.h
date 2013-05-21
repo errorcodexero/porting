@@ -22,8 +22,6 @@
 #define EXPORT_FUNC
 #endif
 
-#include <endian.h>
-
 // Commandeer some bytes at the end for advanced I/O feedback.
 #define IO_CONFIG_DATA_SIZE 32
 #define SYS_STATUS_DATA_SIZE 44
