@@ -35,6 +35,7 @@
 #include "Timer.h"
 #include "VisionAPI.h"
 
+
 /** packet size */
 #define DEFAULT_PACKET_SIZE 512
 
@@ -686,8 +687,8 @@ Authorization: Basic %s;\n\n";
 	  cameraAddr.sin_port = htons (CAMERA_PORT);
 
 	  DPRINTF (LOG_DEBUG, "getting IP" );
-	  if (( (int)(cameraAddr.sin_addr.s_addr = inet_addr (serverName) ) == ERROR) &&
-		( (int)(cameraAddr.sin_addr.s_addr = hostGetByName (serverName) ) == ERROR)) 
+          if (( (int)(cameraAddr.sin_addr.s_addr = inet_addr (const_cast<char*>(serverName)) ) == ERROR) &&
+              ( (int)(cameraAddr.sin_addr.s_addr = hostGetByName (const_cast<char*>(serverName)) ) == ERROR)) 
 	  {	
 		  CameraCloseSocket("Failed to get IP, check hostname or IP", camSock);
 		continue;

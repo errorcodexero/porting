@@ -114,7 +114,7 @@ static void wpiCleanTracePrint(INSTR *caller, INT32 func, INT32 nargs, INT32 *ar
     // If this is a member function, print out the this pointer value.
     if (totalnargs - params == 1)
     {
-	len += sprintf (&buf [len], "<this=%#lx>", args [0]);
+	len += sprintf (&buf [len], "<this=%#x>", (u_int) args [0]);
     }
 
     // Print out the argument values.
@@ -123,7 +123,7 @@ static void wpiCleanTracePrint(INSTR *caller, INT32 func, INT32 nargs, INT32 *ar
     {
 	if (ix != totalnargs - params)
 	    len += sprintf (&buf [len], ", ");
-	len += sprintf (&buf [len], "%#lx", args [ix]);
+	len += sprintf (&buf [len], "%#x", (u_int) args [ix]);
     }
     len += sprintf (&buf [len], ")\n");
 
@@ -217,10 +217,10 @@ bool wpi_assert_impl(bool conditionValue,
 	// Build error string
 	if(message != NULL) {
 	    sprintf(error, "Assertion failed: \"%s\", \"%s\" failed in %s() in %s at line %u\n",
-			     message, conditionText, funcName, fileName, (uint)lineNumber);
+			     message, conditionText, funcName, fileName, (u_int)lineNumber);
 	} else {
 	    sprintf(error, "Assertion failed: \"%s\" in %s() in %s at line %u\n",
-			     conditionText, funcName, fileName, (uint)lineNumber);
+			     conditionText, funcName, fileName, (u_int)lineNumber);
 	}
 
 	// Print to console and send to remote dashboard
@@ -255,10 +255,10 @@ void wpi_assertEqual_common_impl(int valueA,
     // Build error string
     if(message != NULL) {
 	sprintf(error, "Assertion failed: \"%s\", \"%d\" %s \"%d\" in %s() in %s at line %u\n",
-			 message, valueA, equalityType, valueB, funcName, fileName, (uint)lineNumber);
+			 message, valueA, equalityType, valueB, funcName, fileName, (u_int)lineNumber);
     } else {
 	sprintf(error, "Assertion failed: \"%d\" %s \"%d\" in %s() in %s at line %u\n",
-			 valueA, equalityType, valueB, funcName, fileName, (uint)lineNumber);
+			 valueA, equalityType, valueB, funcName, fileName, (u_int)lineNumber);
     }
 
     // Print to console and send to remote dashboard
