@@ -12,11 +12,11 @@
 #include "WPIErrors.h"
 #include "LiveWindow/LiveWindow.h"
 
-const UINT32 Gyro::kOversampleBits;
-const UINT32 Gyro::kAverageBits;
-const float Gyro::kSamplesPerSecond;
-const float Gyro::kCalibrationSampleTime;
-const float Gyro::kDefaultVoltsPerDegreePerSecond;
+constexpr UINT32 Gyro::kOversampleBits;
+constexpr UINT32 Gyro::kAverageBits;
+constexpr float Gyro::kSamplesPerSecond;
+constexpr float Gyro::kCalibrationSampleTime;
+constexpr float Gyro::kDefaultVoltsPerDegreePerSecond;
 
 /**
  * Initialize the gyro.

@@ -26,10 +26,10 @@ public:
     virtual ~DriverStation();
     static DriverStation *GetInstance();
 
-    static const UINT32 kBatteryModuleNumber = 1;
-    static const UINT32 kBatteryChannel = 8;
-    static const UINT32 kJoystickPorts = 4;
-    static const UINT32 kJoystickAxes = 6;
+    static constexpr UINT32 kBatteryModuleNumber = 1;
+    static constexpr UINT32 kBatteryChannel = 8;
+    static constexpr UINT32 kJoystickPorts = 4;
+    static constexpr UINT32 kJoystickAxes = 6;
 
     float GetStickAxis(UINT32 stick, UINT32 axis);
     short GetStickButtons(UINT32 stick);

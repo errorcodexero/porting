@@ -30,15 +30,15 @@ EntryValue DefaultEntryTypes::BOOLEAN_t::readValue(DataIOStream& is) {
 DefaultEntryTypes::DOUBLE_t::DOUBLE_t() : NetworkTableEntryType(DOUBLE_RAW_ID, "Double"){}
 void DefaultEntryTypes::DOUBLE_t::sendValue(EntryValue eValue, DataIOStream& os) {
 	uint64_t value = *reinterpret_cast<uint64_t*>(&eValue.f);
-	for(int i = 0; i<8; ++i){
+	for(u_int i = 0; i<sizeof value; ++i){
 		os.writeByte((value>>56)&0xFF);
 		value<<=8;
 	}
 }
 EntryValue DefaultEntryTypes::DOUBLE_t::readValue(DataIOStream& is) {
-	uint64_t value;
+	uint64_t value = 0;
 	
-	for(int i = 0; i<8; ++i){
+	for(u_int i = 0; i<sizeof value; ++i){
 		value<<=8;
 		value |= (is.readByte()&0xFF);
 	}

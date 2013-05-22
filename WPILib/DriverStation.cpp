@@ -16,11 +16,11 @@
 #include "LiveWindow/LiveWindow.h"
 #include <strLib.h>
 
-const UINT32 DriverStation::kBatteryModuleNumber;
-const UINT32 DriverStation::kBatteryChannel;
-const UINT32 DriverStation::kJoystickPorts;
-const UINT32 DriverStation::kJoystickAxes;
-const float DriverStation::kUpdatePeriod;
+constexpr UINT32 DriverStation::kBatteryModuleNumber;
+constexpr UINT32 DriverStation::kBatteryChannel;
+constexpr UINT32 DriverStation::kJoystickPorts;
+constexpr UINT32 DriverStation::kJoystickAxes;
+constexpr float DriverStation::kUpdatePeriod;
 DriverStation* DriverStation::m_instance = NULL;
 UINT8 DriverStation::m_updateNumber = 0;
 

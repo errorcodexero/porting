@@ -17,6 +17,7 @@ class TableListenerManager;
 #include "connection/NetworkTableConnection.h"
 #include "type/NetworkTableEntryType.h"
 #include "util/IllegalStateException.h"
+#include "AbstractNetworkTableEntryStore.h"
 #include <string>
 #include "tables/ITable.h"
 

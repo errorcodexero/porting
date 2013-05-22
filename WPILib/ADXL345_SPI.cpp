@@ -10,10 +10,10 @@
 #include "NetworkCommunication/UsageReporting.h"
 #include "SPI.h"
 
-const UINT8 ADXL345_SPI::kPowerCtlRegister;
-const UINT8 ADXL345_SPI::kDataFormatRegister;
-const UINT8 ADXL345_SPI::kDataRegister;
-const double ADXL345_SPI::kGsPerLSB;
+constexpr UINT8 ADXL345_SPI::kPowerCtlRegister;
+constexpr UINT8 ADXL345_SPI::kDataFormatRegister;
+constexpr UINT8 ADXL345_SPI::kDataRegister;
+constexpr double ADXL345_SPI::kGsPerLSB;
 
 /**
  * Constructor.
@@ -157,7 +157,7 @@ double ADXL345_SPI::GetAcceleration(ADXL345_SPI::Axes axis)
  */
 ADXL345_SPI::AllAxes ADXL345_SPI::GetAccelerations()
 {
-    AllAxes data = {0.0};
+    AllAxes data = {0.0, 0.0, 0.0};
     INT16 rawData[3];
     if (m_spi)
     {

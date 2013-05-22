@@ -9,8 +9,8 @@
 #include "NetworkCommunication/UsageReporting.h"
 #include "LiveWindow/LiveWindow.h"
 
-const float Servo::kMaxServoAngle;
-const float Servo::kMinServoAngle;
+constexpr float Servo::kMaxServoAngle;
+constexpr float Servo::kMinServoAngle;
 
 /**
  * Common initialization code called by all constructors.

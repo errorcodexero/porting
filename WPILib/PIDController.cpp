@@ -482,7 +482,7 @@ void PIDController::SetAbsoluteTolerance(float absTolerance)
  */
 bool PIDController::OnTarget()
 {
-    bool temp;
+    bool temp = false;
     CRITICAL_REGION(m_semaphore)
     {
 	switch (m_toleranceType) {

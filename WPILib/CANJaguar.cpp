@@ -34,8 +34,8 @@
 
 #define kFullMessageIDMask (CAN_MSGID_API_M | CAN_MSGID_MFR_M | CAN_MSGID_DTYPE_M)
 
-const INT32 CANJaguar::kControllerRate;
-const double CANJaguar::kApproxBusVoltage;
+constexpr INT32 CANJaguar::kControllerRate;
+constexpr double CANJaguar::kApproxBusVoltage;
 
 /**
  * Common initialization code called by all constructors.
@@ -344,7 +344,7 @@ INT32 CANJaguar::unpackINT32(UINT8 *buffer)
  */
 INT32 CANJaguar::sendMessage(UINT32 messageID, const UINT8 *data, UINT8 dataSize)
 {
-    static const UINT32 kTrustedMessages[] = {
+    static constexpr UINT32 kTrustedMessages[] = {
 	    LM_API_VOLT_T_EN, LM_API_VOLT_T_SET, LM_API_SPD_T_EN, LM_API_SPD_T_SET,
 	    LM_API_VCOMP_T_EN, LM_API_VCOMP_T_SET, LM_API_POS_T_EN, LM_API_POS_T_SET,
 	    LM_API_ICTRL_T_EN, LM_API_ICTRL_T_SET};

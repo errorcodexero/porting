@@ -53,7 +53,7 @@ void NetworkTable::SetTableProvider(NetworkTableProvider* provider){
 void NetworkTable::SetClientMode(){
     Synchronized sync(STATIC_LOCK);
     CheckInit();
-    mode = &NetworkTableMode::Server;
+    mode = &NetworkTableMode::Client;
 }
 
 void NetworkTable::SetServerMode(){
