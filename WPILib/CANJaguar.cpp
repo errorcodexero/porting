@@ -47,7 +47,7 @@ void CANJaguar::InitCANJaguar()
     if (m_deviceNumber < 1 || m_deviceNumber > 63)
     {
 	char buf[256];
-	snprintf(buf, 256, "device number \"%d\" must be between 1 and 63", m_deviceNumber);
+	snprintf(buf, 256, "device number \"%u\" must be between 1 and 63", m_deviceNumber);
 	wpi_setWPIErrorWithContext(ParameterOutOfRange, buf);
 	return;
     }
@@ -60,11 +60,11 @@ void CANJaguar::InitCANJaguar()
 	char buf[256];
 	if (fwVer < 3330)
 	{
-	    snprintf(buf, 256, "Jag #%d firmware (%lu) is too old (must be at least version 101 of the FIRST approved firmware)", m_deviceNumber, fwVer);
+	    snprintf(buf, 256, "Jag #%u firmware (%u) is too old (must be at least version 101 of the FIRST approved firmware)", m_deviceNumber, (u_int) fwVer);
 	}
 	else
 	{
-	    snprintf(buf, 256, "Jag #%d firmware (%lu) is not FIRST approved (must be at least version 101 of the FIRST approved firmware)", m_deviceNumber, fwVer);
+	    snprintf(buf, 256, "Jag #%u firmware (%u) is not FIRST approved (must be at least version 101 of the FIRST approved firmware)", m_deviceNumber, (u_int) fwVer);
 	}
 	wpi_setWPIErrorWithContext(JaguarVersionError, buf);
 	return;
@@ -1235,7 +1235,7 @@ void CANJaguar::SetSafetyEnabled(bool enabled)
 
 void CANJaguar::GetDescription(char *desc)
 {
-    sprintf(desc, "CANJaguar ID %d", m_deviceNumber);
+    sprintf(desc, "CANJaguar ID %u", m_deviceNumber);
 }
 
 /**

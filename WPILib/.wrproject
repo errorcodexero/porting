@@ -12,62 +12,77 @@
             <stringAttribute key="BLD::Info|GlobalMacro|EXPAND_DBG" value="0"/>
             <stringAttribute key="BLD::Info|GlobalMacro|PROJECT_TYPE" value="DKM"/>
             <listAttribute key="BLD::Info|Incl|PPC32diab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC32gnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC32sfdiab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC32sfgnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC403diab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC403gnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC405diab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC405gnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC405sfdiab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC405sfgnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC440diab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC440gnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC440sfdiab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC440sfgnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC603diab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
@@ -77,58 +92,72 @@
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC604diab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC604gnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC85XXdiab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC85XXgnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC85XXsfdiab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC85XXsfgnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC860sfdiab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC860sfgnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|SIMLINUXdiab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|SIMLINUXgnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|SIMNTdiab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|SIMNTgnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|SIMSPARCSOLARISdiab">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|SIMSPARCSOLARISgnu">
+                <stringAttribute value="-I$(PRJ_ROOT_DIR)"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
@@ -558,7 +587,7 @@
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|cmd|PPC440sfdiab" value="echo &quot;building $@&quot;;%cppcompilerprefix% $(TOOL_PATH)dcc %DebugModeFlags% %ToolFlags% $(ADDED_C++FLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o %OutFile% -c %InFile%"/>
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|cmd|PPC440sfgnu" value="echo &quot;building $@&quot;;%cppcompilerprefix% $(TOOL_PATH)ccppc %DebugModeFlags% %ToolFlags% $(ADDED_C++FLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o %OutFile% -c %InFile%"/>
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|cmd|PPC603diab" value="echo &quot;building $@&quot;;%cppcompilerprefix% $(TOOL_PATH)dcc %DebugModeFlags% %ToolFlags% $(ADDED_C++FLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o %OutFile% -c %InFile%"/>
-            <stringAttribute key="BLD::Info|Tool|C++-Compiler|cmd|PPC603gnu" value="%cppcompilerprefix% $(TOOL_PATH)ccppc %DebugModeFlags% %ToolFlags% $(ADDED_C++FLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL -D'SVN_REV=&quot;$(shell svnversion -n ..)&quot;' $(DEFINES) -o %OutFile% -c %InFile%"/>
+            <stringAttribute key="BLD::Info|Tool|C++-Compiler|cmd|PPC603gnu" value="%cppcompilerprefix% $(TOOL_PATH)ccppc %DebugModeFlags% %ToolFlags% $(ADDED_C++FLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL $(DEFINES) -o %OutFile% -c %InFile%"/>
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|cmd|PPC604diab" value="echo &quot;building $@&quot;;%cppcompilerprefix% $(TOOL_PATH)dcc %DebugModeFlags% %ToolFlags% $(ADDED_C++FLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o %OutFile% -c %InFile%"/>
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|cmd|PPC604gnu" value="echo &quot;building $@&quot;;%cppcompilerprefix% $(TOOL_PATH)ccppc %DebugModeFlags% %ToolFlags% $(ADDED_C++FLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o %OutFile% -c %InFile%"/>
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|cmd|PPC85XXdiab" value="echo &quot;building $@&quot;;%cppcompilerprefix% $(TOOL_PATH)dcc %DebugModeFlags% %ToolFlags% $(ADDED_C++FLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -D_WRS_KERNEL   $(DEFINES) -o %OutFile% -c %InFile%"/>
@@ -1392,7 +1421,7 @@
         <buildtarget buildtool="Librarian" name="JavaCameraLib" passed="false" targetname="JavaCameraLib">
             <attributes>
                 <mapAttribute>
-                    <stringAttribute key="BLD::Info|Tool|C++-Compiler|cmd|PPC603gnu" value="%cppcompilerprefix% $(TOOL_PATH)ccppc %DebugModeFlags% %ToolFlags% $(ADDED_C++FLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -DJAVA_CAMERA_LIB=1 -D_WRS_KERNEL -D'SVN_REV=&quot;$(shell svnversion -n ..)&quot;' $(DEFINES) -o %OutFile% -c %InFile%"/>
+                    <stringAttribute key="BLD::Info|Tool|C++-Compiler|cmd|PPC603gnu" value="%cppcompilerprefix% $(TOOL_PATH)ccppc %DebugModeFlags% %ToolFlags% $(ADDED_C++FLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -DJAVA_CAMERA_LIB=1 -D_WRS_KERNEL $(DEFINES) -o %OutFile% -c %InFile%"/>
                     <stringAttribute key="BLD::Info|Tool|C-Compiler|cmd|PPC603gnu" value="echo &quot;building $@&quot;;%ccompilerprefix% $(TOOL_PATH)ccppc %DebugModeFlags% %ToolFlags% $(ADDED_CFLAGS) %Includes% $(ADDED_INCLUDES) -DCPU=$(CPU) -DTOOL_FAMILY=$(TOOL_FAMILY) -DTOOL=$(TOOL) -DJAVA_CAMERA_LIB=1 -D_WRS_KERNEL   $(DEFINES) -o %OutFile% -c %InFile%"/>
                 </mapAttribute>
             </attributes>

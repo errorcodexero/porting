@@ -92,7 +92,7 @@ void NetworkTableNode::PutValue(std::string& name, NetworkTableEntryType* type, 
 			if(entry!=NULL)
 				entryStore.PutOutgoing(entry, entryType->internalizeValue(entry->name, *complexData, entry->GetValue()));
 			else{
-				EntryValue nullValue = {{0}};
+				EntryValue nullValue = {0};
 				entryStore.PutOutgoing(name, type, entryType->internalizeValue(name, *complexData, nullValue));
 			}
 		}

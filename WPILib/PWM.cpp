@@ -31,7 +31,7 @@ void PWM::InitPWM(UINT8 moduleNumber, UINT32 channel)
     Resource::CreateResourceObject(&allocated, tDIO::kNumSystems * kPwmChannels);
     if (!CheckPWMModule(moduleNumber))
     {
-	snprintf(buf, 64, "Digital Module %u", (u_int)moduleNumber);
+	snprintf(buf, 64, "Digital Module %u", moduleNumber);
 	wpi_setWPIErrorWithContext(ModuleIndexOutOfRange, buf);
 	return;
     }
@@ -42,7 +42,7 @@ void PWM::InitPWM(UINT8 moduleNumber, UINT32 channel)
 	return;
     }
 
-    snprintf(buf, 64, "PWM %u (Module: %u)", (u_int)channel, (u_int)moduleNumber);
+    snprintf(buf, 64, "PWM %u (Module: %u)", (u_int)channel, moduleNumber);
     if (allocated->Allocate((moduleNumber - 1) * kPwmChannels + channel - 1, buf) == ~0ul)
     {
 	CloneError(allocated);

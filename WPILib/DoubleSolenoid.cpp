@@ -137,10 +137,10 @@ void DoubleSolenoid::Set(Value value)
 DoubleSolenoid::Value DoubleSolenoid::Get()
 {
     if (StatusIsFatal()) {
-	printf("DoubleSolenoid[%d][%d-%d]::Get"
+	printf("DoubleSolenoid[%u][%u-%u]::Get"
 		" status is FATAL, returning kOff\n",
-		(int)m_moduleNumber, (int)m_forwardChannel,
-		(int)m_reverseChannel);
+		(u_int)m_moduleNumber, (u_int)m_forwardChannel,
+		(u_int)m_reverseChannel);
 	return kOff;
     }
 
@@ -156,9 +156,9 @@ void DoubleSolenoid::ValueChanged(ITable* source, const std::string& key, EntryV
     if (*val == "Off") Set(DoubleSolenoid::kOff);
     else if (*val == "Forward") Set(DoubleSolenoid::kForward);
     else if (*val == "Reverse") Set(DoubleSolenoid::kReverse);
-    else printf("DoubleSolenoid[%d][%d-%d]::ValueChanged"
-    		" value [%s] not valid\n", (int)m_moduleNumber,
-		(int)m_forwardChannel, (int)m_reverseChannel, val->c_str());
+    else printf("DoubleSolenoid[%u][%u-%u]::ValueChanged"
+    		" value [%s] not valid\n", (u_int)m_moduleNumber,
+		(u_int)m_forwardChannel, (u_int)m_reverseChannel, val->c_str());
 }
 
 void DoubleSolenoid::UpdateTable()

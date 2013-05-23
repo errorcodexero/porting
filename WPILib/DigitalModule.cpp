@@ -32,7 +32,7 @@ DigitalModule* DigitalModule::GetInstance(UINT8 moduleNumber)
 
     // If this wasn't caught before now, make sure we say what's wrong before we crash
     char buf[64];
-    snprintf(buf, 64, "Digital Module %d", moduleNumber);
+    snprintf(buf, 64, "Digital Module %u", moduleNumber);
     wpi_setGlobalWPIErrorWithContext(ModuleIndexOutOfRange, buf);
 
     return NULL;
@@ -63,7 +63,7 @@ DigitalModule::DigitalModule(UINT8 moduleNumber)
     if (m_fpgaDIO->readLoopTiming(&localStatus) != kExpectedLoopTiming)
     {
 	char err[128];
-	sprintf(err, "DIO LoopTiming: %d, expecting: %u\n", m_fpgaDIO->readLoopTiming(&localStatus), (u_int)kExpectedLoopTiming);
+	sprintf(err, "DIO LoopTiming: %u, expecting: %u\n", (u_int)m_fpgaDIO->readLoopTiming(&localStatus), (u_int)kExpectedLoopTiming);
 	wpi_setWPIErrorWithContext(LoopTimingError, err);
     }
     m_fpgaDIO->writePWMConfig_Period(PWM::kDefaultPwmPeriod, &localStatus);
@@ -247,7 +247,7 @@ UINT8 DigitalModule::GetRelayReverse()
 bool DigitalModule::AllocateDIO(UINT32 channel, bool input)
 {
     char buf[64];
-    snprintf(buf, 64, "DIO %lu (Module %d)", channel, m_moduleNumber);
+    snprintf(buf, 64, "DIO %u (Module %u)", (u_int) channel, m_moduleNumber);
     if (DIOChannels->Allocate(kDigitalChannels * (m_moduleNumber - 1) + channel - 1, buf) == ~0ul) return false;
     tRioStatusCode localStatus = NiFpga_Status_Success;
     {
@@ -428,7 +428,7 @@ bool DigitalModule::IsPulsing()
 UINT32 DigitalModule::AllocateDO_PWM()
 {
     char buf[64];
-    snprintf(buf, 64, "DO_PWM (Module: %d)", m_moduleNumber);
+    snprintf(buf, 64, "DO_PWM (Module: %u)", m_moduleNumber);
     return DO_PWMGenerators[(m_moduleNumber - 1)]->Allocate(buf);
 }
 

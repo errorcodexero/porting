@@ -23,13 +23,13 @@ void DigitalOutput::InitDigitalOutput(UINT8 moduleNumber, UINT32 channel)
     char buf[64];
     if (!CheckDigitalModule(moduleNumber))
     {
-	snprintf(buf, 64, "Digital Module %d", moduleNumber);
+	snprintf(buf, 64, "Digital Module %u", moduleNumber);
 	wpi_setWPIErrorWithContext(ModuleIndexOutOfRange, buf);
 	return;
     }
     if (!CheckDigitalChannel(channel))
     {
-	snprintf(buf, 64, "Digital Channel %lu", channel);
+	snprintf(buf, 64, "Digital Channel %u", (u_int) channel);
 	wpi_setWPIErrorWithContext(ChannelIndexOutOfRange, buf);
 	return;
     }

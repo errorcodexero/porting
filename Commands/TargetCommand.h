@@ -5,7 +5,7 @@
 #define TARGETCOMMAND_H
 
 #include <Commands/Command.h>
-#include <Commands/TimedDrive.h>
+#include "TimedDrive.h"
 
 #define CAMERA_FOV   45.0
 #define IMAGE_WIDTH 640.0
