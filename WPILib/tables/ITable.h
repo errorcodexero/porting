@@ -11,11 +11,9 @@
 
 class ITable;
 union EntryValue {
-    union {
-	void* ptr;
-	bool b;
-	double f;
-    };
+    void* ptr;
+    bool b;
+    double f;
 };
 typedef union EntryValue EntryValue;
 

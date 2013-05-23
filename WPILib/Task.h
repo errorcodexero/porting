@@ -25,31 +25,31 @@ public:
 
     bool Start(UINT32 arg0 = 0, UINT32 arg1 = 0, UINT32 arg2 = 0, UINT32 arg3 = 0, UINT32 arg4 = 0,
 	    UINT32 arg5 = 0, UINT32 arg6 = 0, UINT32 arg7 = 0, UINT32 arg8 = 0, UINT32 arg9 = 0);
-#ifndef __VXWORKS__
+#ifndef _WRS_KERNEL
 private:
     static int Main( class Task * );
     UINT32 m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, m_arg5, m_arg6, m_arg7, m_arg8, m_arg9;
 #endif
 
 public:
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
     bool Restart();
 #endif
     bool Stop();
 
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
     bool IsReady();
     bool IsSuspended();
 #endif
 
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
     bool Suspend();
     bool Resume();
 #endif
 
     bool Verify();
 
-#ifdef __VXWORKS__
+#ifdef _WRS_KERNEL
     INT32 GetPriority();
     bool SetPriority(INT32 priority);
 #endif
