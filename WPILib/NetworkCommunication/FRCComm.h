@@ -33,12 +33,23 @@ struct FRCCommonControlData{
 	union {
 		UINT8 control;
 
-// This uses __BYTE_ORDER as a stand-in for "__BITFIELD_PACKING_ORDER"
+// This uses __BYTE_ORDER__ as a stand-in for "__BITFIELD_PACKING_ORDER__"
 // (which is not defined).  It gives the intended result for gcc/g++ on
 // PPC and x86 architectures but may not be correct for other compilers
 // or even gcc with other processors.
 
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
+		struct {
+			UINT8 reset : 1;
+			UINT8 notEStop : 1;
+			UINT8 enabled : 1;
+			UINT8 autonomous : 1;
+			UINT8 fmsAttached : 1;
+			UINT8 resync : 1;
+			UINT8 test : 1;
+			UINT8 checkVersions : 1;
+		};
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
 		struct {
 			UINT8 checkVersions : 1;
 			UINT8 test : 1;
@@ -50,16 +61,7 @@ struct FRCCommonControlData{
 			UINT8 reset : 1;
 		};
 #else
-		struct {
-			UINT8 reset : 1;
-			UINT8 notEStop : 1;
-			UINT8 enabled : 1;
-			UINT8 autonomous : 1;
-			UINT8 fmsAttached : 1;
-			UINT8 resync : 1;
-			UINT8 test : 1;
-			UINT8 checkVersions : 1;
-		};
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
 #endif
 	};
 	UINT8 dsDigitalIn;

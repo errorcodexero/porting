@@ -14,22 +14,23 @@
 #include <stdio.h>
 #include "LiveWindow/LiveWindow.h"
 
-#if (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
 
 #define swap16(x) ( (((x)>>8) &0x00FF) \
                   | (((x)<<8) &0xFF00) )
+
 #define swap32(x) ( (((x)>>24)&0x000000FF) \
                   | (((x)>>8) &0x0000FF00) \
                   | (((x)<<8) &0x00FF0000) \
                   | (((x)<<24)&0xFF000000) )
 
-#elif (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
 
 #define swap16(x) (x)
 #define swap32(x) (x)
 
 #else
-#error __BYTE_ORDER__ must be __ORDER_BIG_ENDIAN__ or __ORDER_LITTLE_ENDIAN__
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
 #endif
 
 #define kFullMessageIDMask (CAN_MSGID_API_M | CAN_MSGID_MFR_M | CAN_MSGID_DTYPE_M)

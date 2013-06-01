@@ -16,8 +16,14 @@
 #include <netdb.h>
 #include <assert.h>
 #include <pthread.h>
+#include <endian.h>
+
+#define _BYTE_ORDER __BYTE_ORDER
+#define _BIG_ENDIAN __BIG_ENDIAN
+#define _LITTLE_ENDIAN __LITTLE_ENDIAN
 
 extern "C" {
+
 
 typedef int BOOL;
 

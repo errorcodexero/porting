@@ -52,17 +52,17 @@ class DriverStationEnhancedIO : public ErrorBase
 // PPC and x86 architectures but may not be correct for other compilers
 // or even gcc with other processors.
 
-#if (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-		UINT8 quad_index_enable : 2;
-		UINT8 comparator_enable : 2;
-		UINT8 pwm_enable : 4;
-#elif (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
 		// Bits are inverted from cypress fw because of big-endian!
 		UINT8 pwm_enable : 4;
 		UINT8 comparator_enable : 2;
 		UINT8 quad_index_enable : 2;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+		UINT8 quad_index_enable : 2;
+		UINT8 comparator_enable : 2;
+		UINT8 pwm_enable : 4;
 #else
-#error __BYTE_ORDER__ must be __ORDER_BIG_ENDIAN__ or __ORDER_LITTLE_ENDIAN__
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
 #endif
 	    };
 	    UINT8 enables;
