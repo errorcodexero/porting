@@ -3,8 +3,8 @@ CC := gcc
 CXX := g++
 CINCLUDES := -I./ -I./WPILib/ -I./stubs/ -I./Commands -I./Subsystems -I./Extensions
 CDEBUG :=
-CFLAGS := -Wall -Werror -g -Oo $(CINCLUDES) $(CDEBUG)
-CXXFLAGS := -Wall -Wno-deprecated -Wno-ctor-dtor-privacy -Wno-delete-non-virtual-dtor -Werror -g $(CINCLUDES) $(CDEBUG)
+CFLAGS := -Wall -Werror -g -Oo $(CINCLUDES) $(CDEBUG) -DPRACTICE_OI
+CXXFLAGS := -Wall -Wno-deprecated -Wno-ctor-dtor-privacy -Wno-delete-non-virtual-dtor -Werror -g $(CINCLUDES) $(CDEBUG) -DPRACTICE_OI
 SOURCES := \
 	robot_main.c \
 	Robot.cpp \
