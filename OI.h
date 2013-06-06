@@ -9,7 +9,7 @@ class OI;
 #include <WPILib.h>
 #include "Robot.h"
 
-#define PRACTICE_OI
+// #define PRACTICE_OI
 
 class DSAnalogInput {
 private:
