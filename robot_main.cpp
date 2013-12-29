@@ -37,10 +37,14 @@ int main(int argc, char **argv)
 	FRC_NetworkCommunicationInitialize();
 	FRC_UserProgram_StartupLibraryInit();
 	for (;;) {
+#if 0
 	    int status;
 	    pid_t child = wait(&status);
 	    if ((child == (pid_t) -1) && (errno == ECHILD))
 		break;
+#else
+	    sleep(3);
+#endif
 	}
 	return 0;
 }
