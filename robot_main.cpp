@@ -23,6 +23,8 @@
 #include <unistd.h>
 #include <Synchronized.h>
 #include <Timer.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 char **_argv;
 
@@ -35,7 +37,10 @@ int main(int argc, char **argv)
 	FRC_NetworkCommunicationInitialize();
 	FRC_UserProgram_StartupLibraryInit();
 	for (;;) {
-	    sleep(3); // should wait for robot task to die?
+	    int status;
+	    pid_t child = wait(&status);
+	    if ((child == (pid_t) -1) && (errno == ECHILD))
+		break;
 	}
 	return 0;
 }
