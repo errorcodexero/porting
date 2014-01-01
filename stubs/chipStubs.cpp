@@ -131,7 +131,7 @@ private:
 
 tGlobal* tGlobal::create( tRioStatusCode *status )
 {
-    uint32_t guid[4];
+    uint32_t guid[4] = { 0, 0, 0, 0 };
     snprintf((char *)guid, sizeof guid, "global");
     *status = 0;
     return new stubGlobal(guid);
@@ -228,7 +228,7 @@ tAccumulator* tAccumulator::create(
 	tRioStatusCode *status
     )
 {
-    uint32_t guid[4];
+    uint32_t guid[4] = { 0, 0, 0, 0 };
     snprintf((char *)guid, sizeof guid, "accumulator %u", sys_index);
     *status = 0;
     return new stubAccumulator(sys_index, guid);
@@ -443,7 +443,7 @@ tAI* tAI::create(
 	tRioStatusCode *status
     )
 {
-    uint32_t guid[4];
+    uint32_t guid[4] = { 0, 0, 0, 0 };
     snprintf((char *)guid, sizeof guid, "ai %u", sys_index);
     *status = 0;
     return new stubAI(sys_index, guid);
@@ -957,7 +957,7 @@ tDIO* tDIO::create(
 	tRioStatusCode *status
     )
 {
-    uint32_t guid[4];
+    uint32_t guid[4] = { 0, 0, 0, 0 };
     snprintf((char *)guid, sizeof guid, "dio %u", sys_index);
     *status = 0;
     return new stubDIO(sys_index, guid);
@@ -1101,7 +1101,7 @@ tInterrupt* tInterrupt::create(
 	tRioStatusCode *status
     )
 {
-    uint32_t guid[4];
+    uint32_t guid[4] = { 0, 0, 0, 0 };
     snprintf((char *)guid, sizeof guid, "int %u", sys_index);
     *status = 0;
     return new stubInterrupt(sys_index, guid);
@@ -1350,7 +1350,7 @@ tSolenoid* tSolenoid::create(
 	tRioStatusCode *status
     )
 {
-    uint32_t guid[4];
+    uint32_t guid[4] = { 0, 0, 0, 0 };
     unsigned char sys_index = 0;
     snprintf((char *)guid, sizeof guid, "sol %u", sys_index);
     *status = 0;
@@ -1456,7 +1456,7 @@ private:
 
 tAlarm* tAlarm::create( tRioStatusCode *status )
 {
-    uint32_t guid[4];
+    uint32_t guid[4] = { 0, 0, 0, 0 };
     snprintf((char *)guid, sizeof guid, "alarm");
     *status = 0;
     return new stubAlarm(guid);
@@ -1604,7 +1604,7 @@ private:
 
 tWatchdog* tWatchdog::create( tRioStatusCode *status )
 {
-    uint32_t guid[4];
+    uint32_t guid[4] = { 0, 0, 0, 0 };
     snprintf((char *)guid, sizeof guid, "watchdog");
     *status = 0;
     return new stubWatchdog(guid);
