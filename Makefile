@@ -18,7 +18,7 @@ all: WPILib stubs $(PROGRAMS)
 CFLAGS = -Wall -Werror -g -O0 $(CINCLUDES) $(CDEBUG) $(OI)
 CXXFLAGS = -Wall -Wno-deprecated -Wno-ctor-dtor-privacy -Wno-delete-non-virtual-dtor -Werror -g $(CINCLUDES) $(CDEBUG) $(OI)
 
-define PROGRAM_template =
+define PROGRAM_template
 $(1)_SOURCES := robot_main.cpp $(shell find $(1) '(' -name '*.c' -o -name '*.cpp' ')' -print)
 $(1)_OBJECTS := $$(patsubst %.c,%.o,$$(patsubst %.cpp,%.o,$$($(1)_SOURCES)))
 $(1)_CINCLUDES := $$(patsubst %,-I%,$$(sort $$(dir $$($(1)_SOURCES))))
