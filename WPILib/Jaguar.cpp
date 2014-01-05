@@ -38,7 +38,7 @@ void Jaguar::InitJaguar()
  *
  * @param channel The PWM channel on the digital module that the Jaguar is attached to.
  */
-Jaguar::Jaguar(UINT32 channel) : SafePWM(channel)
+Jaguar::Jaguar(uint32_t channel) : SafePWM(channel)
 {
     InitJaguar();
 }
@@ -49,7 +49,7 @@ Jaguar::Jaguar(UINT32 channel) : SafePWM(channel)
  * @param moduleNumber The digital module (1 or 2).
  * @param channel The PWM channel on the digital module that the Jaguar is attached to.
  */
-Jaguar::Jaguar(UINT8 moduleNumber, UINT32 channel) : SafePWM(moduleNumber, channel)
+Jaguar::Jaguar(uint8_t moduleNumber, uint32_t channel) : SafePWM(moduleNumber, channel)
 {
     InitJaguar();
 }
@@ -67,7 +67,7 @@ Jaguar::~Jaguar()
  * @param speed The speed value between -1.0 and 1.0 to set.
  * @param syncGroup Unused interface.
  */
-void Jaguar::Set(float speed, UINT8 syncGroup)
+void Jaguar::Set(float speed, uint8_t syncGroup)
 {
     SetSpeed(speed);
 }

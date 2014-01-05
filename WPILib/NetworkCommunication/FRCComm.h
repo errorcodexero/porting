@@ -29,9 +29,9 @@
 #define USER_DS_LCD_DATA_SIZE 128
 
 struct FRCCommonControlData{
-	UINT16 packetIndex;
+	uint16_t packetIndex;
 	union {
-		UINT8 control;
+		uint8_t control;
 
 // This uses __BYTE_ORDER__ as a stand-in for "__BITFIELD_PACKING_ORDER__"
 // (which is not defined).  It gives the intended result for gcc/g++ on
@@ -40,99 +40,99 @@ struct FRCCommonControlData{
 
 #if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
 		struct {
-			UINT8 reset : 1;
-			UINT8 notEStop : 1;
-			UINT8 enabled : 1;
-			UINT8 autonomous : 1;
-			UINT8 fmsAttached : 1;
-			UINT8 resync : 1;
-			UINT8 test : 1;
-			UINT8 checkVersions : 1;
+			uint8_t reset : 1;
+			uint8_t notEStop : 1;
+			uint8_t enabled : 1;
+			uint8_t autonomous : 1;
+			uint8_t fmsAttached : 1;
+			uint8_t resync : 1;
+			uint8_t test : 1;
+			uint8_t checkVersions : 1;
 		};
 #elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
 		struct {
-			UINT8 checkVersions : 1;
-			UINT8 test : 1;
-			UINT8 resync : 1;
-			UINT8 fmsAttached : 1;
-			UINT8 autonomous : 1;
-			UINT8 enabled : 1;
-			UINT8 notEStop : 1;
-			UINT8 reset : 1;
+			uint8_t checkVersions : 1;
+			uint8_t test : 1;
+			uint8_t resync : 1;
+			uint8_t fmsAttached : 1;
+			uint8_t autonomous : 1;
+			uint8_t enabled : 1;
+			uint8_t notEStop : 1;
+			uint8_t reset : 1;
 		};
 #else
 #error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
 #endif
 	};
-	UINT8 dsDigitalIn;
-	UINT16 teamID;
+	uint8_t dsDigitalIn;
+	uint16_t teamID;
 
 	char dsID_Alliance;
 	char dsID_Position;
 
 	union {
-		INT8 stick0Axes[6];
+		int8_t stick0Axes[6];
 		struct {
-			INT8 stick0Axis1;
-			INT8 stick0Axis2;
-			INT8 stick0Axis3;
-			INT8 stick0Axis4;
-			INT8 stick0Axis5;
-			INT8 stick0Axis6;
+			int8_t stick0Axis1;
+			int8_t stick0Axis2;
+			int8_t stick0Axis3;
+			int8_t stick0Axis4;
+			int8_t stick0Axis5;
+			int8_t stick0Axis6;
 		};
 	};
-	UINT16 stick0Buttons;		// Left-most 4 bits are unused
+	uint16_t stick0Buttons;		// Left-most 4 bits are unused
 
 	union {
-		INT8 stick1Axes[6];
+		int8_t stick1Axes[6];
 		struct {
-			INT8 stick1Axis1;
-			INT8 stick1Axis2;
-			INT8 stick1Axis3;
-			INT8 stick1Axis4;
-			INT8 stick1Axis5;
-			INT8 stick1Axis6;
+			int8_t stick1Axis1;
+			int8_t stick1Axis2;
+			int8_t stick1Axis3;
+			int8_t stick1Axis4;
+			int8_t stick1Axis5;
+			int8_t stick1Axis6;
 		};
 	};
-	UINT16 stick1Buttons;		// Left-most 4 bits are unused
+	uint16_t stick1Buttons;		// Left-most 4 bits are unused
 
 	union {
-		INT8 stick2Axes[6];
+		int8_t stick2Axes[6];
 		struct {
-			INT8 stick2Axis1;
-			INT8 stick2Axis2;
-			INT8 stick2Axis3;
-			INT8 stick2Axis4;
-			INT8 stick2Axis5;
-			INT8 stick2Axis6;
+			int8_t stick2Axis1;
+			int8_t stick2Axis2;
+			int8_t stick2Axis3;
+			int8_t stick2Axis4;
+			int8_t stick2Axis5;
+			int8_t stick2Axis6;
 		};
 	};
-	UINT16 stick2Buttons;		// Left-most 4 bits are unused
+	uint16_t stick2Buttons;		// Left-most 4 bits are unused
 
 	union {
-		INT8 stick3Axes[6];
+		int8_t stick3Axes[6];
 		struct {
-			INT8 stick3Axis1;
-			INT8 stick3Axis2;
-			INT8 stick3Axis3;
-			INT8 stick3Axis4;
-			INT8 stick3Axis5;
-			INT8 stick3Axis6;
+			int8_t stick3Axis1;
+			int8_t stick3Axis2;
+			int8_t stick3Axis3;
+			int8_t stick3Axis4;
+			int8_t stick3Axis5;
+			int8_t stick3Axis6;
 		};
 	};
-	UINT16 stick3Buttons;		// Left-most 4 bits are unused
+	uint16_t stick3Buttons;		// Left-most 4 bits are unused
 
 	//Analog inputs are 10 bit right-justified
-	UINT16 analog1;
-	UINT16 analog2;
-	UINT16 analog3;
-	UINT16 analog4;
+	uint16_t analog1;
+	uint16_t analog2;
+	uint16_t analog3;
+	uint16_t analog4;
 
-	UINT64 cRIOChecksum;
-	UINT32 FPGAChecksum0;
-	UINT32 FPGAChecksum1;
-	UINT32 FPGAChecksum2;
-	UINT32 FPGAChecksum3;
+	uint64_t cRIOChecksum;
+	uint32_t FPGAChecksum0;
+	uint32_t FPGAChecksum1;
+	uint32_t FPGAChecksum2;
+	uint32_t FPGAChecksum3;
 
 	char versionData[8];
 };
@@ -149,16 +149,16 @@ struct FRCCommonControlData{
 
 extern "C" {
 #ifndef SIMULATION
-	void EXPORT_FUNC getFPGAHardwareVersion(UINT16 *fpgaVersion, UINT32 *fpgaRevision);
+	void EXPORT_FUNC getFPGAHardwareVersion(uint16_t *fpgaVersion, uint32_t *fpgaRevision);
 #endif
 	int EXPORT_FUNC getCommonControlData(FRCCommonControlData *data, int wait_ms);
 	int EXPORT_FUNC getRecentCommonControlData(FRCCommonControlData *commonData, int wait_ms);
-	int EXPORT_FUNC getRecentStatusData(UINT8 *batteryInt, UINT8 *batteryDec, UINT8 *dsDigitalOut, int wait_ms);
-	int EXPORT_FUNC getDynamicControlData(UINT8 type, char *dynamicData, INT32 maxLength, int wait_ms);
-	int EXPORT_FUNC setStatusData(float battery, UINT8 dsDigitalOut, UINT8 updateNumber,
+	int EXPORT_FUNC getRecentStatusData(uint8_t *batteryInt, uint8_t *batteryDec, uint8_t *dsDigitalOut, int wait_ms);
+	int EXPORT_FUNC getDynamicControlData(uint8_t type, char *dynamicData, int32_t maxLength, int wait_ms);
+	int EXPORT_FUNC setStatusData(float battery, uint8_t dsDigitalOut, uint8_t updateNumber,
 			const char *userDataHigh, int userDataHighLength,
 			const char *userDataLow, int userDataLowLength, int wait_ms);
-	int EXPORT_FUNC setStatusDataFloatAsInt(int battery, UINT8 dsDigitalOut, UINT8 updateNumber,
+	int EXPORT_FUNC setStatusDataFloatAsInt(int battery, uint8_t dsDigitalOut, uint8_t updateNumber,
 			const char *userDataHigh, int userDataHighLength,
 			const char *userDataLow, int userDataLowLength, int wait_ms);
 	int EXPORT_FUNC setErrorData(const char *errors, int errorsLength, int wait_ms);
@@ -171,10 +171,10 @@ extern "C" {
 	void EXPORT_FUNC signalResyncActionDone(void);
 #endif
 
-	// this UINT32 is really a LVRefNum
-	void EXPORT_FUNC setNewDataOccurRef(UINT32 refnum);
+	// this uint32_t is really a LVRefNum
+	void EXPORT_FUNC setNewDataOccurRef(uint32_t refnum);
 #ifndef SIMULATION
-	void EXPORT_FUNC setResyncOccurRef(UINT32 refnum);
+	void EXPORT_FUNC setResyncOccurRef(uint32_t refnum);
 #endif
 
 	void EXPORT_FUNC FRC_NetworkCommunication_getVersionString(char *version);

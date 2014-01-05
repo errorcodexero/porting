@@ -28,7 +28,7 @@ void Encoder::InitEncoder(bool reverseDirection, EncodingType encodingType)
     m_table = NULL;
     m_encodingType = encodingType;
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT32 index;
+    uint32_t index;
     switch (encodingType)
     {
     case k4X:
@@ -91,8 +91,8 @@ void Encoder::InitEncoder(bool reverseDirection, EncodingType encodingType)
  * a counter object will be used and the returned value will either exactly match the spec'd count
  * or be double (2x) the spec'd count.
  */
-Encoder::Encoder(UINT8 aModuleNumber, UINT32 aChannel,
-			UINT8 bModuleNumber, UINT32 bChannel,
+Encoder::Encoder(uint8_t aModuleNumber, uint32_t aChannel,
+			uint8_t bModuleNumber, uint32_t bChannel,
 			bool reverseDirection, EncodingType encodingType) :
     m_encoder(NULL),
     m_counter(NULL)
@@ -117,7 +117,7 @@ Encoder::Encoder(UINT8 aModuleNumber, UINT32 aChannel,
  * a counter object will be used and the returned value will either exactly match the spec'd count
  * or be double (2x) the spec'd count.
  */
-Encoder::Encoder(UINT32 aChannel, UINT32 bChannel, bool reverseDirection, EncodingType encodingType) :
+Encoder::Encoder(uint32_t aChannel, uint32_t bChannel, bool reverseDirection, EncodingType encodingType) :
     m_encoder(NULL),
     m_counter(NULL)
 {
@@ -241,10 +241,10 @@ void Encoder::Stop()
  * factor.
  * @return Current raw count from the encoder
  */
-INT32 Encoder::GetRaw()
+int32_t Encoder::GetRaw()
 {
     if (StatusIsFatal()) return 0;
-    INT32 value;
+    int32_t value;
     if (m_counter)
 	value = m_counter->Get();
     else
@@ -263,10 +263,10 @@ INT32 Encoder::GetRaw()
  *
  * @return Current count from the Encoder adjusted for the 1x, 2x, or 4x scale factor.
  */
-INT32 Encoder::Get()
+int32_t Encoder::Get()
 {
     if (StatusIsFatal()) return 0;
-    return (INT32) (GetRaw() * DecodingScaleFactor());
+    return (int32_t) (GetRaw() * DecodingScaleFactor());
 }
 
 /**
@@ -347,7 +347,7 @@ void Encoder::SetMaxPeriod(double maxPeriod)
     else
     {
 	tRioStatusCode localStatus = NiFpga_Status_Success;
-	m_encoder->writeTimerConfig_StallPeriod((UINT32)(maxPeriod * 1.0e6 * DecodingScaleFactor()), &localStatus);
+	m_encoder->writeTimerConfig_StallPeriod((uint32_t)(maxPeriod * 1.0e6 * DecodingScaleFactor()), &localStatus);
 	wpi_setError(localStatus);
     }
 }

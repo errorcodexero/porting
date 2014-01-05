@@ -35,7 +35,7 @@ void Servo::InitServo()
  *
  * @param channel The PWM channel on the digital module to which the servo is attached.
  */
-Servo::Servo(UINT32 channel) : SafePWM(channel)
+Servo::Servo(uint32_t channel) : SafePWM(channel)
 {
     InitServo();
 }
@@ -46,7 +46,7 @@ Servo::Servo(UINT32 channel) : SafePWM(channel)
  * @param moduleNumber The digital module (1 or 2).
  * @param channel The PWM channel on the digital module to which the servo is attached (1..10).
  */
-Servo::Servo(UINT8 moduleNumber, UINT32 channel) : SafePWM(moduleNumber, channel)
+Servo::Servo(uint8_t moduleNumber, uint32_t channel) : SafePWM(moduleNumber, channel)
 {
     InitServo();
 }

@@ -12,7 +12,7 @@
 #include <usrLib.h> // for taskDelay
 
 void sleep_ms(unsigned long ms){
-	taskDelay((INT32)((double)sysClkRateGet() * ms / 1000));
+	taskDelay((int32_t)((double)sysClkRateGet() * ms / 1000));
 }
 unsigned long currentTimeMillis(){
 	struct timespec tp;

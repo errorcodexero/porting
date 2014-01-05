@@ -50,7 +50,7 @@ const char * Error::GetFilename() const
 const char * Error::GetFunction() const
 {   return m_function.c_str();  }
 
-UINT32 Error::GetLineNumber() const
+uint32_t Error::GetLineNumber() const
 {   return m_lineNumber;  }
 
 const ErrorBase* Error::GetOriginatingObject() const
@@ -59,7 +59,7 @@ const ErrorBase* Error::GetOriginatingObject() const
 double Error::GetTime() const
 {   return m_timestamp;  }
 
-void Error::Set(Code code, const char* contextMessage, const char* filename, const char* function, UINT32 lineNumber, const ErrorBase* originatingObject)
+void Error::Set(Code code, const char* contextMessage, const char* filename, const char* function, uint32_t lineNumber, const ErrorBase* originatingObject)
 {
     m_code = code;
     m_message = contextMessage;

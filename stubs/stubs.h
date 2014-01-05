@@ -160,9 +160,9 @@ extern STATUS moduleNameFindBySymbolName( const char* symbol, char* module );
 extern MODULE_ID moduleFindByName( const char* name );
 extern STATUS unldByModuleId( MODULE_ID id, int options );
 
-extern INT32 UserSwitchInput( INT32 nSwitch );
-extern INT32 LedInput( INT32 led );
-extern INT32 LedOutput( INT32 led, INT32 value );
+extern int32_t UserSwitchInput( int32_t nSwitch );
+extern int32_t LedInput( int32_t led );
+extern int32_t LedOutput( int32_t led, int32_t value );
 
 }; // extern "C"
 

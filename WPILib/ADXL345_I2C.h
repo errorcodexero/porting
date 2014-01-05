@@ -20,10 +20,10 @@ class I2C;
 class ADXL345_I2C : public SensorBase
 {
 protected:
-    static constexpr UINT8 kAddress = 0x3A;
-    static constexpr UINT8 kPowerCtlRegister = 0x2D;
-    static constexpr UINT8 kDataFormatRegister = 0x31;
-    static constexpr UINT8 kDataRegister = 0x32;
+    static constexpr uint8_t kAddress = 0x3A;
+    static constexpr uint8_t kPowerCtlRegister = 0x2D;
+    static constexpr uint8_t kDataFormatRegister = 0x31;
+    static constexpr uint8_t kDataRegister = 0x32;
     static constexpr double kGsPerLSB = 0.00390625;
     enum PowerCtlFields {kPowerCtl_Link=0x20, kPowerCtl_AutoSleep=0x10, kPowerCtl_Measure=0x08, kPowerCtl_Sleep=0x04};
     enum DataFormatFields {kDataFormat_SelfTest=0x80, kDataFormat_SPI=0x40, kDataFormat_IntInvert=0x20,
@@ -40,7 +40,7 @@ public:
     };
 
 public:
-    explicit ADXL345_I2C(UINT8 moduleNumber, DataFormat_Range range=kRange_2G);
+    explicit ADXL345_I2C(uint8_t moduleNumber, DataFormat_Range range=kRange_2G);
     virtual ~ADXL345_I2C();
     virtual double GetAcceleration(Axes axis);
     virtual AllAxes GetAccelerations();

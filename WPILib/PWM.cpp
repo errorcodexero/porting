@@ -12,9 +12,9 @@
 #include "Utility.h"
 #include "WPIErrors.h"
 
-const UINT32 PWM::kDefaultPwmPeriod;
-const UINT32 PWM::kDefaultMinPwmHigh;
-const INT32 PWM::kPwmDisabled;
+const uint32_t PWM::kDefaultPwmPeriod;
+const uint32_t PWM::kDefaultMinPwmHigh;
+const int32_t PWM::kPwmDisabled;
 static Resource *allocated = NULL;
 
 /**
@@ -24,7 +24,7 @@ static Resource *allocated = NULL;
  * instances. Checks module and channel value ranges and allocates the appropriate channel.
  * The allocation is only done to help users ensure that they don't double assign channels.
  */
-void PWM::InitPWM(UINT8 moduleNumber, UINT32 channel)
+void PWM::InitPWM(uint8_t moduleNumber, uint32_t channel)
 {
     char buf[64];
     m_table = NULL;
@@ -63,7 +63,7 @@ void PWM::InitPWM(UINT8 moduleNumber, UINT32 channel)
  * @param moduleNumber The digital module (1 or 2).
  * @param channel The PWM channel on the digital module (1..10).
  */
-PWM::PWM(UINT8 moduleNumber, UINT32 channel)
+PWM::PWM(uint8_t moduleNumber, uint32_t channel)
     : m_module(NULL)
 {
     InitPWM(moduleNumber, channel);
@@ -77,7 +77,7 @@ PWM::PWM(UINT8 moduleNumber, UINT32 channel)
  *
  * @param channel The PWM channel on the digital module.
  */
-PWM::PWM(UINT32 channel)
+PWM::PWM(uint32_t channel)
     : m_module(NULL)
 {
     InitPWM(GetDefaultDigitalModule(), channel);
@@ -119,7 +119,7 @@ void PWM::EnableDeadbandElimination(bool eliminateDeadband)
  * @param deadbandMin The low end of the deadband range
  * @param min The minimum pwm value
  */
-void PWM::SetBounds(INT32 max, INT32 deadbandMax, INT32 center, INT32 deadbandMin, INT32 min)
+void PWM::SetBounds(int32_t max, int32_t deadbandMax, int32_t center, int32_t deadbandMin, int32_t min)
 {
     if (StatusIsFatal()) return;
     m_maxPwm = max;
@@ -129,7 +129,7 @@ void PWM::SetBounds(INT32 max, INT32 deadbandMax, INT32 center, INT32 deadbandMi
     m_minPwm = min;
 }
 
-UINT32 PWM::GetModuleNumber()
+uint32_t PWM::GetModuleNumber()
 {
     return m_module->GetNumber();
 }
@@ -156,15 +156,15 @@ void PWM::SetPosition(float pos)
 	pos = 1.0;
     }
 
-    INT32 rawValue;
+    int32_t rawValue;
     // note, need to perform the multiplication below as floating point before converting to int
-    rawValue = (INT32)( (pos * (float) GetFullRangeScaleFactor()) + GetMinNegativePwm());
+    rawValue = (int32_t)( (pos * (float) GetFullRangeScaleFactor()) + GetMinNegativePwm());
 
     wpi_assert((rawValue >= GetMinNegativePwm()) && (rawValue <= GetMaxPositivePwm()));
     wpi_assert(rawValue != kPwmDisabled);
 
     // send the computed pwm value to the FPGA
-    SetRaw((UINT8)rawValue);
+    SetRaw((uint8_t)rawValue);
 }
 
 /**
@@ -180,7 +180,7 @@ void PWM::SetPosition(float pos)
 float PWM::GetPosition()
 {
     if (StatusIsFatal()) return 0.0;
-    INT32 value = GetRaw();
+    int32_t value = GetRaw();
     if (value < GetMinNegativePwm())
     {
 	return 0.0;
@@ -222,19 +222,19 @@ void PWM::SetSpeed(float speed)
     }
 
     // calculate the desired output pwm value by scaling the speed appropriately
-    INT32 rawValue;
+    int32_t rawValue;
     if (speed == 0.0)
     {
 	rawValue = GetCenterPwm();
     }
     else if (speed > 0.0)
     {
-	rawValue = (INT32)(speed * ((float)GetPositiveScaleFactor()) +
+	rawValue = (int32_t)(speed * ((float)GetPositiveScaleFactor()) +
 				    ((float) GetMinPositivePwm()) + 0.5);
     }
     else
     {
-	rawValue = (INT32)(speed * ((float)GetNegativeScaleFactor()) +
+	rawValue = (int32_t)(speed * ((float)GetNegativeScaleFactor()) +
 				    ((float) GetMaxNegativePwm()) + 0.5);
     }
 
@@ -243,7 +243,7 @@ void PWM::SetSpeed(float speed)
     wpi_assert(rawValue != kPwmDisabled);
 
     // send the computed pwm value to the FPGA
-    SetRaw((UINT8)rawValue);
+    SetRaw((uint8_t)rawValue);
 }
 
 /**
@@ -261,7 +261,7 @@ void PWM::SetSpeed(float speed)
 float PWM::GetSpeed()
 {
     if (StatusIsFatal()) return 0.0;
-    INT32 value = GetRaw();
+    int32_t value = GetRaw();
     if (value == kPwmDisabled)
     {
 	return 0.0;
@@ -295,7 +295,7 @@ float PWM::GetSpeed()
  *
  * @param value Raw PWM value.  Range 0 - 255.
  */
-void PWM::SetRaw(UINT8 value)
+void PWM::SetRaw(uint8_t value)
 {
     if (StatusIsFatal()) return;
     m_module->SetPWM(m_channel, value);
@@ -308,7 +308,7 @@ void PWM::SetRaw(UINT8 value)
  *
  * @return Raw PWM control value.  Range: 0 - 255.
  */
-UINT8 PWM::GetRaw()
+uint8_t PWM::GetRaw()
 {
     if (StatusIsFatal()) return 0;
     return m_module->GetPWM(m_channel);

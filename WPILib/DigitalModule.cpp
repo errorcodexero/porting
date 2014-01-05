@@ -23,7 +23,7 @@ static Resource *DO_PWMGenerators[tDIO::kNumSystems] = {NULL};
  *
  * @param moduleNumber The digital module to get (1 or 2).
  */
-DigitalModule* DigitalModule::GetInstance(UINT8 moduleNumber)
+DigitalModule* DigitalModule::GetInstance(uint8_t moduleNumber)
 {
     if (CheckDigitalModule(moduleNumber))
     {
@@ -48,7 +48,7 @@ DigitalModule* DigitalModule::GetInstance(UINT8 moduleNumber)
  *
  * @param moduleNumber The digital module to create (1 or 2).
  */
-DigitalModule::DigitalModule(UINT8 moduleNumber)
+DigitalModule::DigitalModule(uint8_t moduleNumber)
     : Module(nLoadOut::kModuleType_Digital, moduleNumber)
     , m_fpgaDIO (NULL)
 {
@@ -70,7 +70,7 @@ DigitalModule::DigitalModule(UINT8 moduleNumber)
     m_fpgaDIO->writePWMConfig_MinHigh(PWM::kDefaultMinPwmHigh, &localStatus);
 
     // Ensure that PWM output values are set to OFF
-    for (UINT32 pwm_index = 1; pwm_index <= kPwmChannels; pwm_index++)
+    for (uint32_t pwm_index = 1; pwm_index <= kPwmChannels; pwm_index++)
     {
 	SetPWM(pwm_index, PWM::kPwmDisabled);
 	SetPWMPeriodScale(pwm_index, 3); // Set all to 4x by default.
@@ -111,7 +111,7 @@ DigitalModule::~DigitalModule()
  * @param channel The PWM channel to set.
  * @param value The PWM value to set.
  */
-void DigitalModule::SetPWM(UINT32 channel, UINT8 value)
+void DigitalModule::SetPWM(uint32_t channel, uint8_t value)
 {
     CheckPWMChannel(channel);
     tRioStatusCode localStatus = NiFpga_Status_Success;
@@ -125,7 +125,7 @@ void DigitalModule::SetPWM(UINT32 channel, UINT8 value)
  * @param channel The PWM channel to read from.
  * @return The raw PWM value.
  */
-UINT8 DigitalModule::GetPWM(UINT32 channel)
+uint8_t DigitalModule::GetPWM(uint32_t channel)
 {
     CheckPWMChannel(channel);
     tRioStatusCode localStatus = NiFpga_Status_Success;
@@ -139,7 +139,7 @@ UINT8 DigitalModule::GetPWM(UINT32 channel)
  * @param channel The PWM channel to configure.
  * @param squelchMask The 2-bit mask of outputs to squelch.
  */
-void DigitalModule::SetPWMPeriodScale(UINT32 channel, UINT32 squelchMask)
+void DigitalModule::SetPWMPeriodScale(uint32_t channel, uint32_t squelchMask)
 {
     CheckPWMChannel(channel);
     tRioStatusCode localStatus = NiFpga_Status_Success;
@@ -152,13 +152,13 @@ void DigitalModule::SetPWMPeriodScale(UINT32 channel, UINT32 squelchMask)
  * Set the state of a relay output to be forward. Relays have two outputs and each is
  * independently set to 0v or 12v.
  */
-void DigitalModule::SetRelayForward(UINT32 channel, bool on)
+void DigitalModule::SetRelayForward(uint32_t channel, bool on)
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
     CheckRelayChannel(channel);
     {
 	Synchronized sync(m_relaySemaphore);
-	UINT8 forwardRelays = m_fpgaDIO->readSlowValue_RelayFwd(&localStatus);
+	uint8_t forwardRelays = m_fpgaDIO->readSlowValue_RelayFwd(&localStatus);
 	if (on)
 	    forwardRelays |= 1 << (channel - 1);
 	else
@@ -173,13 +173,13 @@ void DigitalModule::SetRelayForward(UINT32 channel, bool on)
  * Set the state of a relay output to be reverse. Relays have two outputs and each is
  * independently set to 0v or 12v.
  */
-void DigitalModule::SetRelayReverse(UINT32 channel, bool on)
+void DigitalModule::SetRelayReverse(uint32_t channel, bool on)
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
     CheckRelayChannel(channel);
     {
 	Synchronized sync(m_relaySemaphore);
-	UINT8 reverseRelays = m_fpgaDIO->readSlowValue_RelayRev(&localStatus);
+	uint8_t reverseRelays = m_fpgaDIO->readSlowValue_RelayRev(&localStatus);
 	if (on)
 	    reverseRelays |= 1 << (channel - 1);
 	else
@@ -192,10 +192,10 @@ void DigitalModule::SetRelayReverse(UINT32 channel, bool on)
 /**
  * Get the current state of the forward relay channel
  */
-bool DigitalModule::GetRelayForward(UINT32 channel)
+bool DigitalModule::GetRelayForward(uint32_t channel)
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT8 forwardRelays = m_fpgaDIO->readSlowValue_RelayFwd(&localStatus);
+    uint8_t forwardRelays = m_fpgaDIO->readSlowValue_RelayFwd(&localStatus);
     wpi_setError(localStatus);
     return (forwardRelays & (1 << (channel - 1))) != 0;
 }
@@ -203,10 +203,10 @@ bool DigitalModule::GetRelayForward(UINT32 channel)
 /**
  * Get the current state of all of the forward relay channels on this module.
  */
-UINT8 DigitalModule::GetRelayForward()
+uint8_t DigitalModule::GetRelayForward()
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT8 forwardRelays = m_fpgaDIO->readSlowValue_RelayFwd(&localStatus);
+    uint8_t forwardRelays = m_fpgaDIO->readSlowValue_RelayFwd(&localStatus);
     wpi_setError(localStatus);
     return forwardRelays;
 }
@@ -214,10 +214,10 @@ UINT8 DigitalModule::GetRelayForward()
 /**
  * Get the current state of the reverse relay channel
  */
-bool DigitalModule::GetRelayReverse(UINT32 channel)
+bool DigitalModule::GetRelayReverse(uint32_t channel)
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT8 reverseRelays = m_fpgaDIO->readSlowValue_RelayRev(&localStatus);
+    uint8_t reverseRelays = m_fpgaDIO->readSlowValue_RelayRev(&localStatus);
     wpi_setError(localStatus);
     return (reverseRelays & (1 << (channel - 1))) != 0;
 
@@ -226,10 +226,10 @@ bool DigitalModule::GetRelayReverse(UINT32 channel)
 /**
  * Get the current state of all of the reverse relay channels on this module.
  */
-UINT8 DigitalModule::GetRelayReverse()
+uint8_t DigitalModule::GetRelayReverse()
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT8 reverseRelays = m_fpgaDIO->readSlowValue_RelayRev(&localStatus);
+    uint8_t reverseRelays = m_fpgaDIO->readSlowValue_RelayRev(&localStatus);
     wpi_setError(localStatus);
     return reverseRelays;
 }
@@ -244,7 +244,7 @@ UINT8 DigitalModule::GetRelayReverse()
  * @param input If true open as input; if false open as output
  * @return Was successfully allocated
  */
-bool DigitalModule::AllocateDIO(UINT32 channel, bool input)
+bool DigitalModule::AllocateDIO(uint32_t channel, bool input)
 {
     char buf[64];
     snprintf(buf, 64, "DIO %u (Module %u)", (u_int) channel, m_moduleNumber);
@@ -252,9 +252,9 @@ bool DigitalModule::AllocateDIO(UINT32 channel, bool input)
     tRioStatusCode localStatus = NiFpga_Status_Success;
     {
 	Synchronized sync(m_digitalSemaphore);
-	UINT32 bitToSet = 1 << (RemapDigitalChannel(channel - 1));
-	UINT32 outputEnable = m_fpgaDIO->readOutputEnable(&localStatus);
-	UINT32 outputEnableValue;
+	uint32_t bitToSet = 1 << (RemapDigitalChannel(channel - 1));
+	uint32_t outputEnable = m_fpgaDIO->readOutputEnable(&localStatus);
+	uint32_t outputEnableValue;
 	if (input)
 	{
 	    outputEnableValue = outputEnable & (~bitToSet); // clear the bit for read
@@ -274,7 +274,7 @@ bool DigitalModule::AllocateDIO(UINT32 channel, bool input)
  *
  * @param channel The Digital I/O channel to free
  */
-void DigitalModule::FreeDIO(UINT32 channel)
+void DigitalModule::FreeDIO(uint32_t channel)
 {
     DIOChannels->Free(kDigitalChannels * (m_moduleNumber - 1) + channel - 1);
 }
@@ -286,7 +286,7 @@ void DigitalModule::FreeDIO(UINT32 channel)
  * @param channel The Digital I/O channel
  * @param value The state to set the digital channel (if it is configured as an output)
  */
-void DigitalModule::SetDIO(UINT32 channel, short value)
+void DigitalModule::SetDIO(uint32_t channel, short value)
 {
     if (value != 0 && value != 1)
     {
@@ -297,7 +297,7 @@ void DigitalModule::SetDIO(UINT32 channel, short value)
     tRioStatusCode localStatus = NiFpga_Status_Success;
     {
 	Synchronized sync(m_digitalSemaphore);
-	UINT16 currentDIO = m_fpgaDIO->readDO(&localStatus);
+	uint16_t currentDIO = m_fpgaDIO->readDO(&localStatus);
 	if(value == 0)
 	{
 	    currentDIO = currentDIO & ~(1 << RemapDigitalChannel(channel - 1));
@@ -318,10 +318,10 @@ void DigitalModule::SetDIO(UINT32 channel, short value)
  * @param channel The digital I/O channel
  * @return The state of the specified channel
  */
-bool DigitalModule::GetDIO(UINT32 channel)
+bool DigitalModule::GetDIO(uint32_t channel)
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT32 currentDIO = m_fpgaDIO->readDI(&localStatus);
+    uint32_t currentDIO = m_fpgaDIO->readDI(&localStatus);
     wpi_setError(localStatus);
 
     //Shift 00000001 over channel-1 places.
@@ -335,10 +335,10 @@ bool DigitalModule::GetDIO(UINT32 channel)
  * Read the state of all the Digital I/O lines from the FPGA
  * These are not remapped to logical order.  They are still in hardware order.
  */
-UINT16 DigitalModule::GetDIO()
+uint16_t DigitalModule::GetDIO()
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT32 currentDIO = m_fpgaDIO->readDI(&localStatus);
+    uint32_t currentDIO = m_fpgaDIO->readDI(&localStatus);
     wpi_setError(localStatus);
     return currentDIO;
 }
@@ -350,10 +350,10 @@ UINT16 DigitalModule::GetDIO()
  * @param channel The digital I/O channel
  * @return The direction of the specified channel
  */
-bool DigitalModule::GetDIODirection(UINT32 channel)
+bool DigitalModule::GetDIODirection(uint32_t channel)
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT32 currentOutputEnable = m_fpgaDIO->readOutputEnable(&localStatus);
+    uint32_t currentOutputEnable = m_fpgaDIO->readOutputEnable(&localStatus);
     wpi_setError(localStatus);
 
     //Shift 00000001 over channel-1 places.
@@ -368,10 +368,10 @@ bool DigitalModule::GetDIODirection(UINT32 channel)
  * A 1 bit means output and a 0 bit means input.
  * These are not remapped to logical order.  They are still in hardware order.
  */
-UINT16 DigitalModule::GetDIODirection()
+uint16_t DigitalModule::GetDIODirection()
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT32 currentOutputEnable = m_fpgaDIO->readOutputEnable(&localStatus);
+    uint32_t currentOutputEnable = m_fpgaDIO->readOutputEnable(&localStatus);
     wpi_setError(localStatus);
     return currentOutputEnable;
 }
@@ -383,11 +383,11 @@ UINT16 DigitalModule::GetDIODirection()
  * @param channel The Digital Output channel that the pulse should be output on
  * @param pulseLength The active length of the pulse (in seconds)
  */
-void DigitalModule::Pulse(UINT32 channel, float pulseLength)
+void DigitalModule::Pulse(uint32_t channel, float pulseLength)
 {
-    UINT16 mask = 1 << RemapDigitalChannel(channel - 1);
+    uint16_t mask = 1 << RemapDigitalChannel(channel - 1);
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    m_fpgaDIO->writePulseLength((UINT8)(1.0e9 * pulseLength / (m_fpgaDIO->readLoopTiming(&localStatus) * 25)), &localStatus);
+    m_fpgaDIO->writePulseLength((uint8_t)(1.0e9 * pulseLength / (m_fpgaDIO->readLoopTiming(&localStatus) * 25)), &localStatus);
     m_fpgaDIO->writePulse(mask, &localStatus);
     wpi_setError(localStatus);
 }
@@ -397,11 +397,11 @@ void DigitalModule::Pulse(UINT32 channel, float pulseLength)
  *
  * @return A pulse is in progress
  */
-bool DigitalModule::IsPulsing(UINT32 channel)
+bool DigitalModule::IsPulsing(uint32_t channel)
 {
-    UINT16 mask = 1 << RemapDigitalChannel(channel - 1);
+    uint16_t mask = 1 << RemapDigitalChannel(channel - 1);
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT16 pulseRegister = m_fpgaDIO->readPulse(&localStatus);
+    uint16_t pulseRegister = m_fpgaDIO->readPulse(&localStatus);
     wpi_setError(localStatus);
     return (pulseRegister & mask) != 0;
 }
@@ -414,7 +414,7 @@ bool DigitalModule::IsPulsing(UINT32 channel)
 bool DigitalModule::IsPulsing()
 {
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT16 pulseRegister = m_fpgaDIO->readPulse(&localStatus);
+    uint16_t pulseRegister = m_fpgaDIO->readPulse(&localStatus);
     wpi_setError(localStatus);
     return pulseRegister != 0;
 }
@@ -425,7 +425,7 @@ bool DigitalModule::IsPulsing()
  *
  * @return PWM Generator refnum
  */
-UINT32 DigitalModule::AllocateDO_PWM()
+uint32_t DigitalModule::AllocateDO_PWM()
 {
     char buf[64];
     snprintf(buf, 64, "DO_PWM (Module: %u)", m_moduleNumber);
@@ -437,7 +437,7 @@ UINT32 DigitalModule::AllocateDO_PWM()
  *
  * @param pwmGenerator The pwmGen to free that was allocated with AllocateDO_PWM()
  */
-void DigitalModule::FreeDO_PWM(UINT32 pwmGenerator)
+void DigitalModule::FreeDO_PWM(uint32_t pwmGenerator)
 {
     if (pwmGenerator == ~0ul) return;
     DO_PWMGenerators[(m_moduleNumber - 1)]->Free(pwmGenerator);
@@ -455,7 +455,7 @@ void DigitalModule::SetDO_PWMRate(float rate)
     // Currently rounding in the log rate domain... heavy weight toward picking a higher freq.
     // TODO: Round in the linear rate domain.
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    UINT8 pwmPeriodPower = (UINT8)(log(1.0 / (m_fpgaDIO->readLoopTiming(&localStatus) * 0.25E-6 * rate))/log(2.0) + 0.5);
+    uint8_t pwmPeriodPower = (uint8_t)(log(1.0 / (m_fpgaDIO->readLoopTiming(&localStatus) * 0.25E-6 * rate))/log(2.0) + 0.5);
     m_fpgaDIO->writeDO_PWMConfig_PeriodPower(pwmPeriodPower, &localStatus);
     wpi_setError(localStatus);
 }
@@ -466,7 +466,7 @@ void DigitalModule::SetDO_PWMRate(float rate)
  * @param pwmGenerator The generator index reserved by AllocateDO_PWM()
  * @param channel The Digital Output channel to output on
  */
-void DigitalModule::SetDO_PWMOutputChannel(UINT32 pwmGenerator, UINT32 channel)
+void DigitalModule::SetDO_PWMOutputChannel(uint32_t pwmGenerator, uint32_t channel)
 {
     if (pwmGenerator == ~0ul) return;
     tRioStatusCode localStatus = NiFpga_Status_Success;
@@ -494,7 +494,7 @@ void DigitalModule::SetDO_PWMOutputChannel(UINT32 pwmGenerator, UINT32 channel)
  * @param pwmGenerator The generator index reserved by AllocateDO_PWM()
  * @param dutyCycle The percent duty cycle to output [0..1].
  */
-void DigitalModule::SetDO_PWMDutyCycle(UINT32 pwmGenerator, float dutyCycle)
+void DigitalModule::SetDO_PWMDutyCycle(uint32_t pwmGenerator, float dutyCycle)
 {
     if (pwmGenerator == ~0ul) return;
     if (dutyCycle > 1.0) dutyCycle = 1.0;
@@ -504,13 +504,13 @@ void DigitalModule::SetDO_PWMDutyCycle(UINT32 pwmGenerator, float dutyCycle)
     tRioStatusCode localStatus = NiFpga_Status_Success;
     {
 	Synchronized sync(m_doPwmSemaphore);
-	UINT8 pwmPeriodPower = m_fpgaDIO->readDO_PWMConfig_PeriodPower(&localStatus);
+	uint8_t pwmPeriodPower = m_fpgaDIO->readDO_PWMConfig_PeriodPower(&localStatus);
 	if (pwmPeriodPower < 4)
 	{
 	    // The resolution of the duty cycle drops close to the highest frequencies.
 	    rawDutyCycle = rawDutyCycle / pow(2.0, 4 - pwmPeriodPower);
 	}
-	m_fpgaDIO->writeDO_PWMDutyCycle(pwmGenerator, (UINT8)rawDutyCycle, &localStatus);
+	m_fpgaDIO->writeDO_PWMDutyCycle(pwmGenerator, (uint8_t)rawDutyCycle, &localStatus);
     }
     wpi_setError(localStatus);
 }
@@ -522,7 +522,7 @@ void DigitalModule::SetDO_PWMDutyCycle(UINT32 pwmGenerator, float dutyCycle)
  * @param address The address of the device on the I2C bus
  * @return A pointer to an I2C object to talk to the device at address
  */
-I2C* DigitalModule::GetI2C(UINT32 address)
+I2C* DigitalModule::GetI2C(uint32_t address)
 {
     return new I2C(this, address);
 }

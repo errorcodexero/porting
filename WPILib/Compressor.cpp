@@ -43,10 +43,10 @@ static void CompressorChecker(Compressor *c)
  *
  * You MUST start the compressor by calling the Start() method.
  */
-void Compressor::InitCompressor(UINT8 pressureSwitchModuleNumber,
-	UINT32 pressureSwitchChannel,
-	UINT8 compresssorRelayModuleNumber,
-	UINT32 compressorRelayChannel)
+void Compressor::InitCompressor(uint8_t pressureSwitchModuleNumber,
+	uint32_t pressureSwitchChannel,
+	uint8_t compresssorRelayModuleNumber,
+	uint32_t compressorRelayChannel)
 {
     m_table = NULL;
     m_enabled = false;
@@ -57,7 +57,7 @@ void Compressor::InitCompressor(UINT8 pressureSwitchModuleNumber,
 
     nUsageReporting::report(nUsageReporting::kResourceType_Compressor, 0);
 
-    if (!m_task.Start((INT32)this))
+    if (!m_task.Start((int32_t)this))
     {
 	wpi_setWPIError(CompressorTaskError);
     }
@@ -74,10 +74,10 @@ void Compressor::InitCompressor(UINT8 pressureSwitchModuleNumber,
  * @param compresssorRelayModuleNumber The digital module that the compressor relay is attached to.
  * @param compressorRelayChannel The relay channel that the compressor relay is attached to.
  */
-Compressor::Compressor(UINT8 pressureSwitchModuleNumber,
-	UINT32 pressureSwitchChannel,
-	UINT8 compresssorRelayModuleNumber,
-	UINT32 compressorRelayChannel)
+Compressor::Compressor(uint8_t pressureSwitchModuleNumber,
+	uint32_t pressureSwitchChannel,
+	uint8_t compresssorRelayModuleNumber,
+	uint32_t compressorRelayChannel)
     : m_task ("Compressor", (FUNCPTR)CompressorChecker)
 {
     InitCompressor(pressureSwitchModuleNumber,
@@ -96,7 +96,7 @@ Compressor::Compressor(UINT8 pressureSwitchModuleNumber,
  * @param pressureSwitchChannel The GPIO channel that the pressure switch is attached to.
  * @param compressorRelayChannel The relay channel that the compressor relay is attached to.
  */
-Compressor::Compressor(UINT32 pressureSwitchChannel, UINT32 compressorRelayChannel)
+Compressor::Compressor(uint32_t pressureSwitchChannel, uint32_t compressorRelayChannel)
     : m_task ("Compressor", (FUNCPTR)CompressorChecker)
 {
     InitCompressor(GetDefaultDigitalModule(),
@@ -132,7 +132,7 @@ void Compressor::SetRelayValue(Relay::Value relayValue)
  *
  * @return The current state of the pressure switch.
  */
-UINT32 Compressor::GetPressureSwitchValue()
+uint32_t Compressor::GetPressureSwitchValue()
 {
     return m_pressureSwitch->Get();
 }

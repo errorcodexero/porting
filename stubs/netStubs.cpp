@@ -7,6 +7,7 @@
 #include <zlib.h>
 #include "stubs.h"
 #include "Synchronized.h"
+#include "Task.h"
 #include "DriverStation.h"
 #include "NetworkCommunication/FRCComm.h"
 #include "NetworkCommunication/UsageReporting.h"
@@ -209,13 +210,13 @@ public:
     // BEGIN: Definitions from the Cypress firmware
     typedef struct
     {
-	UINT16 digital;
-	UINT16 digital_oe;
-	UINT16 digital_pe;
-	UINT16 pwm_compare[4];
-	UINT16 pwm_period[2];
-	UINT8 dac[2];
-	UINT8 leds;
+	uint16_t digital;
+	uint16_t digital_oe;
+	uint16_t digital_pe;
+	uint16_t pwm_compare[4];
+	uint16_t pwm_period[2];
+	uint8_t dac[2];
+	uint8_t leds;
 	union
 	{
 	    struct
@@ -227,35 +228,35 @@ public:
 
 #if (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 		// Bits are inverted from cypress fw because of big-endian!
-		UINT8 pwm_enable : 4;
-		UINT8 comparator_enable : 2;
-		UINT8 quad_index_enable : 2;
+		uint8_t pwm_enable : 4;
+		uint8_t comparator_enable : 2;
+		uint8_t quad_index_enable : 2;
 #elif (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-		UINT8 quad_index_enable : 2;
-		UINT8 comparator_enable : 2;
-		UINT8 pwm_enable : 4;
+		uint8_t quad_index_enable : 2;
+		uint8_t comparator_enable : 2;
+		uint8_t pwm_enable : 4;
 #else
 #error __BYTE_ORDER__ must be __ORDER_BIG_ENDIAN__ or __ORDER_LITTLE_ENDIAN__
 #endif // __BYTE_ORDER__
 	    };
-	    UINT8 enables;
+	    uint8_t enables;
 	};
-	UINT8 fixed_digital_out;
+	uint8_t fixed_digital_out;
     } output_t;  //data to IO (23 bytes)
 
     static void SwapDSEIOOutput( output_t *pOutput );
 
     typedef struct
     {
-	UINT8 api_version;
-	UINT8 fw_version;
-	INT16 analog[8];
-	UINT16 digital;
-	INT16 accel[3];
-	INT16 quad[2];
-	UINT8 buttons;
-	UINT8 capsense_slider;
-	UINT8 capsense_proximity;
+	uint8_t api_version;
+	uint8_t fw_version;
+	int16_t analog[8];
+	uint16_t digital;
+	int16_t accel[3];
+	int16_t quad[2];
+	uint8_t buttons;
+	uint8_t capsense_slider;
+	uint8_t capsense_proximity;
     } input_t;	//data from IO (33 bytes)
     // END: Definitions from the Cypress firmware
 
@@ -264,16 +265,16 @@ public:
     // Dynamic block definitions
     typedef struct
     {
-	UINT8 size; // Must be 25 (size remaining in the block not counting the size variable)
-	UINT8 id; // Must be 18
+	uint8_t size; // Must be 25 (size remaining in the block not counting the size variable)
+	uint8_t id; // Must be 18
 	output_t data;
-	UINT8 flags;
+	uint8_t flags;
     } status_block_t;
 
     typedef struct
     {
-	UINT8 size; // Must be 34
-	UINT8 id; // Must be 17
+	uint8_t size; // Must be 34
+	uint8_t id; // Must be 17
 	input_t data;
     } control_block_t;
 #pragma pack(pop)
@@ -296,11 +297,11 @@ private:
 
     sockaddr_in m_fromAddr;		// sending driver station's address
     FRCCommonControlData m_recvData;	// control data in host byte order
-    UINT8 m_extData[FRCEXTDSIZE];	// dynamic data in unknown byte order
+    uint8_t m_extData[FRCEXTDSIZE];	// dynamic data in unknown byte order
 
 public:
     int GetCommonControlData( FRCCommonControlData *data );
-    int GetDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength );
+    int GetDynamicControlData( uint8_t type, char *dynamicData, int32_t maxLength );
 
 public:
     // keep a local copy of user data to be sent to the DS
@@ -309,17 +310,17 @@ public:
     void ObserveUserProgramAutonomous();
     void ObserveUserProgramTeleop();
     void ObserveUserProgramTest();
-    int SetStatusData( float battery, UINT8 dsDigitalOut, UINT8 updateNumber,
+    int SetStatusData( float battery, uint8_t dsDigitalOut, uint8_t updateNumber,
 		        const char *userDataHigh, int userDataHighLength,
 		        const char *userDataLow, int userDataLowLength,
 			int wait_ms );
 
 private:
-    UINT16 m_mode;
+    uint16_t m_mode;
 
     float m_battery;
-    UINT8 m_dsDigitalOut;
-    UINT8 m_updateNumber;
+    uint8_t m_dsDigitalOut;
+    uint8_t m_updateNumber;
 
     char *m_userDataHigh;
     uint32_t m_userDataHighLength;
@@ -365,7 +366,7 @@ private:
 #pragma pack(push,1)
     struct FRCStatusPkt {
 /*000*/	union {
-		UINT8 control;
+		uint8_t control;
 
 // This uses __BYTE_ORDER as a stand-in for "__BITFIELD_PACKING_ORDER"
 // (which is not defined).  It gives the intended result for gcc/g++ on
@@ -374,25 +375,25 @@ private:
 
 #if (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 		struct {
-			UINT8 reset : 1;
-			UINT8 notEStop : 1;
-			UINT8 enabled : 1;
-			UINT8 autonomous : 1;
-			UINT8 fmsAttached : 1;
-			UINT8 resync : 1;
-			UINT8 test : 1;
-			UINT8 checkVersions : 1;
+			uint8_t reset : 1;
+			uint8_t notEStop : 1;
+			uint8_t enabled : 1;
+			uint8_t autonomous : 1;
+			uint8_t fmsAttached : 1;
+			uint8_t resync : 1;
+			uint8_t test : 1;
+			uint8_t checkVersions : 1;
 		};
 #elif (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 		struct {
-			UINT8 checkVersions : 1;
-			UINT8 test : 1;
-			UINT8 resync : 1;
-			UINT8 fmsAttached : 1;
-			UINT8 autonomous : 1;
-			UINT8 enabled : 1;
-			UINT8 notEStop : 1;
-			UINT8 reset : 1;
+			uint8_t checkVersions : 1;
+			uint8_t test : 1;
+			uint8_t resync : 1;
+			uint8_t fmsAttached : 1;
+			uint8_t autonomous : 1;
+			uint8_t enabled : 1;
+			uint8_t notEStop : 1;
+			uint8_t reset : 1;
 		};
 #else
 #error __BYTE_ORDER__ must be __ORDER_BIG_ENDIAN__ or __ORDER_LITTLE_ENDIAN__
@@ -745,7 +746,7 @@ int FNC::GetCommonControlData( FRCCommonControlData *data )
     return OK;
 }
 
-int getDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength,
+int getDynamicControlData( uint8_t type, char *dynamicData, int32_t maxLength,
 			   int wait_ms )
 {
     if (!netCommObj) {
@@ -791,13 +792,13 @@ void FNC::SwapDSEIOOutput( output_t *pOutput )
     // "enables" bitfield order set by #defines in struct definition
 }
 
-int FNC::GetDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength )
+int FNC::GetDynamicControlData( uint8_t type, char *dynamicData, int32_t maxLength )
 {
     Synchronized sync(m_dataMutex);
     
-    UINT8 *pData = m_extData;
-    UINT8 len;
-    UINT8 tag;
+    uint8_t *pData = m_extData;
+    uint8_t len;
+    uint8_t tag;
 
     while (pData < &m_extData[FRCEXTDSIZE - 2]) {
 	len = pData[0];
@@ -807,7 +808,7 @@ int FNC::GetDynamicControlData( UINT8 type, char *dynamicData, INT32 maxLength )
 	}
 	if (tag == type) {
 	    if (1+len > maxLength) {
-		fprintf(stderr, "%s: buffer too small, was %ld bytes,"
+		fprintf(stderr, "%s: buffer too small, was %d bytes,"
 			" need %u bytes\n", __FUNCTION__, maxLength, len+1);
 		return ERROR;
 	    }
@@ -934,7 +935,7 @@ void FNC::ObserveUserProgramTest()
 }
 
 
-int setStatusData( float battery, UINT8 dsDigitalOut, UINT8 updateNumber,
+int setStatusData( float battery, uint8_t dsDigitalOut, uint8_t updateNumber,
 		   const char *userDataHigh, int userDataHighLength,
 		   const char *userDataLow, int userDataLowLength,
 		   int wait_ms )
@@ -951,7 +952,7 @@ int setStatusData( float battery, UINT8 dsDigitalOut, UINT8 updateNumber,
 				      wait_ms );
 }
 
-int FNC::SetStatusData( float battery, UINT8 dsDigitalOut, UINT8 updateNumber,
+int FNC::SetStatusData( float battery, uint8_t dsDigitalOut, uint8_t updateNumber,
 		        const char *userDataHigh, int userDataHighLength,
 		        const char *userDataLow, int userDataLowLength,
 			int wait_ms )
@@ -1101,7 +1102,7 @@ int FNC::SetLCDData( const char *lcdData, int lcdDataLength, int wait_ms )
 	    // copy new data to local storage until we can send it to DS
 	    m_lcdData = new char[lcdDataLength];
 	    memcpy(m_lcdData, lcdData, lcdDataLength);
-	    *(UINT16 *)m_lcdData = htons(*(UINT16 *)lcdData);
+	    *(uint16_t *)m_lcdData = htons(*(uint16_t *)lcdData);
 	    m_lcdDataLength = lcdDataLength;
 	} else {
 	    fprintf(stderr, "%s: wrong length (%d), expected (%d)\n",
@@ -1262,10 +1263,10 @@ int FNC::Send()
 
 namespace nUsageReporting {
 
-UINT32 report(
+uint32_t report(
 	tResourceType resource,
-	UINT8 instanceNumber,
-	UINT8 context,
+	uint8_t instanceNumber,
+	uint8_t context,
 	const char *feature
     )
 {
@@ -1586,15 +1587,15 @@ UINT32 report(
 
 }; // namespace UsageReporting
 
-static UINT32 replyMessageID = 0;
-static UINT8 replyData[8];
-static UINT8 replyDataSize = 0;
+static uint32_t replyMessageID = 0;
+static uint8_t replyData[8];
+static uint8_t replyDataSize = 0;
 
 extern "C" void FRC_NetworkCommunication_JaguarCANDriver_sendMessage(
-    UINT32 messageID,
-    const UINT8 *data,
-    UINT8 dataSize,
-    INT32 *status )
+    uint32_t messageID,
+    const uint8_t *data,
+    uint8_t dataSize,
+    int32_t *status )
 {
     messageID &= ~0x80000000;
     switch (messageID & ~0x3f) {
@@ -1604,8 +1605,8 @@ extern "C" void FRC_NetworkCommunication_JaguarCANDriver_sendMessage(
 
     case CAN_MSGID_API_FIRMVER:
 	replyMessageID = messageID;
-	*(UINT32 *)replyData = htole32(101);
-	replyDataSize = sizeof (UINT32);
+	*(uint32_t *)replyData = htole32(101);
+	replyDataSize = sizeof (uint32_t);
 	break;
 
     case LM_API_SPD_PC:
@@ -1655,14 +1656,14 @@ extern "C" void FRC_NetworkCommunication_JaguarCANDriver_sendMessage(
     case LM_API_VCOMP_SET:
 	replyMessageID = messageID;
 	memset(replyData, 0, sizeof replyData);
-	replyDataSize = sizeof(INT16);
+	replyDataSize = sizeof(int16_t);
 	break;
 
     case LM_API_SPD_SET:
     case LM_API_POS_SET:
 	replyMessageID = messageID;
 	memset(replyData, 0, sizeof replyData);
-	replyDataSize = sizeof(INT32);
+	replyDataSize = sizeof(int32_t);
 	break;
 
     default:
@@ -1674,11 +1675,11 @@ extern "C" void FRC_NetworkCommunication_JaguarCANDriver_sendMessage(
 }
 
 extern "C" void FRC_NetworkCommunication_JaguarCANDriver_receiveMessage(
-    UINT32 *messageID,
-    UINT8 *data,
-    UINT8 *dataSize,
-    UINT32 timeoutMs,
-    INT32 *status )
+    uint32_t *messageID,
+    uint8_t *data,
+    uint8_t *dataSize,
+    uint32_t timeoutMs,
+    int32_t *status )
 {
     if (messageID && replyMessageID == (*messageID & ~0x80000000)) {
 	if (dataSize) *dataSize = replyDataSize;

@@ -64,7 +64,7 @@ void DoubleSolenoid::InitSolenoid()
  * @param forwardChannel The forward channel on the module to control.
  * @param reverseChannel The reverse channel on the module to control.
  */
-DoubleSolenoid::DoubleSolenoid(UINT32 forwardChannel, UINT32 reverseChannel)
+DoubleSolenoid::DoubleSolenoid(uint32_t forwardChannel, uint32_t reverseChannel)
     : SolenoidBase (GetDefaultSolenoidModule())
     , m_forwardChannel (forwardChannel)
     , m_reverseChannel (reverseChannel)
@@ -79,7 +79,7 @@ DoubleSolenoid::DoubleSolenoid(UINT32 forwardChannel, UINT32 reverseChannel)
  * @param forwardChannel The forward channel on the module to control.
  * @param reverseChannel The reverse channel on the module to control.
  */
-DoubleSolenoid::DoubleSolenoid(UINT8 moduleNumber, UINT32 forwardChannel, UINT32 reverseChannel)
+DoubleSolenoid::DoubleSolenoid(uint8_t moduleNumber, uint32_t forwardChannel, uint32_t reverseChannel)
     : SolenoidBase (moduleNumber)
     , m_forwardChannel (forwardChannel)
     , m_reverseChannel (reverseChannel)
@@ -110,7 +110,7 @@ void DoubleSolenoid::Set(Value value)
 
     Value oldValue = Get();
 
-    UINT8 rawValue = 0x00;
+    uint8_t rawValue = 0x00;
     switch(value)
     {
     case kOff:
@@ -144,7 +144,7 @@ DoubleSolenoid::Value DoubleSolenoid::Get()
 	return kOff;
     }
 
-    UINT8 value = GetAll();
+    uint8_t value = GetAll();
     if (value & m_forwardMask) return kForward;
     if (value & m_reverseMask) return kReverse;
     return kOff;

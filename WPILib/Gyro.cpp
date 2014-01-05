@@ -12,8 +12,8 @@
 #include "WPIErrors.h"
 #include "LiveWindow/LiveWindow.h"
 
-constexpr UINT32 Gyro::kOversampleBits;
-constexpr UINT32 Gyro::kAverageBits;
+constexpr uint32_t Gyro::kOversampleBits;
+constexpr uint32_t Gyro::kAverageBits;
 constexpr float Gyro::kSamplesPerSecond;
 constexpr float Gyro::kCalibrationSampleTime;
 constexpr float Gyro::kDefaultVoltsPerDegreePerSecond;
@@ -53,10 +53,10 @@ void Gyro::InitGyro()
     Wait(kCalibrationSampleTime);
 
     INT64 value;
-    UINT32 count;
+    uint32_t count;
     m_analog->GetAccumulatorOutput(&value, &count);
 
-    UINT32 center = (UINT32)((float)value / (float)count + .5);
+    uint32_t center = (uint32_t)((float)value / (float)count + .5);
 
     m_offset = ((float)value / (float)count) - (float)center;
 
@@ -74,7 +74,7 @@ void Gyro::InitGyro()
  * @param moduleNumber The analog module the gyro is connected to (1).
  * @param channel The analog channel the gyro is connected to (1 or 2).
  */
-Gyro::Gyro(UINT8 moduleNumber, UINT32 channel)
+Gyro::Gyro(uint8_t moduleNumber, uint32_t channel)
 {
     m_analog = new AnalogChannel(moduleNumber, channel);
     m_channelAllocated = true;
@@ -88,7 +88,7 @@ Gyro::Gyro(UINT8 moduleNumber, UINT32 channel)
  *
  * @param channel The analog channel the gyro is connected to.
  */
-Gyro::Gyro(UINT32 channel)
+Gyro::Gyro(uint32_t channel)
 {
     m_analog = new AnalogChannel(channel);
     m_channelAllocated = true;
@@ -155,7 +155,7 @@ Gyro::~Gyro()
 float Gyro::GetAngle( void )
 {
     INT64 rawValue;
-    UINT32 count;
+    uint32_t count;
     m_analog->GetAccumulatorOutput(&rawValue, &count);
 
     INT64 value = rawValue - (INT64)((float)count * m_offset);

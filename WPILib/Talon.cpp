@@ -40,7 +40,7 @@ void Talon::InitTalon() {
  *
  * @param channel The PWM channel on the digital module that the Talon is attached to.
  */
-Talon::Talon(UINT32 channel) : SafePWM(channel)
+Talon::Talon(uint32_t channel) : SafePWM(channel)
 {
     InitTalon();
 }
@@ -51,7 +51,7 @@ Talon::Talon(UINT32 channel) : SafePWM(channel)
  * @param moduleNumber The digital module (1 or 2).
  * @param channel The PWM channel on the digital module that the Talon is attached to (1..10).
  */
-Talon::Talon(UINT8 moduleNumber, UINT32 channel) : SafePWM(moduleNumber, channel)
+Talon::Talon(uint8_t moduleNumber, uint32_t channel) : SafePWM(moduleNumber, channel)
 {
     InitTalon();
 }
@@ -69,7 +69,7 @@ Talon::~Talon()
  * @param speed The speed value between -1.0 and 1.0 to set.
  * @param syncGroup Unused interface.
  */
-void Talon::Set(float speed, UINT8 syncGroup)
+void Talon::Set(float speed, uint8_t syncGroup)
 {
     SetSpeed(speed);
 }

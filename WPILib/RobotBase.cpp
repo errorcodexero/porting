@@ -166,7 +166,7 @@ void RobotBase::startRobotTask(FUNCPTR factory)
 
 #ifdef _WRS_KERNEL
     // Check for startup code already running
-    INT32 oldId = taskNameToId("FRC_RobotTask");
+    int32_t oldId = taskNameToId("FRC_RobotTask");
     if (oldId != ERROR)
     {
 	// Find the startup code module.
@@ -196,7 +196,7 @@ void RobotBase::startRobotTask(FUNCPTR factory)
     // This is done to ensure that the C++ robot task is spawned with the floating point
     // context save parameter.
     Task *task = new Task("RobotTask", (FUNCPTR)RobotBase::robotTask, Task::kDefaultPriority, 64000);
-    task->Start((INT32)factory, (INT32)task);
+    task->Start((int32_t)factory, (int32_t)task);
 }
 
 /**

@@ -19,7 +19,7 @@ class DriverStation;
 	return new _ClassName_(); \
     } \
     extern "C" { \
-	INT32 FRC_UserProgram_StartupLibraryInit() \
+	int32_t FRC_UserProgram_StartupLibraryInit() \
 	{ \
 	    RobotBase::startRobotTask((FUNCPTR)FRC_userClassFactory); \
 	    return 0; \
