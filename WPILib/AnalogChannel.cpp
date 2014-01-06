@@ -289,7 +289,7 @@ void AnalogChannel::InitAccumulator()
  * This will be added to all values returned to the user.
  * @param initialValue The value that the accumulator should start from when reset.
  */
-void AnalogChannel::SetAccumulatorInitialValue(INT64 initialValue)
+void AnalogChannel::SetAccumulatorInitialValue(int64_t initialValue)
 {
     if (StatusIsFatal()) return;
     m_accumulatorOffset = initialValue;
@@ -358,7 +358,7 @@ void AnalogChannel::SetAccumulatorDeadband(int32_t deadband)
  *
  * @return The 64-bit value accumulated since the last Reset().
  */
-INT64 AnalogChannel::GetAccumulatorValue()
+int64_t AnalogChannel::GetAccumulatorValue()
 {
     if (StatusIsFatal()) return 0;
     if (m_accumulator == NULL)
@@ -367,7 +367,7 @@ INT64 AnalogChannel::GetAccumulatorValue()
 	return 0;
     }
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    INT64 value = m_accumulator->readOutput_Value(&localStatus) + m_accumulatorOffset;
+    int64_t value = m_accumulator->readOutput_Value(&localStatus) + m_accumulatorOffset;
     wpi_setError(localStatus);
     return value;
 }
@@ -403,7 +403,7 @@ uint32_t AnalogChannel::GetAccumulatorCount()
  * @param value Pointer to the 64-bit accumulated output.
  * @param count Pointer to the number of accumulation cycles.
  */
-void AnalogChannel::GetAccumulatorOutput(INT64 *value, uint32_t *count)
+void AnalogChannel::GetAccumulatorOutput(int64_t *value, uint32_t *count)
 {
     if (StatusIsFatal()) return;
     if (m_accumulator == NULL)
