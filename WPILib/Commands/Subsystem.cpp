@@ -127,18 +127,18 @@ Command *Subsystem::GetCurrentCommand()
 void Subsystem::ConfirmCommand()
 {
     if (m_currentCommandChanged) {
-    if (m_table != NULL)
-    {
-	if (m_currentCommand != NULL)
+	if (m_table != NULL)
 	{
-	    m_table->PutBoolean("hasCommand", true);
-	    m_table->PutString("command", m_currentCommand->GetName());
+	    if (m_currentCommand != NULL)
+	    {
+		m_table->PutBoolean("hasCommand", true);
+		m_table->PutString("command", m_currentCommand->GetName());
+	    }
+	    else
+	    {
+		m_table->PutBoolean("hasCommand", false);
+	    }
 	}
-	else
-	{
-	    m_table->PutBoolean("hasCommand", false);
-	}
-    }
 	m_currentCommandChanged = false;
     }
 }

@@ -65,6 +65,7 @@ public:
     int64_t GetAccumulatorValue();
     uint32_t GetAccumulatorCount();
     void GetAccumulatorOutput(int64_t *value, uint32_t *count);
+    void SetVoltageForPID(bool shouldUseVoltageForPID);
 
     double PIDGet();
 
@@ -81,6 +82,7 @@ private:
     AnalogModule *m_module;
     tAccumulator *m_accumulator;
     int64_t m_accumulatorOffset;
+    bool m_shouldUseVoltageForPID;
 
     ITable *m_table;
 };

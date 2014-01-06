@@ -55,11 +55,11 @@ protected:
     virtual ~RobotBase();
     virtual void StartCompetition() = 0;
     RobotBase();
+    static void WriteVersionString();
 
     Task *m_task;
     Watchdog m_watchdog;
     DriverStation *m_ds;
-
 private:
     static RobotBase *m_instance;
     DISALLOW_COPY_AND_ASSIGN(RobotBase);

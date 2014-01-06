@@ -21,8 +21,7 @@ constexpr float Servo::kMinServoAngle;
 void Servo::InitServo()
 {
     m_table = NULL;
-    // TODO: compute the appropriate values based on digital loop timing
-    SetBounds(245, 0, 0, 0, 11);
+    SetBounds(2.27, 1.513, 1.507, 1.5, .743);
     SetPeriodMultiplier(kPeriodMultiplier_4X);
 
 

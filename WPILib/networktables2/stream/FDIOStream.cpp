@@ -16,6 +16,8 @@
 #else
 #include <unistd.h>
 #endif
+#include <selectLib.h>
+#include <string.h>
 #include <stdio.h>
 
 
@@ -34,8 +36,23 @@ int FDIOStream::read(void* ptr, int numbytes){
 		return 0;
 	char* bufferPointer = (char*)ptr;
 	int totalRead = 0;
+
+	struct timeval timeout;
+	fd_set fdSet;
+	
 	while (totalRead < numbytes) {
-		int numRead = ::read(fd, bufferPointer, numbytes-totalRead);
+		FD_ZERO(&fdSet);
+		FD_SET(fd, &fdSet);
+		timeout.tv_sec = 1;
+		timeout.tv_usec = 0;
+		int select_result = select(FD_SETSIZE, &fdSet, NULL, NULL, &timeout);
+		if ( select_result < 0)
+		  throw IOException("Select returned an error on read");
+
+		int numRead = 0;
+		if (FD_ISSET(fd, &fdSet)) {
+		  numRead = ::read(fd, bufferPointer, numbytes-totalRead);
+
 		if(numRead == 0){
 			throw EOFException();
 		}
@@ -46,6 +63,7 @@ int FDIOStream::read(void* ptr, int numbytes){
 		}
 		bufferPointer += numRead;
 		totalRead += numRead;
+	}
 	}
 	return totalRead;
 }

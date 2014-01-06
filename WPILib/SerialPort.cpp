@@ -28,7 +28,7 @@ SerialPort::SerialPort(uint32_t baudRate, uint8_t dataBits, SerialPort::Parity p
     localStatus = viOpenDefaultRM((ViSession*)&m_resourceManagerHandle);
     wpi_setError(localStatus);
 
-    localStatus = viOpen(m_resourceManagerHandle, (ViPChar)"ASRL1::INSTR", VI_NULL, VI_NULL, (ViSession*)&m_portHandle);
+    localStatus = viOpen(m_resourceManagerHandle, const_cast<char*>("ASRL1::INSTR"), VI_NULL, VI_NULL, (ViSession*)&m_portHandle);
     wpi_setError(localStatus);
     if (localStatus != 0)
     {

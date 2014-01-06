@@ -41,7 +41,7 @@ class EntryCache {
 private:
     map<std::string, NetworkTableEntry*> cache;
     std::string& path;
-    ReentrantSemaphore LOCK;
+    NTReentrantSemaphore LOCK;
 public:
     EntryCache(std::string& path);
     ~EntryCache();
@@ -56,10 +56,13 @@ class NetworkTable : public ITable, public IRemote {
 public: // for better python support
     static DefaultThreadManager threadManager;
     static NetworkTableProvider* staticProvider;
+    static NetworkTableNode* staticNode;
+    static void* streamFactory;
+    static NetworkTableEntryTypeManager* typeManager;
     static NetworkTableMode* mode;
     static int port;
     static std::string ipAddress;
-    static ReentrantSemaphore STATIC_LOCK;
+    static NTReentrantSemaphore STATIC_LOCK;
     
     
     
@@ -68,7 +71,7 @@ public: // for better python support
     NetworkTableKeyCache absoluteKeyCache;
     NetworkTableProvider& provider;
     NetworkTableNode& node;
-    ReentrantSemaphore LOCK;
+    NTReentrantSemaphore LOCK;
     
     
     map<IRemoteConnectionListener*, NetworkTableConnectionListenerAdapter*> connectionListenerMap;
@@ -95,6 +98,7 @@ public:
      * @throws IOException
      */
     static void Initialize();
+	static void Shutdown();
     
     /**
      * set the table provider for static network tables methods

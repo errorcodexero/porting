@@ -30,8 +30,15 @@ public:
    typedef
    union{
       struct{
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
          unsigned Direction : 1;
          signed Value : 31;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+         signed Value : 31;
+         unsigned Direction : 1;
+#else
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
+#endif
       };
       struct{
          unsigned value : 32;
@@ -40,6 +47,7 @@ public:
    typedef
    union{
       struct{
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
          unsigned ASource_Channel : 4;
          unsigned ASource_Module : 1;
          unsigned ASource_AnalogTrigger : 1;
@@ -52,6 +60,22 @@ public:
          unsigned IndexActiveHigh : 1;
          unsigned Reverse : 1;
          unsigned Enable : 1;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+         unsigned Enable : 1;
+         unsigned Reverse : 1;
+         unsigned IndexActiveHigh : 1;
+         unsigned IndexSource_AnalogTrigger : 1;
+         unsigned IndexSource_Module : 1;
+         unsigned IndexSource_Channel : 4;
+         unsigned BSource_AnalogTrigger : 1;
+         unsigned BSource_Module : 1;
+         unsigned BSource_Channel : 4;
+         unsigned ASource_AnalogTrigger : 1;
+         unsigned ASource_Module : 1;
+         unsigned ASource_Channel : 4;
+#else
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
+#endif
       };
       struct{
          unsigned value : 21;
@@ -60,9 +84,17 @@ public:
    typedef
    union{
       struct{
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
          unsigned Period : 23;
          signed Count : 8;
          unsigned Stalled : 1;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+         unsigned Stalled : 1;
+         signed Count : 8;
+         unsigned Period : 23;
+#else
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
+#endif
       };
       struct{
          unsigned value : 32;
@@ -71,9 +103,17 @@ public:
    typedef
    union{
       struct{
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
          unsigned StallPeriod : 24;
          unsigned AverageSize : 7;
          unsigned UpdateWhenEmpty : 1;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+         unsigned UpdateWhenEmpty : 1;
+         unsigned AverageSize : 7;
+         unsigned StallPeriod : 24;
+#else
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
+#endif
       };
       struct{
          unsigned value : 32;
@@ -124,19 +164,19 @@ public:
 
    typedef enum
    {
-   } tReset_IfaceConstants;
-
-   virtual void strobeReset(tRioStatusCode *status) = 0;
-
-
-   typedef enum
-   {
    } tTimerOutput_IfaceConstants;
 
    virtual tTimerOutput readTimerOutput(tRioStatusCode *status) = 0;
    virtual unsigned int readTimerOutput_Period(tRioStatusCode *status) = 0;
    virtual signed char readTimerOutput_Count(tRioStatusCode *status) = 0;
    virtual bool readTimerOutput_Stalled(tRioStatusCode *status) = 0;
+
+
+   typedef enum
+   {
+   } tReset_IfaceConstants;
+
+   virtual void strobeReset(tRioStatusCode *status) = 0;
 
 
    typedef enum

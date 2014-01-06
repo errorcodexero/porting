@@ -18,6 +18,10 @@
 
 RobotBase* RobotBase::m_instance = NULL;
 
+const char *FILE_NAME = "/c/FRC_Lib_Version.ini";
+const char *VERSION_STRING = "C++ 2014 Update 0";
+
+
 void RobotBase::setInstance(RobotBase* robot)
 {
     wpi_assert(m_instance == NULL);
@@ -141,6 +145,14 @@ void RobotBase::robotTask(FUNCPTR factory, Task *task)
     RobotBase::getInstance().StartCompetition();
 }
 
+void RobotBase::WriteVersionString() {
+    FILE *file = fopen(FILE_NAME, "w");
+    if (file != NULL) {
+	fputs(VERSION_STRING, file);
+	fclose(file);
+    }
+}
+
 /**
  *
  * Start the robot code.
@@ -166,7 +178,7 @@ void RobotBase::startRobotTask(FUNCPTR factory)
 
 #ifdef _WRS_KERNEL
     // Check for startup code already running
-    int32_t oldId = taskNameToId("FRC_RobotTask");
+    int32_t oldId = taskNameToId(const_cast<char*>("FRC_RobotTask"));
     if (oldId != ERROR)
     {
 	// Find the startup code module.
@@ -191,6 +203,8 @@ void RobotBase::startRobotTask(FUNCPTR factory)
 
     // Let the Usage Reporting framework know that there is a C++ program running
     nUsageReporting::report(nUsageReporting::kResourceType_Language, nUsageReporting::kLanguage_CPlusPlus);
+
+    RobotBase::WriteVersionString();
 
     // Start robot task
     // This is done to ensure that the C++ robot task is spawned with the floating point

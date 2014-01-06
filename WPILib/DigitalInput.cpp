@@ -21,6 +21,7 @@ Resource *interruptsResource = NULL;
  */
 void DigitalInput::InitDigitalInput(uint8_t moduleNumber, uint32_t channel)
 {
+    m_table = NULL;
     char buf[64];
     m_table = NULL;
     Resource::CreateResourceObject(&interruptsResource, tInterrupt::kNumSystems);

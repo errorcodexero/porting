@@ -28,8 +28,15 @@ public:
    typedef
    union{
       struct{
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
          unsigned ReceivedDataOverflow : 1;
          unsigned Idle : 1;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+         unsigned Idle : 1;
+         unsigned ReceivedDataOverflow : 1;
+#else
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
+#endif
       };
       struct{
          unsigned value : 2;
@@ -38,6 +45,7 @@ public:
    typedef
    union{
       struct{
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
          unsigned BusBitWidth : 8;
          unsigned ClockHalfPeriodDelay : 8;
          unsigned MSBfirst : 1;
@@ -47,6 +55,19 @@ public:
          unsigned FramePolarity : 1;
          unsigned WriteOnly : 1;
          unsigned ClockPolarity : 1;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+         unsigned ClockPolarity : 1;
+         unsigned WriteOnly : 1;
+         unsigned FramePolarity : 1;
+         unsigned LatchLast : 1;
+         unsigned LatchFirst : 1;
+         unsigned DataOnFalling : 1;
+         unsigned MSBfirst : 1;
+         unsigned ClockHalfPeriodDelay : 8;
+         unsigned BusBitWidth : 8;
+#else
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
+#endif
       };
       struct{
          unsigned value : 23;
@@ -55,6 +76,7 @@ public:
    typedef
    union{
       struct{
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
          unsigned SCLK_Channel : 4;
          unsigned SCLK_Module : 1;
          unsigned MOSI_Channel : 4;
@@ -63,6 +85,18 @@ public:
          unsigned MISO_Module : 1;
          unsigned SS_Channel : 4;
          unsigned SS_Module : 1;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+         unsigned SS_Module : 1;
+         unsigned SS_Channel : 4;
+         unsigned MISO_Module : 1;
+         unsigned MISO_Channel : 4;
+         unsigned MOSI_Module : 1;
+         unsigned MOSI_Channel : 4;
+         unsigned SCLK_Module : 1;
+         unsigned SCLK_Channel : 4;
+#else
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
+#endif
       };
       struct{
          unsigned value : 20;
@@ -82,9 +116,17 @@ public:
 
    typedef enum
    {
-   } tReadReceivedData_IfaceConstants;
+   } tReceivedData_IfaceConstants;
 
-   virtual void strobeReadReceivedData(tRioStatusCode *status) = 0;
+   virtual unsigned int readReceivedData(tRioStatusCode *status) = 0;
+
+
+   typedef enum
+   {
+   } tDataToLoad_IfaceConstants;
+
+   virtual void writeDataToLoad(unsigned int value, tRioStatusCode *status) = 0;
+   virtual unsigned int readDataToLoad(tRioStatusCode *status) = 0;
 
 
    typedef enum
@@ -115,17 +157,23 @@ public:
 
    typedef enum
    {
-   } tReceivedData_IfaceConstants;
+   } tClearReceivedData_IfaceConstants;
 
-   virtual unsigned int readReceivedData(tRioStatusCode *status) = 0;
+   virtual void strobeClearReceivedData(tRioStatusCode *status) = 0;
 
 
    typedef enum
    {
-   } tDataToLoad_IfaceConstants;
+   } tReceivedElements_IfaceConstants;
 
-   virtual void writeDataToLoad(unsigned int value, tRioStatusCode *status) = 0;
-   virtual unsigned int readDataToLoad(tRioStatusCode *status) = 0;
+   virtual unsigned short readReceivedElements(tRioStatusCode *status) = 0;
+
+
+   typedef enum
+   {
+   } tLoad_IfaceConstants;
+
+   virtual void strobeLoad(tRioStatusCode *status) = 0;
 
 
    typedef enum
@@ -161,30 +209,16 @@ public:
 
    typedef enum
    {
-   } tClearReceivedData_IfaceConstants;
-
-   virtual void strobeClearReceivedData(tRioStatusCode *status) = 0;
-
-
-   typedef enum
-   {
-   } tReceivedElements_IfaceConstants;
-
-   virtual unsigned short readReceivedElements(tRioStatusCode *status) = 0;
-
-
-   typedef enum
-   {
-   } tLoad_IfaceConstants;
-
-   virtual void strobeLoad(tRioStatusCode *status) = 0;
-
-
-   typedef enum
-   {
    } tAvailableToLoad_IfaceConstants;
 
    virtual unsigned short readAvailableToLoad(tRioStatusCode *status) = 0;
+
+
+   typedef enum
+   {
+   } tReadReceivedData_IfaceConstants;
+
+   virtual void strobeReadReceivedData(tRioStatusCode *status) = 0;
 
 
 

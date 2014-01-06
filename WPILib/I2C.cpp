@@ -23,7 +23,7 @@ uint32_t I2C::m_objCount = 0;
 I2C::I2C(DigitalModule *module, uint8_t deviceAddress)
     : m_module (module)
     , m_deviceAddress (deviceAddress)
-    , m_compatibilityMode (false)
+    , m_compatibilityMode (true)
 {
     if (m_semaphore == NULL)
     {
@@ -191,7 +191,7 @@ void I2C::Broadcast(uint8_t registerAddress, uint8_t data)
  *
  * Enables bitwise clock skewing detection.  This will reduce the I2C interface speed,
  * but will allow you to communicate with devices that skew the clock at abnormal times.
- *
+ * Compatability mode is enabled by default.
  * @param enable Enable compatibility mode for this sensor or not.
  */
 void I2C::SetCompatibilityMode(bool enable)

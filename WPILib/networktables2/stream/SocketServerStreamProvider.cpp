@@ -40,7 +40,7 @@
 #endif
 #endif
 
-#ifndef ERROR
+#ifndef _WRS_KERNEL
 #define ERROR -1
 #endif
 
@@ -93,16 +93,18 @@ SocketServerStreamProvider::~SocketServerStreamProvider(){
 IOStream* SocketServerStreamProvider::accept(){
     struct timeval timeout;
     // Check for a shutdown once per second
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
     while (true)
     {
 	fd_set fdSet;
 
 	FD_ZERO(&fdSet);
 	FD_SET(serverSocket, &fdSet);
-	if (select(FD_SETSIZE, &fdSet, NULL, NULL, &timeout) > 0)
-	{
+		timeout.tv_sec = 1;
+		timeout.tv_usec = 0;
+		int select_result = select(FD_SETSIZE, &fdSet, NULL, NULL, &timeout);
+		if ( select_result < 0)
+		  return NULL;
+
 	    if (FD_ISSET(serverSocket, &fdSet))
 	    {
 		struct sockaddr clientAddr = {0};
@@ -111,12 +113,10 @@ IOStream* SocketServerStreamProvider::accept(){
 		if (connectedSocket == ERROR)
 		    return NULL;
 		
-		//int on = 1;
-		//setsockopt(connectedSocket, IPPROTO_TCP, TCP_NODELAY, (char *)&on, sizeof(on));
-		
 		return new FDIOStream(connectedSocket);
 	    }
-	}
+
+		
     }
     return NULL;
 }

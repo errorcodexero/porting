@@ -8,6 +8,7 @@
 #include "DigitalModule.h"
 #include "I2C.h"
 #include "NetworkCommunication/UsageReporting.h"
+#include "networktables2/type/NumberArray.h"
 #include "WPIErrors.h"
 
 const uint8_t HiTechnicColorSensor::kAddress;
@@ -353,6 +354,12 @@ void HiTechnicColorSensor::InitTable(ITable *subtable) {
 void HiTechnicColorSensor::UpdateTable() {
     if (m_table != NULL) {
         m_table->PutNumber("Value", GetColor());
+	NumberArray* rgb = new NumberArray();
+	rgb->add(GetRed());
+	rgb->add(GetGreen());
+	rgb->add(GetBlue());
+	m_table->PutValue("RGB", *rgb);
+	delete rgb;
     }
 }
 

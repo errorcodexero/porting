@@ -25,7 +25,7 @@ AbstractNetworkTableEntryStore::~AbstractNetworkTableEntryStore(){
 	    delete itr->second;
 	namedEntries.erase(itr++);
     }
-};
+	}
 
 /**
  * Get an entry based on it's name
@@ -34,7 +34,7 @@ AbstractNetworkTableEntryStore::~AbstractNetworkTableEntryStore(){
  */
 NetworkTableEntry* AbstractNetworkTableEntryStore::GetEntry(std::string& name){
     {
-	Synchronized sync(LOCK);
+			NTSynchronized sync(LOCK);
 	std::map<std::string, NetworkTableEntry*>::iterator value_itr = namedEntries.find(name);
 	if(value_itr != namedEntries.end()) {
 	    return value_itr->second;
@@ -45,7 +45,7 @@ NetworkTableEntry* AbstractNetworkTableEntryStore::GetEntry(std::string& name){
 
 NetworkTableEntry* AbstractNetworkTableEntryStore::GetEntry(EntryId entryId){
     {
-	Synchronized sync(LOCK);
+			NTSynchronized sync(LOCK);
 
 	std::map<EntryId, NetworkTableEntry*>::iterator value_itr = idEntries.find(entryId);
 	if(value_itr != idEntries.end()) {
@@ -57,7 +57,7 @@ NetworkTableEntry* AbstractNetworkTableEntryStore::GetEntry(EntryId entryId){
 
 std::vector<std::string>* AbstractNetworkTableEntryStore::keys(){
     {
-	Synchronized sync(LOCK);
+			NTSynchronized sync(LOCK);
 	std::vector<std::string>* keys = new std::vector<std::string>();
 	std::map<std::string, NetworkTableEntry*>::iterator itr;
 
@@ -78,7 +78,7 @@ std::vector<std::string>* AbstractNetworkTableEntryStore::keys(){
  */
 void AbstractNetworkTableEntryStore::clearEntries(){
     {
-	Synchronized sync(LOCK);
+			NTSynchronized sync(LOCK);
 	namedEntries.clear();
 	idEntries.clear();
     }
@@ -89,7 +89,7 @@ void AbstractNetworkTableEntryStore::clearEntries(){
  */
 void AbstractNetworkTableEntryStore::clearIds(){
     {
-	Synchronized sync(LOCK);
+			NTSynchronized sync(LOCK);
 	std::map<std::string, NetworkTableEntry*>::iterator itr;
 	idEntries.clear();
 
@@ -121,7 +121,7 @@ void AbstractNetworkTableEntryStore::SetIncomingReceiver(OutgoingEntryReceiver* 
  */
 void AbstractNetworkTableEntryStore::PutOutgoing(std::string& name, NetworkTableEntryType* type, EntryValue value){
     {
-	Synchronized sync(LOCK);
+			NTSynchronized sync(LOCK);
 	std::map<std::string, NetworkTableEntry*>::iterator index = namedEntries.find(name);
 	NetworkTableEntry* tableEntry;
 	if(index == namedEntries.end())//if the name does not exist in the current entries
@@ -140,6 +140,8 @@ void AbstractNetworkTableEntryStore::PutOutgoing(std::string& name, NetworkTable
 		throw TableKeyExistsWithDifferentTypeException(name, tableEntry->GetType());
 	    }
 
+				EntryValue oldValue = tableEntry->GetValue();
+				if(!type->areEqual(value, oldValue)){
 	    if(updateEntry(tableEntry, (SequenceNumber)(tableEntry->GetSequenceNumber() + 1), value)){
 		outgoingReceiver->offerOutgoingUpdate(tableEntry);
 	    }
@@ -148,10 +150,14 @@ void AbstractNetworkTableEntryStore::PutOutgoing(std::string& name, NetworkTable
 	}
     }
 }
+	}
 
 void AbstractNetworkTableEntryStore::PutOutgoing(NetworkTableEntry* tableEntry, EntryValue value){
     {
-	Synchronized sync(LOCK);
+			NTSynchronized sync(LOCK);
+			NetworkTableEntryType* type = tableEntry->GetType();
+			EntryValue oldValue = tableEntry->GetValue();
+			if(!type->areEqual(value, oldValue)){
 	if(updateEntry(tableEntry, (SequenceNumber)(tableEntry->GetSequenceNumber() + 1), value)){
 	    outgoingReceiver->offerOutgoingUpdate(tableEntry);
 	}
@@ -159,10 +165,11 @@ void AbstractNetworkTableEntryStore::PutOutgoing(NetworkTableEntry* tableEntry, 
 	tableEntry->FireListener(listenerManager);
     }
 }
+	}
 
 void AbstractNetworkTableEntryStore::offerIncomingAssignment(NetworkTableEntry* entry){
     {
-	Synchronized sync(LOCK);
+			NTSynchronized sync(LOCK);
 	std::map<std::string, NetworkTableEntry*>::iterator itr = namedEntries.find(entry->name);
 	NetworkTableEntry* tableEntry;
 	if(addEntry(entry)){
@@ -183,7 +190,7 @@ void AbstractNetworkTableEntryStore::offerIncomingAssignment(NetworkTableEntry* 
 
 void AbstractNetworkTableEntryStore::offerIncomingUpdate(NetworkTableEntry* entry, SequenceNumber squenceNumber, EntryValue value){
     {
-	Synchronized sync(LOCK);
+			NTSynchronized sync(LOCK);
 	if(updateEntry(entry, squenceNumber, value)){
 		entry->FireListener(listenerManager);
 		incomingReceiver->offerOutgoingUpdate(entry);
@@ -198,7 +205,7 @@ void AbstractNetworkTableEntryStore::offerIncomingUpdate(NetworkTableEntry* entr
  */
 void AbstractNetworkTableEntryStore::notifyEntries(ITable* table, ITableListener* listener){
     {
-	Synchronized sync(LOCK);
+			NTSynchronized sync(LOCK);
 	std::map<std::string, NetworkTableEntry*>::iterator itr;
 	for(itr = namedEntries.begin(); itr != namedEntries.end(); itr++)
 	{

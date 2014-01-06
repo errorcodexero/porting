@@ -12,8 +12,9 @@
 #include "Utility.h"
 #include "WPIErrors.h"
 
-const uint32_t PWM::kDefaultPwmPeriod;
-const uint32_t PWM::kDefaultMinPwmHigh;
+constexpr float PWM::kDefaultPwmPeriod;
+constexpr float PWM::kDefaultPwmCenter;
+const int32_t PWM::kDefaultPwmStepsDown;
 const int32_t PWM::kPwmDisabled;
 static Resource *allocated = NULL;
 
@@ -26,6 +27,7 @@ static Resource *allocated = NULL;
  */
 void PWM::InitPWM(uint8_t moduleNumber, uint32_t channel)
 {
+    m_table = NULL;
     char buf[64];
     m_table = NULL;
     Resource::CreateResourceObject(&allocated, tDIO::kNumSystems * kPwmChannels);
@@ -127,6 +129,30 @@ void PWM::SetBounds(int32_t max, int32_t deadbandMax, int32_t center, int32_t de
     m_centerPwm = center;
     m_deadbandMinPwm = deadbandMin;
     m_minPwm = min;
+}
+
+
+/**
+ * Set the bounds on the PWM pulse widths.
+ * This sets the bounds on the PWM values for a particular type of controller. The values
+ * determine the upper and lower speeds as well as the deadband bracket.
+ * @param max The max PWM pulse width in ms
+ * @param deadbandMax The high end of the deadband range pulse width in ms
+ * @param center The center (off) pulse width in ms
+ * @param deadbandMin The low end of the deadband pulse width in ms
+ * @param min The minimum pulse width in ms
+ */
+void PWM::SetBounds(double max, double deadbandMax, double center, double deadbandMin, double min)
+{
+    if (StatusIsFatal()) return;
+
+    double loopTime = m_module->GetLoopTiming()/(kSystemClockTicksPerMicrosecond*1e3);
+
+    m_maxPwm = (int32_t)((max-kDefaultPwmCenter)/loopTime+kDefaultPwmStepsDown-1);
+    m_deadbandMaxPwm = (int32_t)((deadbandMax-kDefaultPwmCenter)/loopTime+kDefaultPwmStepsDown-1);
+    m_centerPwm = (int32_t)((center-kDefaultPwmCenter)/loopTime+kDefaultPwmStepsDown-1);
+    m_deadbandMinPwm = (int32_t)((deadbandMin-kDefaultPwmCenter)/loopTime+kDefaultPwmStepsDown-1);
+    m_minPwm = (int32_t)((min-kDefaultPwmCenter)/loopTime+kDefaultPwmStepsDown-1);
 }
 
 uint32_t PWM::GetModuleNumber()
@@ -262,7 +288,7 @@ float PWM::GetSpeed()
 {
     if (StatusIsFatal()) return 0.0;
     int32_t value = GetRaw();
-    if (value == kPwmDisabled)
+    if (value == PWM::kPwmDisabled)
     {
 	return 0.0;
     }
@@ -350,6 +376,7 @@ void PWM::UpdateTable() {
 }
 
 void PWM::StartLiveWindowMode() {
+    SetSpeed(0);
     if (m_table != NULL) {
 	m_table->AddTableListener("Value", this, true);
     }

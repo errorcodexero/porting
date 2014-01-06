@@ -48,6 +48,7 @@ public:
     void SetDO_PWMRate(float rate);
     void SetDO_PWMDutyCycle(uint32_t pwmGenerator, float dutyCycle);
     void SetDO_PWMOutputChannel(uint32_t pwmGenerator, uint32_t channel);
+    uint16_t GetLoopTiming();
 
     I2C* GetI2C(uint32_t address);
 

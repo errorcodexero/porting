@@ -26,8 +26,8 @@
  *   - 56 = full "reverse"
  */
 void Victor::InitVictor() {
-    // TODO: compute the appropriate values based on digital loop timing
-    SetBounds(206, 131, 128, 125, 56);
+    SetBounds(2.027, 1.525, 1.507, 1.49, 1.026);
+
     SetPeriodMultiplier(kPeriodMultiplier_2X);
     SetRaw(m_centerPwm);
 

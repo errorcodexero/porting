@@ -30,12 +30,23 @@ public:
    typedef
    union{
       struct{
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
          unsigned Source_Channel : 4;
          unsigned Source_Module : 1;
          unsigned Source_AnalogTrigger : 1;
          unsigned RisingEdge : 1;
          unsigned FallingEdge : 1;
          unsigned WaitForAck : 1;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+         unsigned WaitForAck : 1;
+         unsigned FallingEdge : 1;
+         unsigned RisingEdge : 1;
+         unsigned Source_AnalogTrigger : 1;
+         unsigned Source_Module : 1;
+         unsigned Source_Channel : 4;
+#else
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
+#endif
       };
       struct{
          unsigned value : 9;

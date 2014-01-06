@@ -113,8 +113,8 @@ bool MotorSafetyHelper::IsAlive()
  */
 void MotorSafetyHelper::Check()
 {
-    if (!m_enabled) return;
-    if (DriverStation::GetInstance()->IsDisabled()) return;
+    DriverStation *ds = DriverStation::GetInstance();
+    if (!m_enabled || !ds || ds->IsDisabled() || ds->IsTest()) return;
 
     Synchronized sync(m_syncMutex);
     if (m_stopTime < Timer::GetFPGATimestamp())

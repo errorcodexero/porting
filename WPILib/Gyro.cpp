@@ -56,13 +56,15 @@ void Gyro::InitGyro()
     uint32_t count;
     m_analog->GetAccumulatorOutput(&value, &count);
 
-    uint32_t center = (uint32_t)((float)value / (float)count + .5);
+    m_center = (uint32_t)((float)value / (float)count + .5);
 
-    m_offset = ((float)value / (float)count) - (float)center;
+    m_offset = ((float)value / (float)count) - (float)m_center;
 
-    m_analog->SetAccumulatorCenter(center);
+    m_analog->SetAccumulatorCenter(m_center);
     m_analog->SetAccumulatorDeadband(0); ///< TODO: compute / parameterize this
     m_analog->ResetAccumulator();
+
+    SetPIDSourceParameter(kAngle);
 
     nUsageReporting::report(nUsageReporting::kResourceType_Gyro, m_analog->GetChannel(), m_analog->GetModuleNumber() - 1);
     LiveWindow::GetInstance()->AddSensor("Gyro", m_analog->GetModuleNumber(), m_analog->GetChannel(), this);
@@ -169,18 +171,16 @@ float Gyro::GetAngle( void )
 /**
  * Return the current gyro rate in degrees/sec that the robot is currently moving.
  * 
- * The rate is based on the current analog value corrected by the oversampling rate, the
- * gyro type and the A/D calibration values.
- * 
- * @return the current gyro rate of the robot in degrees/sec.
+ * The rate is based on the most recent reading of the gyro analog value
+ *
+ * @return the current rate in degrees per second
  */
-float Gyro::GetRate( void )
+double Gyro::GetRate( void )
 {
-	double scaledValue = ((double)m_analog->GetAverageValue() - m_offset) * 1e-9 * (double)m_analog->GetLSBWeight() /
-		((1 << m_analog->GetOversampleBits()) * m_voltsPerDegreePerSecond);
-
-	return (float)scaledValue;
+    return (m_analog->GetAverageValue() - ((double)m_center + m_offset)) * 1e-9 * m_analog->GetLSBWeight()
+	    / ((1 << m_analog->GetOversampleBits()) * m_voltsPerDegreePerSecond);
 }
+
 
 /**
  * Set the gyro type based on the sensitivity.
@@ -194,6 +194,13 @@ void Gyro::SetSensitivity( float voltsPerDegreePerSecond )
     m_voltsPerDegreePerSecond = voltsPerDegreePerSecond;
 }
 
+void Gyro::SetPIDSourceParameter(PIDSourceParameter pidSource)
+{
+    if(pidSource == 0 || pidSource > 2)
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "Gyro pidSource");
+    m_pidSource = pidSource;
+}
+
 /**
  * Get the angle in degrees for the PIDSource base object.
  *
@@ -201,7 +208,14 @@ void Gyro::SetSensitivity( float voltsPerDegreePerSecond )
  */
 double Gyro::PIDGet()
 {
+    switch(m_pidSource){
+    case kRate:
+	return GetRate();
+    case kAngle:
     return GetAngle();
+    default:
+	return 0;
+    }
 }
 
 void Gyro::UpdateTable() {

@@ -23,9 +23,8 @@ void Jaguar::InitJaguar()
      * Neutral ranges from 1.4482078ms to 1.5517922ms
      * Proportional forward ranges from 1.5517922ms to 2.3027789ms
      * Full forward ranges from 2.3027789ms to 2.328675ms
-     * TODO: compute the appropriate values based on digital loop timing
      */
-    SetBounds(251, 135, 128, 120, 4);
+    SetBounds(2.31, 1.55, 1.507, 1.454, .697);
     SetPeriodMultiplier(kPeriodMultiplier_1X);
     SetRaw(m_centerPwm);
 

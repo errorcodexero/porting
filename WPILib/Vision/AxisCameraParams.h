@@ -23,10 +23,10 @@
 class AxisCameraParams : public ErrorBase
 {
 public:
-    enum Exposure_t {kExposure_Automatic, kExposure_Hold, kExposure_FlickerFree50Hz, kExposure_FlickerFree60Hz};
-    enum WhiteBalance_t {kWhiteBalance_Automatic, kWhiteBalance_Hold, kWhiteBalance_FixedOutdoor1, kWhiteBalance_FixedOutdoor2, kWhiteBalance_FixedIndoor, kWhiteBalance_FixedFlourescent1, kWhiteBalance_FixedFlourescent2};
-    enum Resolution_t {kResolution_640x480, kResolution_640x360, kResolution_320x240, kResolution_160x120};
-    enum Rotation_t {kRotation_0, kRotation_180};
+    typedef enum Exposure_t {kExposure_Automatic, kExposure_Hold, kExposure_FlickerFree50Hz, kExposure_FlickerFree60Hz} Exposure;
+    typedef enum WhiteBalance_t {kWhiteBalance_Automatic, kWhiteBalance_Hold, kWhiteBalance_FixedOutdoor1, kWhiteBalance_FixedOutdoor2, kWhiteBalance_FixedIndoor, kWhiteBalance_FixedFlourescent1, kWhiteBalance_FixedFlourescent2} WhiteBalance;
+    typedef enum Resolution_t {kResolution_640x480, kResolution_640x360, kResolution_320x240, kResolution_160x120} Resolution;
+    typedef enum Rotation_t {kRotation_0, kRotation_180} Rotation;
 
 protected:
     AxisCameraParams(const char* ipAddress);

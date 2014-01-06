@@ -25,12 +25,10 @@
  *   - 49 = full "reverse"
  */
 void Talon::InitTalon() {
-    // TODO: compute the appropriate values based on digital loop timing
-    SetBounds(211, 133, 129, 125, 49);
+    SetBounds(2.037, 1.539, 1.513, 1.487, .989);
     SetPeriodMultiplier(kPeriodMultiplier_2X);
     SetRaw(m_centerPwm);
 
-    // TODO: Add Talon to Usage Reporting
     nUsageReporting::report(nUsageReporting::kResourceType_Talon, GetChannel(), GetModuleNumber() - 1);
     LiveWindow::GetInstance()->AddActuator("Talon", GetModuleNumber(), GetChannel(), this);
 }

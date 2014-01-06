@@ -52,8 +52,8 @@ void dprintf ( const char * tempString, ...  )  /* Variable argument list */
   va_list   args;	      /* Input argument list */
   int	    line_number;      /* Line number passed in argument */
   int	    type;
-  char	    *functionName;    /* Format passed in argument */
-  char	    *fmt;             /* Format passed in argument */
+  const char	*functionName;    /* Format passed in argument */
+  const char	*fmt;             /* Format passed in argument */
   char	    text[512];	      /* Text string */
   char	    outtext[512];     /* Text string */
   FILE	    *outfile_fd;      /* Output file pointer */
@@ -78,7 +78,7 @@ void dprintf ( const char * tempString, ...  )  /* Variable argument list */
   }
   
   /* Extract function name */
-  functionName = va_arg (args, char *);
+  functionName = va_arg (args, const char *);
  
  /* Extract line number from argument list */
   line_number = va_arg (args, int);
@@ -87,7 +87,7 @@ void dprintf ( const char * tempString, ...  )  /* Variable argument list */
   type = va_arg (args, int);
 
  /* Extract format from argument list */
-  fmt = va_arg (args, char *);
+  fmt = va_arg (args, const char *);
 
   vsprintf (text, fmt, args);
 
@@ -298,10 +298,6 @@ int processFile(char *inputFile, char *outputString, int lineNumber)
     FILE *infile;
     int stringSize = 80;	// max size of one line in file 
     char inputStr[stringSize];
-    /*
-    struct stat fileStatus;
-    int fileSize=0;
-    */
     int lineCount=0;
       
     if (lineNumber < 0)
@@ -311,14 +307,6 @@ int processFile(char *inputFile, char *outputString, int lineNumber)
 	printf ("Fatal error opening file %s\n",inputFile);
 	return (0);
     }
-    /*
-    memset (&fileStatus, 0, sizeof(fileStatus));
-    if (!stat(inputFile, &fileStatus)) {
-      if (S_ISREG(fileStatus.st_mode)) {
-        fileSize = fileStatus.st_size;
-      }
-    }
-    */
 
     while (!feof(infile)) {
 	if (fgets (inputStr, stringSize, infile) != NULL) {

@@ -43,12 +43,13 @@ public:
     void SetPeriodMultiplier(PeriodMultiplier mult);
     void EnableDeadbandElimination(bool eliminateDeadband);
     void SetBounds(int32_t max, int32_t deadbandMax, int32_t center, int32_t deadbandMin, int32_t min);
+    void SetBounds(double max, double deadbandMax, double center, double deadbandMin, double min);
     uint32_t GetChannel() {return m_channel;}
     uint32_t GetModuleNumber();
 
 protected:
     /**
-     * kDefaultPwmPeriod is "ticks" where each tick is 6.525us
+     * kDefaultPwmPeriod is in ms
      *
      * - 20ms periods (50 Hz) are the "safest" setting in that this works for all devices
      * - 20ms periods seem to be desirable for Vex Motors
@@ -62,20 +63,16 @@ protected:
      *
      * kDefaultPwmPeriod is the 1x period (5.05 ms).  In hardware, the period scaling is implemented as an
      * output squelch to get longer periods for old devices.
-     *
-     * Set to 5.05 ms period / 6.525us clock = 774
      */
-    static const uint32_t kDefaultPwmPeriod = 774;
-
+    static constexpr float kDefaultPwmPeriod = 5.05;
     /**
-     * kDefaultMinPwmHigh is "ticks" where each tick is 6.525us
-     *
-     * - There are 128 pwm values less than the center, so...
-     * - The minimum output pulse length is 1.5ms - 128 * 6.525us = 0.665ms
-     * - 0.665ms / 6.525us per tick = 102
+     * kDefaultPwmCenter is the PWM range center in ms
      */
-    static const uint32_t kDefaultMinPwmHigh = 102;
-
+    static constexpr float kDefaultPwmCenter = 1.5;
+    /**
+     * kDefaultPWMStepsDown is the number of PWM steps below the centerpoint
+     */
+    static const int32_t kDefaultPwmStepsDown = 128;
     static const int32_t kPwmDisabled = 0;
 
     virtual void SetPosition(float pos);

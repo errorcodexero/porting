@@ -12,11 +12,13 @@ SOURCES := \
     ADXL345_SPI.cpp \
     AnalogChannel.cpp \
     AnalogModule.cpp \
+    AnalogPotentiometer.cpp \
     AnalogTrigger.cpp \
     AnalogTriggerOutput.cpp \
     Buttons/AnalogIOButton.cpp \
     Buttons/Button.cpp \
     Buttons/ButtonScheduler.cpp \
+    Buttons/CancelButtonScheduler.cpp \
     Buttons/DigitalIOButton.cpp \
     Buttons/HeldButtonScheduler.cpp \
     Buttons/InternalButton.cpp \
@@ -24,6 +26,7 @@ SOURCES := \
     Buttons/NetworkButton.cpp \
     Buttons/PressedButtonScheduler.cpp \
     Buttons/ReleasedButtonScheduler.cpp \
+    Buttons/ToggleButtonScheduler.cpp \
     Buttons/Trigger.cpp \
     CANJaguar.cpp \
     Commands/Command.cpp \
@@ -116,6 +119,8 @@ SOURCES := \
     networktables2/util/System.cpp \
     networktables2/WriteManager.cpp \
     Notifier.cpp \
+    OSAL/Synchronized.cpp \
+    OSAL/Task.cpp \
     PIDController.cpp \
     Preferences.cpp \
     PWM.cpp \

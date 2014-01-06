@@ -504,6 +504,36 @@ void Counter::SetPulseLengthMode(float threshold)
     wpi_setError(localStatus);
 }
 
+
+/**
+ * Get the Samples to Average which specifies the number of samples of the timer to
+ * average when calculating the period. Perform averaging to account for
+ * mechanical imperfections or as oversampling to increase resolution.
+ * @return SamplesToAverage The number of samples being averaged (from 1 to 127)
+ */
+int Counter::GetSamplesToAverage()
+{
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    return m_counter->readTimerConfig_AverageSize(&localStatus);
+    wpi_setError(localStatus);
+}
+
+/**
+ * Set the Samples to Average which specifies the number of samples of the timer to
+ * average when calculating the period. Perform averaging to account for
+ * mechanical imperfections or as oversampling to increase resolution.
+ * @param samplesToAverage The number of samples to average from 1 to 127.
+ */
+void Counter::SetSamplesToAverage (int samplesToAverage) {
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    if (samplesToAverage < 1 || samplesToAverage > 127)
+    {
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "Average counter values must be between 1 and 127");
+    }
+    m_counter->writeTimerConfig_AverageSize(samplesToAverage, &localStatus);
+    wpi_setError(localStatus);
+}
+
 /**
  * Start the Counter counting.
  * This enables the counter and it starts accumulating counts from the associated

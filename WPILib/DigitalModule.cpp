@@ -60,14 +60,19 @@ DigitalModule::DigitalModule(uint8_t moduleNumber)
 
     // Make sure that the 9403 IONode has had a chance to initialize before continuing.
     while(m_fpgaDIO->readLoopTiming(&localStatus) == 0) taskDelay(1);
+
     if (m_fpgaDIO->readLoopTiming(&localStatus) != kExpectedLoopTiming)
     {
 	char err[128];
-	sprintf(err, "DIO LoopTiming: %u, expecting: %u\n", (u_int)m_fpgaDIO->readLoopTiming(&localStatus), (u_int)kExpectedLoopTiming);
+	sprintf(err, "DIO LoopTiming: %u, expecting: %u\n", (u_int)m_fpgaDIO->readLoopTiming(&localStatus), kExpectedLoopTiming);
 	wpi_setWPIErrorWithContext(LoopTimingError, err);
     }
-    m_fpgaDIO->writePWMConfig_Period(PWM::kDefaultPwmPeriod, &localStatus);
-    m_fpgaDIO->writePWMConfig_MinHigh(PWM::kDefaultMinPwmHigh, &localStatus);
+
+    //Calculate the length, in ms, of one DIO loop
+    double loopTime = m_fpgaDIO->readLoopTiming(&localStatus)/(kSystemClockTicksPerMicrosecond*1e3);
+
+    m_fpgaDIO->writePWMConfig_Period((uint16_t) (PWM::kDefaultPwmPeriod/loopTime + .5), &localStatus);
+    m_fpgaDIO->writePWMConfig_MinHigh((uint16_t) ((PWM::kDefaultPwmCenter-PWM::kDefaultPwmStepsDown*loopTime)/loopTime + .5), &localStatus);
 
     // Ensure that PWM output values are set to OFF
     for (uint32_t pwm_index = 1; pwm_index <= kPwmChannels; pwm_index++)
@@ -513,6 +518,20 @@ void DigitalModule::SetDO_PWMDutyCycle(uint32_t pwmGenerator, float dutyCycle)
 	m_fpgaDIO->writeDO_PWMDutyCycle(pwmGenerator, (uint8_t)rawDutyCycle, &localStatus);
     }
     wpi_setError(localStatus);
+}
+
+/**
+ * Get the loop timing of the Digital Module
+ *
+ * @return The loop time
+ */
+uint16_t DigitalModule::GetLoopTiming()
+{
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    uint16_t timing = m_fpgaDIO->readLoopTiming(&localStatus);
+    wpi_setError(localStatus);
+
+    return timing;
 }
 
 /**

@@ -12,12 +12,12 @@
 class ComplexData;
 
 
-//#include "ComplexEntryType.h" can't do this cause it causes order of definition issues
+//#include "networktables2/type/ComplexEntryType.h" can't do this cause it causes order of definition issues
 class ComplexEntryType;
 
-	/**
+/**
  * Base class for non-primitive data structures.
-	 */
+ */
 class ComplexData{
 private:
 	ComplexEntryType& type;
@@ -35,6 +35,7 @@ public:
 	 * @return The type of this data structure.
 	 */
 	ComplexEntryType& GetType();
+	virtual ~ComplexData(){};
 
 };
 

@@ -57,6 +57,7 @@ void AnalogChannel::InitChannel(uint8_t moduleNumber, uint32_t channel)
     {
 	m_accumulator = NULL;
     }
+    m_shouldUseVoltageForPID = false;
     LiveWindow::GetInstance()->AddSensor("AnalogChannel", GetModuleNumber(), channel, this);
     nUsageReporting::report(nUsageReporting::kResourceType_AnalogChannel, channel, GetModuleNumber() - 1);
 }
@@ -425,14 +426,30 @@ void AnalogChannel::GetAccumulatorOutput(int64_t *value, uint32_t *count)
 }
 
 /**
- * Get the Average voltage for the PID Source base object.
+ * Set whether to use voltage or value for PIDGet.
+ * This method determines whether PIDGet should use average voltage
+ * or value for PIDControllers for a particular channel. This is to
+ * preserve compatibility with existng programs and is likely to change
+ * in favor of voltage for 2015 and beyond.
+ * @param shouldUseVoltageForPID true if voltage should be used for PIDGet.
+ */
+void AnalogChannel::SetVoltageForPID(bool shouldUseVoltageForPID) {
+    m_shouldUseVoltageForPID = shouldUseVoltageForPID;
+}
+
+/**
+ * Get the Average voltage or value for the PID Source base object.
  *
- * @return The average voltage.
+ * @return The average voltage or raw value.
  */
 double AnalogChannel::PIDGet()
 {
     if (StatusIsFatal()) return 0.0;
-    return GetAverageValue();
+    if (m_shouldUseVoltageForPID) {
+	return GetAverageVoltage();
+    } else {
+	return GetAverageValue();
+    }
 }
 
 void AnalogChannel::UpdateTable() {

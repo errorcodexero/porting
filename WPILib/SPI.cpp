@@ -7,6 +7,7 @@
 #include "SPI.h"
 
 #include "ChipObject/tSPI.h"
+#include "DigitalModule.h"
 #include "DigitalInput.h"
 #include "DigitalOutput.h"
 #include "NetworkCommunication/UsageReporting.h"
@@ -197,21 +198,18 @@ uint32_t SPI::GetBitsPerWord()
 void SPI::SetClockRate(double hz)
 {
     int delay = 0;
-    // TODO: compute the appropriate values based on digital loop timing
-    if (hz <= 76628.4)
-    {
-	double v = (1.0/hz)/1.305e-5;
-	int intv = (int)v;
-	if (v-intv > 0.5)
-	    delay = intv;
-	else
-	    delay = intv-1;
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    int loopTiming = DigitalModule::GetInstance(m_spi->readChannels_SCLK_Module(&localStatus))->GetLoopTiming();
+    wpi_setError(localStatus);
+    double v = (1.0 / hz) / (2 * loopTiming / (kSystemClockTicksPerMicrosecond * 1e6));
+    if (v < 1) {
+        wpi_setWPIErrorWithContext(ParameterOutOfRange, "SPI Clock too high");
     }
-    if (delay > 255)
-    {
-	wpi_setWPIError(SPIClockRateTooLow);
-	delay = 255;
+    delay = (int) (v + .5);
+    if (delay > 255) {
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "SPI Clock too low");
     }
+
     m_config.ClockHalfPeriodDelay = delay;
 }
 

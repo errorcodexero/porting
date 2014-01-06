@@ -15,6 +15,7 @@
 class PIDSource
 {
 public:
+    typedef enum {kDistance, kRate, kAngle} PIDSourceParameter;
     virtual double PIDGet() = 0;
 };
 

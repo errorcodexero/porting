@@ -214,7 +214,7 @@ void Scheduler::Remove(Command *command) {
 }
 
 void Scheduler::RemoveAll() {
-    while(m_commands.size()>0){
+    while (m_commands.size() > 0) {
 	Remove(*m_commands.begin());
     }
 }

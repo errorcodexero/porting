@@ -601,7 +601,7 @@ int GetImageSetting(char *configString, char *cameraResponse){
 int cameraJPEGServer(int frames, int compression, ImageResolution resolution, ImageRotation rotation)
 {
 	char funcName[]="cameraJPEGServer";
-	const char *serverName = "192.168.0.90";	/* camera @ */ 
+	char serverName[] = "192.168.0.90";		/* camera @ */
 	cont = 1;
 	int errorCode = 0;
 	int printCounter = 0;
@@ -852,9 +852,12 @@ Authorization: Basic %s;\n\n";
 		
 		/* signal a listening task */
 		if (globalCamera.readerPID) {
-			if (taskKill (globalCamera.readerPID,SIGUSR1) == OK) {
+			if (taskKill (globalCamera.readerPID,SIGUSR1) == OK)
+			{
 				DPRINTF (LOG_DEBUG, "SIGNALING PID= %i", globalCamera.readerPID);
-			} else {
+			}
+			else
+			{
 				globalCamera.cameraMetrics[CAM_PID_SIGNAL_ERR]++;
 				DPRINTF (LOG_DEBUG, "ERROR SIGNALING PID= %i", globalCamera.readerPID);
 			}

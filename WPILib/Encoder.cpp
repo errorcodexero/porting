@@ -28,12 +28,12 @@ void Encoder::InitEncoder(bool reverseDirection, EncodingType encodingType)
     m_table = NULL;
     m_encodingType = encodingType;
     tRioStatusCode localStatus = NiFpga_Status_Success;
-    uint32_t index;
     switch (encodingType)
     {
     case k4X:
+	{
 	Resource::CreateResourceObject(&quadEncoders, tEncoder::kNumSystems);
-	index = quadEncoders->Allocate("4X Encoder");
+	uint32_t index = quadEncoders->Allocate("4X Encoder");
 	if (index == ~0ul)
 	{
 	    CloneError(quadEncoders);
@@ -62,11 +62,14 @@ void Encoder::InitEncoder(bool reverseDirection, EncodingType encodingType)
 	m_encoder->writeTimerConfig_AverageSize(4, &localStatus);
 	m_counter = NULL;
 	break;
+	}
     case k1X:
     case k2X:
+	{
 	m_counter = new Counter(m_encodingType, m_aSource, m_bSource, reverseDirection);
 	m_index = m_counter->GetIndex();
 	break;
+    }
     }
     m_distancePerPulse = 1.0;
     m_pidSource = kDistance;
@@ -485,6 +488,57 @@ void Encoder::SetReverseDirection(bool reverseDirection)
 	wpi_setError(localStatus);
     }
 }
+
+
+/**
+ * Set the Samples to Average which specifies the number of samples of the timer to
+ * average when calculating the period. Perform averaging to account for
+ * mechanical imperfections or as oversampling to increase resolution.
+ * @param samplesToAverage The number of samples to average from 1 to 127.
+ */
+void Encoder::SetSamplesToAverage(int samplesToAverage)
+{
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    if (samplesToAverage < 1 || samplesToAverage > 127)
+    {
+	wpi_setWPIErrorWithContext(ParameterOutOfRange, "Average counter values must be between 1 and 127");
+    }
+    switch (m_encodingType) {
+	case k4X:
+	    m_encoder->writeTimerConfig_AverageSize(samplesToAverage, &localStatus);
+	    break;
+	case k1X:
+	case k2X:
+	    m_counter->SetSamplesToAverage(samplesToAverage);
+	    break;
+    }
+    wpi_setError(localStatus);
+}
+
+/**
+ * Get the Samples to Average which specifies the number of samples of the timer to
+ * average when calculating the period. Perform averaging to account for
+ * mechanical imperfections or as oversampling to increase resolution.
+ * @return SamplesToAverage The number of samples being averaged (from 1 to 127)
+ */
+int Encoder::GetSamplesToAverage()
+{
+    tRioStatusCode localStatus = NiFpga_Status_Success;
+    int result = 1;
+    switch (m_encodingType) {
+	case k4X:
+	    result = m_encoder->readTimerConfig_AverageSize(&localStatus);
+	    break;
+	case k1X:
+	case k2X:
+	    result = m_counter->GetSamplesToAverage();
+	    break;
+    }
+    wpi_setError(localStatus);
+    return result;
+}
+
+
 
 /**
  * Set which parameter of the encoder you are using as a process control variable.

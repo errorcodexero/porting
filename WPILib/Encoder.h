@@ -28,7 +28,6 @@ class DigitalSource;
 class Encoder: public SensorBase, public CounterBase, public PIDSource, public LiveWindowSendable
 {
 public:
-    typedef enum {kDistance, kRate} PIDSourceParameter;
 
     Encoder(uint32_t aChannel, uint32_t bChannel, bool reverseDirection=false, EncodingType encodingType = k4X);
     Encoder(uint8_t aModuleNumber, uint32_t aChannel, uint8_t bModuleNumber, uint32_t _bChannel, bool reverseDirection=false, EncodingType encodingType = k4X);
@@ -51,7 +50,8 @@ public:
     void SetMinRate(double minRate);
     void SetDistancePerPulse(double distancePerPulse);
     void SetReverseDirection(bool reverseDirection);
-
+    void SetSamplesToAverage(int samplesToAverage);
+    int GetSamplesToAverage();
     void SetPIDSourceParameter(PIDSourceParameter pidSource);
     double PIDGet();
 

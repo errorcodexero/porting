@@ -712,7 +712,7 @@
 #define ERR_POINTS_ARE_COLLINEAR                                     -1074395292 // Do not supply collinear points for this operation.
 #define ERR_SHAPEMATCH_BADIMAGEDATA                                  -1074395291 // Shape Match requires the image to contain only pixel values of 0 or 1.
 #define ERR_SHAPEMATCH_BADTEMPLATE                                   -1074395290 // The template you supplied for ShapeMatch contains no shape information.
-#define ERR_CONTAINER_CAPACITY_EXCEEDED_UINT_MAX                     -1074395289 // The operation would have exceeded the capacity of an internal container, which is limited to 4294967296 unique elements.
+#define ERR_CONTAINER_CAPACITY_EXCEEDED_uINT_MAX                     -1074395289 // The operation would have exceeded the capacity of an internal container, which is limited to 4294967296 unique elements.
 #define ERR_CONTAINER_CAPACITY_EXCEEDED_INT_MAX                      -1074395288 // The operation would have exceeded the capacity of an internal container, which is limited to 2147483648 unique elements.
 #define ERR_INVALID_LINE                                             -1074395287 // The line you provided contains two identical points, or one of the coordinate locations for the line is not a number (NaN).
 #define ERR_INVALID_CONCENTRIC_RAKE_DIRECTION                        -1074395286 // Invalid concentric rake direction.

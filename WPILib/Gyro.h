@@ -39,8 +39,9 @@ public:
     explicit Gyro(AnalogChannel &channel);
     virtual ~Gyro();
     virtual float GetAngle();
-	virtual float GetRate();
+    virtual double GetRate();
     void SetSensitivity(float voltsPerDegreePerSecond);
+    void SetPIDSourceParameter(PIDSourceParameter pidSource);
     virtual void Reset();
 
     // PIDSource interface
@@ -60,6 +61,8 @@ private:
     float m_voltsPerDegreePerSecond;
     float m_offset;
     bool m_channelAllocated;
+    uint32_t m_center;
+    PIDSourceParameter m_pidSource;
 
     ITable *m_table;
 };

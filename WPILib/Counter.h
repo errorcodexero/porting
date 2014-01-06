@@ -68,6 +68,8 @@ public:
     void SetUpdateWhenEmpty(bool enabled);
     bool GetStopped();
     bool GetDirection();
+    void SetSamplesToAverage(int samplesToAverage);
+    int GetSamplesToAverage();
     uint32_t GetIndex() {return m_index;}
 
 
@@ -77,15 +79,15 @@ public:
     virtual std::string GetSmartDashboardType();
     void InitTable(ITable *subTable);
     ITable * GetTable();
-
+protected:
+    DigitalSource *m_upSource;	    ///< What makes the counter count up.
+    DigitalSource *m_downSource;    ///< What makes the counter count down.
+    tCounter *m_counter;		///< The FPGA counter object.
 private:
     void InitCounter(Mode mode = kTwoPulse);
 
-    DigitalSource *m_upSource;	    ///< What makes the counter count up.
-    DigitalSource *m_downSource;    ///< What makes the counter count down.
     bool m_allocatedUpSource;	    ///< Was the upSource allocated locally?
     bool m_allocatedDownSource;	///< Was the downSource allocated locally?
-    tCounter *m_counter;		///< The FPGA counter object.
     uint32_t m_index;		    ///< The index of this counter.
 
     ITable *m_table;

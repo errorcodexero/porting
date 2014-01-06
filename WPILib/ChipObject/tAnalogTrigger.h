@@ -30,10 +30,19 @@ public:
    typedef
    union{
       struct{
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
          unsigned InHysteresis : 1;
          unsigned OverLimit : 1;
          unsigned Rising : 1;
          unsigned Falling : 1;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+         unsigned Falling : 1;
+         unsigned Rising : 1;
+         unsigned OverLimit : 1;
+         unsigned InHysteresis : 1;
+#else
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
+#endif
       };
       struct{
          unsigned value : 4;
@@ -42,12 +51,23 @@ public:
    typedef
    union{
       struct{
+#if defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && (_BYTE_ORDER == _BIG_ENDIAN)
          unsigned Channel : 3;
          unsigned Module : 1;
          unsigned Averaged : 1;
          unsigned Filter : 1;
          unsigned FloatingRollover : 1;
          signed RolloverLimit : 8;
+#elif defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN)
+         signed RolloverLimit : 8;
+         unsigned FloatingRollover : 1;
+         unsigned Filter : 1;
+         unsigned Averaged : 1;
+         unsigned Module : 1;
+         unsigned Channel : 3;
+#else
+#error _BYTE_ORDER must be _BIG_ENDIAN or _LITTLE_ENDIAN
+#endif
       };
       struct{
          unsigned value : 15;
