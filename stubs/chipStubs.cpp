@@ -10,14 +10,14 @@
 
 bool nLoadOut::getModulePresence(
 	nLoadOut::tModuleType moduleType,
-	UINT8 moduleNumber
+	uint8_t moduleNumber
     )
 {
     bool present = (moduleNumber == 0);
 #ifdef DEBUG
     printf("%s: module %u is%s type %u\n",
     	   __FUNCTION__, moduleNumber, present ? "" : " not",
-	   (UINT8)moduleType);
+	   (uint8_t)moduleType);
 #endif
     return present;
 }
@@ -1171,7 +1171,7 @@ NiFpga_Status tSystem::NiFpgaLv_SharedOpen( const char* const bitfile,
 }
 
 uint32_t tInterruptManager::_globalInterruptMask = 0;
-SEM_ID tInterruptManager::_globalInterruptMaskSemaphore = NULL;
+ni::dsc::osdep::CriticalSection* tInterruptManager::_globalInterruptMaskSemaphore = NULL;
 
 static tInterruptManager* globalTimerInterruptManager = NULL;
 
@@ -1189,16 +1189,16 @@ tInterruptManager::tInterruptManager( uint32_t interruptMask,
     : tSystem( status )
 {
     if (!_globalInterruptMaskSemaphore) {
-	_globalInterruptMaskSemaphore =
+	_globalInterruptMaskSemaphore = (ni::dsc::osdep::CriticalSection*)
 	    semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
     }
     _handler = NULL;
-    _userParam = (void *)this;
     _interruptMask = interruptMask;
-    _taskId = taskIdSelf();
+    _thread = NULL;
     _rioContext = 0;
     _watcher = watcher;
     _enabled = false;
+    _userParam = (void *)this;
     *status = 0;
 }
 
@@ -1225,8 +1225,8 @@ void tInterruptManager::enable(tRioStatusCode *status)
 {
     _enabled = true;
     {
-	Synchronized sync(_globalInterruptMaskSemaphore);
-	const UINT32 kTimerInterruptNumber = 28;
+	Synchronized sync((SEM_ID)(_globalInterruptMaskSemaphore));
+	const uint32_t kTimerInterruptNumber = 28;
 	if (_interruptMask == (1 << kTimerInterruptNumber)) {
 	    globalTimerInterruptManager = this;
 	    signal(SIGALRM, globalTimerInterruptHandler);
@@ -1241,8 +1241,8 @@ void tInterruptManager::disable(tRioStatusCode *status)
 {
     _enabled = false;
     {
-	Synchronized sync(_globalInterruptMaskSemaphore);
-	const UINT32 kTimerInterruptNumber = 28;
+	Synchronized sync((SEM_ID)(_globalInterruptMaskSemaphore));
+	const uint32_t kTimerInterruptNumber = 28;
 	if (_interruptMask == (1 << kTimerInterruptNumber)) {
 	    signal(SIGALRM, SIG_DFL);
 	    globalTimerInterruptManager = NULL;
@@ -1398,7 +1398,7 @@ public:
 	if (m_enable && m_triggerTime) {
 	    struct timeval now;
 	    gettimeofday(&now, NULL);
-	    UINT32 us = m_triggerTime - (now.tv_sec * 1000000U + now.tv_usec);
+	    uint32_t us = m_triggerTime - (now.tv_sec * 1000000U + now.tv_usec);
 	    struct itimerval it;
 	    it.it_interval.tv_sec = 0;
 	    it.it_interval.tv_usec = 0;
@@ -1428,7 +1428,7 @@ public:
 	if (m_enable && m_triggerTime) {
 	    struct timeval now;
 	    gettimeofday(&now, NULL);
-	    UINT32 us = m_triggerTime - (now.tv_sec * 1000000U + now.tv_usec);
+	    uint32_t us = m_triggerTime - (now.tv_sec * 1000000U + now.tv_usec);
 	    struct itimerval it;
 	    it.it_interval.tv_sec = 0;
 	    it.it_interval.tv_usec = 0;
@@ -1553,19 +1553,6 @@ public:
 	return m_status.DisableCount;
     }
 
-    virtual void writeImmortal(bool value, tRioStatusCode *status) {
-	if (m_immortal != value) {
-	    printf("FPGA watchdog immortal was %c changed to %c\n",
-	    	m_immortal ? 't' : 'f', value ? 't' : 'f');
-	}
-	m_immortal = value;
-	*status = 0;
-    }
-    virtual bool readImmortal(tRioStatusCode *status) {
-	*status = 0;
-	return m_immortal;
-    }
-
     virtual void strobeKill(tRioStatusCode *status) {
 #ifdef DEBUG
 	printf("FPGA watchdog strobe kill\n");
@@ -1598,6 +1585,20 @@ public:
 	return m_timer;
     }
 
+    virtual void writeImmortal(bool value, tRioStatusCode *status) {
+	if (m_immortal != value) {
+	    printf("FPGA watchdog immortal was %c changed to %c\n",
+	    	m_immortal ? 't' : 'f', value ? 't' : 'f');
+	}
+	m_immortal = value;
+	*status = 0;
+    }
+
+    virtual bool readImmortal(tRioStatusCode *status) {
+	*status = 0;
+	return m_immortal;
+    }
+
 private:
     DISALLOW_COPY_AND_ASSIGN(stubWatchdog);
 };
@@ -1622,11 +1623,11 @@ tWatchdog* tWatchdog::create( tRioStatusCode *status )
 
 extern "C" {
 
-UINT64 niTimestamp64(void)
+uint64_t niTimestamp64(void)
 {
     timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
-    UINT64 now = (ts.tv_sec * 1000000000LLU) + ts.tv_nsec;
+    uint64_t now = (ts.tv_sec * 1000000000LLU) + ts.tv_nsec;
     return (now / 30LLU);
 }
 
@@ -1640,7 +1641,7 @@ UINT64 niTimestamp64(void)
 
 extern "C" {
 
-INT32 UserSwitchInput( INT32 nSwitch )
+int32_t UserSwitchInput( int32_t nSwitch )
 {
     assert(nSwitch == 0);
     return 0;
@@ -1648,13 +1649,13 @@ INT32 UserSwitchInput( INT32 nSwitch )
 
 static int cRIO_User1_LED = 0;
 
-INT32 LedInput(INT32 led)
+int32_t LedInput(int32_t led)
 {
     assert(led == 0);
     return cRIO_User1_LED;
 }
 
-INT32 LedOutput(INT32 led, INT32 value)
+int32_t LedOutput(int32_t led, int32_t value)
 {
     assert(led == 0);
     if (cRIO_User1_LED != (value != 0)) {
@@ -1684,13 +1685,13 @@ INT32 LedOutput(INT32 led, INT32 value)
 
 extern "C" {
 
-UINT32 FRC_NetworkCommunication_nAICalibration_getLSBWeight( const UINT32 aiSystemIndex, const UINT32 channel, INT32 *status )
+uint32_t FRC_NetworkCommunication_nAICalibration_getLSBWeight( const uint32_t aiSystemIndex, const uint32_t channel, int32_t *status )
 {
     *status = OK;
     return 4885198;
 }
 
-INT32 FRC_NetworkCommunication_nAICalibration_getOffset( const UINT32 aiSystemIndex, const UINT32 channel, INT32 *status )
+int32_t FRC_NetworkCommunication_nAICalibration_getOffset( const uint32_t aiSystemIndex, const uint32_t channel, int32_t *status )
 {
     *status = OK;
     return 0;

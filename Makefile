@@ -33,10 +33,10 @@ endef
 $(foreach prog,$(PROGRAMS),$(eval $(call PROGRAM_template,$(prog))))
 
 WPILib WPILib/WPILib.a:
-	$(MAKE) -C WPILib
+	$(MAKE) CDEBUG=$(CDEBUG) -C WPILib
 
 stubs stubs/stubs.a:
-	$(MAKE) -C stubs
+	$(MAKE) CDEBUG=$(CDEBUG) -C stubs
 
 clean:
 	$(RM) $(CLEAN_TARGETS) errorlog undefined
