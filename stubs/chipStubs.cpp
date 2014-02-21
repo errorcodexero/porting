@@ -175,7 +175,8 @@ public:
     }
     virtual tAccumulator::tOutput readOutput(tRioStatusCode *status) {
 	tAccumulator::tOutput output;
-	memset(&output, 0, sizeof output);
+	output.Value = 0;
+	output.Count = 1;
 	*status = 0;
 	return output;
     }
@@ -185,7 +186,7 @@ public:
 	return value;
     }
     virtual unsigned int readOutput_Count(tRioStatusCode *status) {
-	unsigned int count = 0;
+	unsigned int count = 1;
 	*status = 0;
 	return count;
     }

@@ -692,7 +692,7 @@ STATUS FNC::Recv()
 	m_recvData.FPGAChecksum2	= ntohl(m_recvPkt.ctrl.FPGAChecksum2);
 	m_recvData.FPGAChecksum3	= ntohl(m_recvPkt.ctrl.FPGAChecksum3);
 #if 0
-	printf("FPGA checksums: %08lx %08lx %08lx %08lx\n",
+	printf("FPGA checksums: %08x %08x %08x %08x\n",
 		m_recvData.FPGAChecksum0, m_recvData.FPGAChecksum1,
 		m_recvData.FPGAChecksum2, m_recvData.FPGAChecksum3);
 #endif
